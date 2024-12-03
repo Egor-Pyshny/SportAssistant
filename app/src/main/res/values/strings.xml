@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">SportAssistant</string>
+    <string name="start_screen_title">Дневник спортсмена</string>
+    <string name="start_screen_text">Добивайся любых высот и целей\nвместе с нами</string>
+    <string name="registration_button_text">Зарегестироваться</string>
+    <string name="login_button_text">Войти</string>
+    <string name="create_account_text">Создать аккаунт</string>
+    <string name="name_input_placeholder">Имя</string>
+    <string name="surname_input_placeholder">Фамилия</string>
+    <string name="mail_input_placeholder">Почта</string>
+    <string name="password_input_placeholder">Пароль</string>
+    <string name="continue_button_text">Продолжить</string>
+    <string name="sport_type_placeholder">Вид спорта</string>
+    <string name="qualification_placeholder">Квалификация</string>
+    <string name="address_placeholder">Адрес проживания</string>
+    <string name="phone_placeholder">Телефон</string>
+    <string name="gender_placeholder">Пол</string>
+    <string name="login_text">Войти</string>
+    <string name="create_profile_text">Настроим\nваш профиль</string>
+    <string name="create_coach_text">Ваш тренер</string>
+    <string name="coach_name_placeholder">ФИО тренера</string>
+    <string name="coach_phone_placeholder">Телефон тренера</string>
+    <string name="coach_institution_placeholder">Учреждение</string>
+    <string name="support_text_for_password">Пароль должен быть длиннее 8 символов</string>
+    <string name="support_text_for_email">Неверный формат почты</string>
+    <string-array name="gender_options">
+        <item>Женский</item>
+        <item>Мужской</item>
+    </string-array>
+</resources>
