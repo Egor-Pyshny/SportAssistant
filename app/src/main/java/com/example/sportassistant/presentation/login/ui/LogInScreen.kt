@@ -48,7 +48,7 @@ fun LogInScreen(
                 modifier = Modifier.fillMaxWidth()
                     .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(35.dp)
+                verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 StyledInput(
                     value = uiState.email,
