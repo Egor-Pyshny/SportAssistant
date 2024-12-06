@@ -23,6 +23,10 @@
     <string name="coach_institution_placeholder">Учреждение</string>
     <string name="support_text_for_password">Пароль должен быть длиннее 8 символов</string>
     <string name="support_text_for_email">Неверный формат почты</string>
+    <string name="nav_bar_settings_text">Настройки</string>
+    <string name="nav_bar_profile_text">Профиль</string>
+    <string name="nav_bar_calendar_text">Календарь</string>
+    <string name="nav_bar_pinned_text">Закрепленное</string>
     <string-array name="gender_options">
         <item>Женский</item>
         <item>Мужской</item>

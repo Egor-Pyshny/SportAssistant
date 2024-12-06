@@ -42,6 +42,7 @@ fun StartScreen(
         )
         Column(
             modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
                 text = stringResource(R.string.start_screen_title),
@@ -54,24 +55,20 @@ fun StartScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 60.dp)
+        Column(
+            modifier = Modifier.padding(bottom = 60.dp)
         ) {
-            Column {
-                StyledButton(
-                    text = stringResource(R.string.registration_button_text),
-                    onClick = onRegistrationButtonClicked,
-                    isEnabled = true,
-                    modifier = Modifier.padding(bottom = 25.dp)
-                )
-                StyledOutlinedButton(
-                    text = stringResource(R.string.login_button_text),
-                    onClick = onLogInButtonClicked,
-                    isEnabled = true,
-                )
-            }
+            StyledButton(
+                text = stringResource(R.string.registration_button_text),
+                onClick = onRegistrationButtonClicked,
+                isEnabled = true,
+                modifier = Modifier.padding(bottom = 25.dp)
+            )
+            StyledOutlinedButton(
+                text = stringResource(R.string.login_button_text),
+                onClick = onLogInButtonClicked,
+                isEnabled = true,
+            )
         }
     }
 }

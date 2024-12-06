@@ -141,6 +141,8 @@ private fun isAllFilled(state: RegistrationUiState): Boolean {
     return (!state.userMailError &&
             !state.userPasswordError
             && state.userName.isNotEmpty()
+            && state.userMail.isNotEmpty()
+            && state.userPassword.isNotEmpty()
             && state.userSurname.isNotEmpty())
 }
 

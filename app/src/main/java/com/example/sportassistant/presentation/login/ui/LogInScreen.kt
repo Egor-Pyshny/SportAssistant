@@ -34,7 +34,7 @@ fun LogInScreen(
     val uiState by viewModel.uiState.collectAsState()
     Column (
         modifier = modifier.fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp, top = 45.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -107,6 +107,7 @@ fun LogInScreen(
 }
 
 private fun isAllFilled(state: LogInUiState): Boolean {
-    return (state.email.isNotEmpty()
+    return true
+    return (!state.userMailError && state.email.isNotEmpty()
             && state.password.isNotEmpty())
 }

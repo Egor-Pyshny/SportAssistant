@@ -4,10 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.sportassistant.presentation.SportAssistantApp
+import com.example.sportassistant.presentation.RootNavGraph
 import com.example.sportassistant.presentation.theme.SportAssistantTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SportAssistantTheme {
                 Surface {
-                    SportAssistantApp()
+                    RootNavGraph()
                 }
             }
         }
@@ -29,7 +33,7 @@ class MainActivity : ComponentActivity() {
 fun SportAssistantAppPreview() {
     SportAssistantTheme() {
         Surface {
-            SportAssistantApp()
+            RootNavGraph()
         }
     }
 }
