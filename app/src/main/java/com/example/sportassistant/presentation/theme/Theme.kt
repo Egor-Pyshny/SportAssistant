@@ -3,6 +3,7 @@ package com.example.sportassistant.presentation.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
@@ -16,6 +17,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import com.example.sportassistant.presentation.theme.AppTypography
 import com.example.sportassistant.presentation.theme.Shapes
+
+
+val ColorScheme.homeScreenListBackground: Color
+    get() = homeScreenElementsBackground
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -268,7 +273,6 @@ fun SportAssistantTheme(
       darkTheme -> darkScheme
       else -> lightScheme
   }
-
     MaterialTheme(
         colorScheme = colorScheme,
         typography = AppTypography,

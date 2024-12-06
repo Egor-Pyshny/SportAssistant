@@ -3,6 +3,7 @@ package com.example.sportassistant.presentation
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.sportassistant.presentation.home.ui.HomeScreen
+import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.login.ui.LogInScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationCoachScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationCreateAccountScreen
@@ -28,7 +30,7 @@ import com.example.sportassistant.presentation.registration.ui.RegistrationProfi
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
 import com.example.sportassistant.presentation.start.ui.StartScreen
 
-sealed class Route(val route: String)
+open class Route(val route: String)
 
 sealed class AuthRoutes {
     data object Start : Route("start")
@@ -56,9 +58,10 @@ fun RootNavGraph(
     navController: NavHostController = rememberNavController(),
     registrationViewModel: RegistrationViewModel = viewModel(),
 ) {
+    val startDestination = GraphRoutes.HomeNav.route
     NavHost(
         navController = navController,
-        startDestination = GraphRoutes.AuthNav.route,
+        startDestination = startDestination,
     ) {
         authNavGraph(
             navController = navController,
@@ -77,25 +80,17 @@ fun RootNavGraph(
 @Composable
 fun HomeNavGraph(
     navController: NavHostController,
+    modifier: Modifier = Modifier,
     logout: () -> Unit,
 ) {
     NavHost(
         navController = navController,
         route = GraphRoutes.HomeNav.route,
         startDestination = HomeRoutes.Home.route,
+        modifier = modifier,
     ) {
         composable(route = HomeRoutes.Home.route) {
-            Scaffold { paddingValues ->
-                Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text="Home")
-                }
-            }
+            HomeMainScreen()
         }
         composable(route = HomeRoutes.Settings.route) {
             Scaffold { paddingValues ->

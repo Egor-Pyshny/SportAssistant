@@ -17,13 +17,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun StyledButton(
     text: String,
-    onClick: () -> Unit,
     isEnabled: Boolean,
-    @DrawableRes leadingIcon: Int? = null,
-    @DrawableRes trailingIcon: Int? = null,
+    modifier: Modifier = Modifier,
     leadingIconModifier: Modifier = Modifier,
     trailingIconModifier: Modifier = Modifier,
-    modifier: Modifier = Modifier,
+    @DrawableRes leadingIcon: Int? = null,
+    @DrawableRes trailingIcon: Int? = null,
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier.fillMaxWidth().height(50.dp),

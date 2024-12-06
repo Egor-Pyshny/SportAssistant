@@ -26,7 +26,18 @@
     <string name="nav_bar_settings_text">Настройки</string>
     <string name="nav_bar_profile_text">Профиль</string>
     <string name="nav_bar_calendar_text">Календарь</string>
+    <string name="nav_bar_main_text">Главная</string>
     <string name="nav_bar_pinned_text">Закрепленное</string>
+    <string name="home_list_item_competition_calendar">Календарь соревнований</string>
+    <string name="home_list_item_working_process">Учебно-тренировочный процесс</string>
+    <string name="home_list_item_ofp_testing">Тестирование ОФП</string>
+    <string name="home_list_item_cfp_testing">Тестирование СФП</string>
+    <string name="home_list_item_ant_params">Антропометрические параметры</string>
+    <string name="home_list_item_mc_calendar">Календарь МЦ</string>
+    <string name="home_list_item_med_exam">Медицинское обследование</string>
+    <string name="home_list_item_complex_exam">Комплексное обследование</string>
+    <string name="home_list_item_note">Примечание</string>
+    <string name="home_list_item_train_diary">Дневник тренировок</string>
     <string-array name="gender_options">
         <item>Женский</item>
         <item>Мужской</item>

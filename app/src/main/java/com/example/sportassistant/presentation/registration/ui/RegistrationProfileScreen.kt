@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,13 +48,13 @@ import com.example.sportassistant.presentation.registration.viewmodel.Registrati
 @Composable
 fun RegistrationProfileScreen(
     viewModel: RegistrationViewModel,
-    onContinueRegistrationButtonClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onContinueRegistrationButtonClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
     Column (
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(start = 20.dp, end = 20.dp, top = 45.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
@@ -187,7 +189,7 @@ fun RegistrationProfileScreen(
             }
         }
         Column(
-            modifier = Modifier.padding(bottom = 60.dp)
+            modifier = Modifier.padding(bottom = 60.dp, top = 60.dp)
         ) {
             if (isAllFilled(uiState)) {
                 StyledButton(

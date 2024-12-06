@@ -17,13 +17,13 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun StyledOutlinedButton(
     text: String,
-    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     isEnabled: Boolean,
     @DrawableRes leadingIcon: Int? = null,
     @DrawableRes trailingIcon: Int? = null,
     leadingIconModifier: Modifier = Modifier,
     trailingIconModifier: Modifier = Modifier,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         modifier = modifier.fillMaxWidth().height(50.dp),

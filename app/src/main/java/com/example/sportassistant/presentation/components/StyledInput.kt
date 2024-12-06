@@ -22,17 +22,17 @@ import androidx.compose.ui.unit.dp
 fun StyledInput(
     value: String,
     onValueChange: (String) -> Unit,
-    placeholder: String? = null,
+    modifier: Modifier = Modifier,
     @DrawableRes leadingIcon: Int,
+    placeholder: String? = null,
     @DrawableRes trailingIcon: Int? = null,
-    onTrailingIconClick: (() -> Unit)? = null,
     isError: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     prefix: String? = null,
     suffix: String? = null,
     supportingText: String? = null,
-    modifier: Modifier = Modifier,
+    onTrailingIconClick: (() -> Unit)? = null,
 ) {
     OutlinedTextField(
         value = value,
