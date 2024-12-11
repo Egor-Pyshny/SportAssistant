@@ -21,23 +21,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
+import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.login.domain.LogInUiState
 import com.example.sportassistant.presentation.login.viewmodel.LogInViewModel
+import org.koin.androidx.compose.get
 
 @Composable
 fun LogInScreen(
     viewModel: LogInViewModel = viewModel(),
     modifier: Modifier = Modifier,
     onLogInButtonClick: () -> Unit = {},
+    screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Column (
         modifier = modifier.fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp, top = 60.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(
+                start = screenSizeProvider.getEdgeSpacing(),
+                end = screenSizeProvider.getEdgeSpacing(),
+                top = 60.dp
+            ).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {

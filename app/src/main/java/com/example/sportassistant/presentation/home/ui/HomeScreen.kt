@@ -54,9 +54,6 @@ fun HomeScreen(
         topBar = {
             getTopBar(
                 navController = navController,
-                onHomeClick = {
-                    navController.navigate(HomeRoutes.Home.route)
-                },
             )
         },
         modifier = modifier
@@ -75,13 +72,7 @@ private fun getBottomBar(
     modifier: Modifier = Modifier,
     onTabPressed: ((Route) -> Unit),
 ) {
-    val screensWithBottomBar = listOf(
-        HomeRoutes.Home.route,
-        HomeRoutes.Pinned.route,
-        HomeRoutes.Calendar.route,
-        HomeRoutes.Settings.route,
-        HomeRoutes.Profile.route,
-    )
+    val screensWithoutBottomBar = listOf<String>()
     val navigationItemContentList = listOf(
         NavigationItemContent(
             icon = R.drawable.profile,
@@ -106,14 +97,16 @@ private fun getBottomBar(
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    if (screensWithBottomBar.contains(currentDestination?.route)) {
+    if (!screensWithoutBottomBar.contains(currentDestination?.route)) {
         NavigationBar(
             modifier = modifier,
             containerColor = Color.Transparent
         ) {
             for (navItem in navigationItemContentList) {
                 NavigationBarItem(
-                    selected = currentDestination?.hierarchy?.any { it.route == navItem.route.route } == true,
+                    selected = currentDestination?.hierarchy?.any { parentRoute ->
+                        parentRoute.route?.startsWith(navItem.route.route) == true
+                    } == true,
                     onClick = { onTabPressed(navItem.route) },
                     icon = {
                         Icon(
@@ -144,23 +137,25 @@ private data class NavigationItemContent(
 private fun getTopBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    onHomeClick: () -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val screensWithBottomBar = listOf(
-        HomeRoutes.Pinned.route,
-        HomeRoutes.Calendar.route,
-        HomeRoutes.Settings.route,
-        HomeRoutes.Profile.route,
+    val screensWithoutTopBar = listOf(
+        HomeRoutes.Home.route,
     )
-    if (screensWithBottomBar.contains(currentDestination?.route)) {
+    val screensWithReturnToHomeIcon = listOf(
+        HomeRoutes.Pinned.route,
+        HomeRoutes.Profile.route,
+        HomeRoutes.Settings.route,
+        HomeRoutes.Calendar.route
+    )
+    if (!screensWithoutTopBar.contains(currentDestination?.route)) {
 
         val currentScreen = getTopBarTitles(
             route = currentDestination?.route ?: ""
         )
-
+        val iconText = getIconText(currentDestination?.route)
         CenterAlignedTopAppBar(
             title = {
                 Text(
@@ -174,7 +169,13 @@ private fun getTopBar(
             navigationIcon = {
                 Row(
                     modifier = Modifier
-                        .clickable { onHomeClick() },
+                        .clickable {
+                            if (currentDestination?.route in screensWithReturnToHomeIcon) {
+                                navController.navigate(HomeRoutes.Home.route)
+                            } else {
+                                navController.popBackStack()
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -182,7 +183,7 @@ private fun getTopBar(
                         contentDescription = null
                     )
                     Text(
-                        text = stringResource(R.string.nav_bar_main_text),
+                        text = iconText,
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontSize = 17.sp
                         )
@@ -194,12 +195,27 @@ private fun getTopBar(
 }
 
 @Composable
+private fun getIconText(route: String?): String {
+    val text = when (route) {
+        HomeRoutes.Pinned.route,
+        HomeRoutes.Profile.route,
+        HomeRoutes.Settings.route,
+        HomeRoutes.Calendar.route -> stringResource(R.string.nav_bar_main_text)
+        else -> stringResource(R.string.nav_bar_back_text)
+    }
+    return text
+}
+
+@Composable
 private fun getTopBarTitles(route: String): String {
     val title = when (route) {
         HomeRoutes.Pinned.route -> stringResource(R.string.nav_bar_pinned_text)
         HomeRoutes.Profile.route -> stringResource(R.string.nav_bar_profile_text)
         HomeRoutes.Settings.route -> stringResource(R.string.nav_bar_settings_text)
         HomeRoutes.Calendar.route -> stringResource(R.string.nav_bar_calendar_text)
+        HomeRoutes.LayoutSettings.route -> stringResource(R.string.nav_bar_layout_settings_text)
+        HomeRoutes.AboutApp.route -> stringResource(R.string.nav_bar_about_app_text)
+        HomeRoutes.Premium.route -> stringResource(R.string.nav_bar_about_app_text)
         else -> "ERROR"
     }
     return title

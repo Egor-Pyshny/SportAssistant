@@ -17,16 +17,18 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
 import com.example.sportassistant.presentation.theme.homeScreenListBackground
 
 @Composable
-fun StyledListItem(
+fun StyledButtonListItem(
     text: String,
     modifier: Modifier = Modifier,
     cornerShape: CornerBasedShape = RoundedCornerShape(0.dp),
     border: Border = Border.None,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     onClick: () -> Unit,
 ) {
     Row (
@@ -34,7 +36,7 @@ fun StyledListItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .background(
-                color = MaterialTheme.colorScheme.homeScreenListBackground,
+                color = MaterialTheme.colorScheme.onTertiary,
                 shape = cornerShape
             ).drawBehind {
                 val borderSize = 2.dp.toPx()
@@ -55,7 +57,7 @@ fun StyledListItem(
         ) {
             Text(
                 text = text,
-                style = MaterialTheme.typography.bodyLarge,
+                style = textStyle,
                 modifier = Modifier.weight(1f)
                     .padding(start = 10.dp)
             )

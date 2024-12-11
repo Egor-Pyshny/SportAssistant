@@ -3,6 +3,7 @@
     <string name="start_screen_title">Дневник спортсмена</string>
     <string name="start_screen_text">Добивайся любых высот и целей\nвместе с нами</string>
     <string name="registration_button_text">Зарегестироваться</string>
+    <string name="turn_on_button_text">Подключить</string>
     <string name="login_button_text">Войти</string>
     <string name="create_account_text">Создать аккаунт</string>
     <string name="name_input_placeholder">Имя</string>
@@ -26,8 +27,12 @@
     <string name="nav_bar_settings_text">Настройки</string>
     <string name="nav_bar_profile_text">Профиль</string>
     <string name="nav_bar_calendar_text">Календарь</string>
+    <string name="nav_bar_layout_settings_text">Внешний вид</string>
+    <string name="nav_bar_about_app_text">О приложении</string>
+    <string name="nav_bar_premium_text">Premium</string>
     <string name="nav_bar_main_text">Главная</string>
     <string name="nav_bar_pinned_text">Закрепленное</string>
+    <string name="nav_bar_back_text">Назад</string>
     <string name="home_list_item_competition_calendar">Календарь соревнований</string>
     <string name="home_list_item_working_process">Учебно-тренировочный процесс</string>
     <string name="home_list_item_ofp_testing">Тестирование ОФП</string>
@@ -38,6 +43,15 @@
     <string name="home_list_item_complex_exam">Комплексное обследование</string>
     <string name="home_list_item_note">Примечание</string>
     <string name="home_list_item_train_diary">Дневник тренировок</string>
+    <string name="home_list_item_premium">Premium</string>
+    <string name="home_list_item_layout">Внешний вид</string>
+    <string name="home_list_item_about_app">О приложении</string>
+    <string name="home_list_item_ofp">ОФП</string>
+    <string name="home_list_item_cfp">СФП</string>
+    <string name="home_list_item_night_mode">Ночной режим</string>
+    <string name="home_list_item_privacy_and_policy">Политика конфиденциальности</string>
+    <string name="home_list_item_rules">Правила использования</string>
+    <string name="database_text">Базы данных</string>
     <string-array name="gender_options">
         <item>Женский</item>
         <item>Мужской</item>

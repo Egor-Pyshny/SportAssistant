@@ -3,12 +3,8 @@ package com.example.sportassistant.presentation
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,14 +17,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
+import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
 import com.example.sportassistant.presentation.home.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.login.ui.LogInScreen
+import com.example.sportassistant.presentation.premium.ui.PremiumScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationCoachScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationCreateAccountScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationProfileScreen
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.settings.ui.SettingsScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.KoinApplication
+import org.koin.core.context.KoinContext
 
 open class Route(val route: String)
 
@@ -51,6 +54,9 @@ sealed class HomeRoutes {
     data object Profile : Route("profile")
     data object Calendar : Route("calendar")
     data object Pinned : Route("pinned")
+    data object AboutApp : Route("settings_about_app")
+    data object LayoutSettings : Route("settings_layout_settings")
+    data object Premium : Route("settings_premium")
 }
 
 @Composable
@@ -58,7 +64,7 @@ fun RootNavGraph(
     navController: NavHostController = rememberNavController(),
     registrationViewModel: RegistrationViewModel = viewModel(),
 ) {
-    val startDestination = GraphRoutes.HomeNav.route
+    val startDestination = GraphRoutes.AuthNav.route
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -90,20 +96,19 @@ fun HomeNavGraph(
         modifier = modifier,
     ) {
         composable(route = HomeRoutes.Home.route) {
-            HomeMainScreen()
+            HomeMainScreen(navController)
         }
         composable(route = HomeRoutes.Settings.route) {
-            Scaffold { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text="Settings")
-                }
-            }
+            SettingsScreen(navController)
+        }
+        composable(route = HomeRoutes.LayoutSettings.route) {
+            LayoutSettingsScreen()
+        }
+        composable(route = HomeRoutes.AboutApp.route) {
+            AboutAppScreen()
+        }
+        composable(route = HomeRoutes.Premium.route) {
+            PremiumScreen()
         }
         composable(route = HomeRoutes.Profile.route) {
             Scaffold { paddingValues ->

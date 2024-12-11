@@ -23,11 +23,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
+import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.registration.domain.model.RegistrationUiState
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import org.koin.androidx.compose.get
 
 
 @Composable
@@ -35,11 +37,16 @@ fun RegistrationCoachScreen(
     viewModel: RegistrationViewModel,
     modifier: Modifier = Modifier,
     onFinishRegistrationButtonClick: () -> Unit = {},
+    screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
-            .padding(start = 20.dp, end = 20.dp, top = 45.dp),
+            .padding(
+                start = screenSizeProvider.getEdgeSpacing(),
+                end = screenSizeProvider.getEdgeSpacing(),
+                top = 45.dp
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
