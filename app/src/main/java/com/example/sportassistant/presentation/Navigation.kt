@@ -19,9 +19,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
+import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
 import com.example.sportassistant.presentation.home.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.login.ui.LogInScreen
+import com.example.sportassistant.presentation.pinned.ui.PinnedScreen
 import com.example.sportassistant.presentation.premium.ui.PremiumScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationCoachScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationCreateAccountScreen
@@ -29,6 +31,7 @@ import com.example.sportassistant.presentation.registration.ui.RegistrationProfi
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
 import com.example.sportassistant.presentation.settings.ui.SettingsScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
+import com.example.sportassistant.presentation.theme.SportAssistantTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.KoinContext
@@ -65,26 +68,33 @@ fun RootNavGraph(
     registrationViewModel: RegistrationViewModel = viewModel(),
 ) {
     val startDestination = GraphRoutes.AuthNav.route
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
+    val themeViewModel: AppLayoutViewModel = koinViewModel()
+    SportAssistantTheme(
+        viewModel = themeViewModel
     ) {
-        authNavGraph(
+        NavHost(
             navController = navController,
-            registrationViewModel = registrationViewModel,
-        )
-        composable(route = GraphRoutes.HomeNav.route) {
-            HomeScreen(
-                logout = {
-                    navController.navigate(GraphRoutes.AuthNav.route) {popUpTo(0)}
-                }
+            startDestination = startDestination,
+        ) {
+            authNavGraph(
+                navController = navController,
+                registrationViewModel = registrationViewModel,
             )
+            composable(route = GraphRoutes.HomeNav.route) {
+                HomeScreen(
+                    themeViewModel = themeViewModel,
+                    logout = {
+                        navController.navigate(GraphRoutes.AuthNav.route) { popUpTo(0) }
+                    }
+                )
+            }
         }
     }
 }
 
 @Composable
 fun HomeNavGraph(
+    themeViewModel: AppLayoutViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     logout: () -> Unit,
@@ -102,13 +112,16 @@ fun HomeNavGraph(
             SettingsScreen(navController)
         }
         composable(route = HomeRoutes.LayoutSettings.route) {
-            LayoutSettingsScreen()
+            LayoutSettingsScreen(viewModel = themeViewModel)
         }
         composable(route = HomeRoutes.AboutApp.route) {
             AboutAppScreen()
         }
         composable(route = HomeRoutes.Premium.route) {
             PremiumScreen()
+        }
+        composable(route = HomeRoutes.Pinned.route) {
+            PinnedScreen()
         }
         composable(route = HomeRoutes.Profile.route) {
             Scaffold { paddingValues ->
@@ -120,19 +133,6 @@ fun HomeNavGraph(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(text="Profile")
-                }
-            }
-        }
-        composable(route = HomeRoutes.Pinned.route) {
-            Scaffold { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text="Pinned")
                 }
             }
         }

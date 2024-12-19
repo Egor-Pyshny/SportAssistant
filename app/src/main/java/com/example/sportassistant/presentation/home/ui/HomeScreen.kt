@@ -22,21 +22,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.sportassistant.R
+import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.HomeNavGraph
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.Route
+import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
+import org.koin.androidx.compose.get
 
 @Composable
 fun HomeScreen(
+    themeViewModel: AppLayoutViewModel,
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
     logout: () -> Unit,
@@ -59,6 +66,7 @@ fun HomeScreen(
         modifier = modifier
     ) { padding ->
         HomeNavGraph(
+            themeViewModel = themeViewModel,
             navController = navController,
             logout = logout,
             modifier = Modifier.padding(padding)
@@ -70,6 +78,7 @@ fun HomeScreen(
 private fun getBottomBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    screenSizeProvider: WindowSizeProvider = get(),
     onTabPressed: ((Route) -> Unit),
 ) {
     val screensWithoutBottomBar = listOf<String>()
@@ -95,6 +104,12 @@ private fun getBottomBar(
             route = HomeRoutes.Pinned,
         )
     )
+    val size = screenSizeProvider.getScreenDimensions()
+    val navBarFontSize = if (size.screenWidth <= 360.dp) {
+        10.sp
+    } else {
+        12.sp
+    }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     if (!screensWithoutBottomBar.contains(currentDestination?.route)) {
@@ -119,7 +134,12 @@ private fun getBottomBar(
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         indicatorColor = Color.Transparent,
                     ),
-                    label = { Text(text = navItem.text) },
+                    label = {
+                        Text(
+                            text = navItem.text,
+                            style = MaterialTheme.typography.labelMedium.copy(fontSize = navBarFontSize)
+                        )
+                    },
                 )
             }
         }

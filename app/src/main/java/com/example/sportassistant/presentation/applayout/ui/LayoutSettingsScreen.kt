@@ -16,10 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,21 +26,19 @@ import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
-import com.example.sportassistant.presentation.applayout.viewmodel.testV
-import com.example.sportassistant.presentation.theme.homeScreenListBackground
+import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
-import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 @Composable
 fun LayoutSettingsScreen(
-    userPreferencesRepository: UserPreferencesRepository = get(),
+    viewModel: AppLayoutViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val isDark by userPreferencesRepository.isDarkTheme.collectAsState(initial = false)
+    val uistate by viewModel.uiState.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,11 +76,9 @@ fun LayoutSettingsScreen(
                         .padding(start = 10.dp)
                 )
                 Switch(
-                    checked = isDark,
+                    checked = uistate.isDark,
                     onCheckedChange = {
-                        coroutineScope.launch {
-                            userPreferencesRepository.saveLayoutPreference(!isDark)
-                        }
+                        viewModel.setTheme(!uistate.isDark)
                     },
                     thumbContent = {},
                     colors = SwitchDefaults.colors(

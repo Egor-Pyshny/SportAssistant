@@ -12,8 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.components.StyledButton
@@ -36,9 +38,13 @@ fun PremiumScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Это премиум функционал",
-            style = MaterialTheme.typography.headlineLarge,
+            text = "Это премиум функции",
+            style = MaterialTheme.typography.headlineLarge.copy(
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+            ),
             textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 30.dp)
         )
         StyledButton(
             text = stringResource(R.string.turn_on_button_text),

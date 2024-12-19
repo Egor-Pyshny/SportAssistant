@@ -52,6 +52,8 @@
     <string name="home_list_item_privacy_and_policy">Политика конфиденциальности</string>
     <string name="home_list_item_rules">Правила использования</string>
     <string name="database_text">Базы данных</string>
+    <string name="pinned_screen_title">Это премиум функция</string>
+    <string name="pinned_screen_text">Пожалуйста, подключите premium,\nчтобы иметь возможность закреплять\nи быстро просматривать\nзакрепленные события!</string>
     <string-array name="gender_options">
         <item>Женский</item>
         <item>Мужской</item>
