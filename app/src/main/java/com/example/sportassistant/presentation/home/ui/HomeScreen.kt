@@ -51,7 +51,7 @@ fun HomeScreen(
     BackHandler {  }
     Scaffold (
         bottomBar = {
-            getBottomBar(
+            GetBottomBar(
                 navController = navController,
                 onTabPressed = { it: Route ->
                     navController.navigate(it.route)
@@ -59,7 +59,7 @@ fun HomeScreen(
             )
         },
         topBar = {
-            getTopBar(
+            GetTopBar(
                 navController = navController,
             )
         },
@@ -75,7 +75,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun getBottomBar(
+private fun GetBottomBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
@@ -154,7 +154,7 @@ private data class NavigationItemContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun getTopBar(
+private fun GetTopBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {

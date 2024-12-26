@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,19 +53,26 @@ fun RegistrationCoachScreen(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column (
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = stringResource(R.string.create_coach_text),
-                style = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Image(
-                modifier = Modifier.padding(top = 20.dp),
-                painter = painterResource(R.drawable.placeholder),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = stringResource(R.string.create_coach_text),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Image(
+                    modifier = Modifier.height(screenSizeProvider.getScreenDimensions().screenHeight*0.27f),
+                    painter = painterResource(R.drawable.coach_screen),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+            }
             Column (
                 modifier = Modifier.fillMaxWidth()
                     .padding(top = 20.dp),
@@ -114,7 +123,7 @@ fun RegistrationCoachScreen(
             }
         }
         Column(
-            modifier = Modifier.padding(bottom = 60.dp)
+            verticalArrangement = Arrangement.Center,
         ) {
             if (isAllFilled(uiState)) {
                 StyledButton(
@@ -122,7 +131,8 @@ fun RegistrationCoachScreen(
                     onClick = onFinishRegistrationButtonClick,
                     isEnabled = true,
                     trailingIcon = R.drawable.chevron_right,
-                    trailingIconModifier = Modifier.padding(top = 1.dp)
+                    trailingIconModifier = Modifier.padding(top = 1.dp),
+                    modifier = Modifier.padding(bottom = 45.dp)
                 )
             } else {
                 StyledOutlinedButton(
@@ -130,7 +140,8 @@ fun RegistrationCoachScreen(
                     onClick = onFinishRegistrationButtonClick,
                     isEnabled = false,
                     trailingIcon = R.drawable.chevron_right,
-                    trailingIconModifier = Modifier.padding(top = 1.dp)
+                    trailingIconModifier = Modifier.padding(top = 1.dp),
+                    modifier = Modifier.padding(bottom = 45.dp)
                 )
             }
         }

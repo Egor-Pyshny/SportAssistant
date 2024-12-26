@@ -18,7 +18,7 @@ val dataModules = module {
     viewModel{
         AppLayoutViewModel(
             userPreferencesRepository = get(),
-            AppDispatchers = get()
+            appDispatchers = get()
         )
     }
 }

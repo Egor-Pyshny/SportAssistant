@@ -5,6 +5,11 @@ plugins {
 }
 
 android {
+    lint {
+        checkAllWarnings = true
+        abortOnError = true
+        warningsAsErrors = false
+    }
     namespace = "com.example.sportassistant"
     compileSdk = 34
 
@@ -37,6 +42,7 @@ android {
     buildFeatures {
         compose = true
     }
+
 }
 
 dependencies {

@@ -14,13 +14,13 @@ import kotlinx.coroutines.launch
 
 class AppLayoutViewModel(
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val AppDispatchers: AppDispatchers,
+    private val appDispatchers: AppDispatchers,
 ): ViewModel() {
     private val _uiState = MutableStateFlow<AppLayoutUiState>(AppLayoutUiState())
     val uiState: StateFlow<AppLayoutUiState> = _uiState.asStateFlow()
 
     fun loadTheme() {
-        viewModelScope.launch(AppDispatchers.io) {
+        viewModelScope.launch(appDispatchers.io) {
             userPreferencesRepository.isDarkTheme.collect { isDark ->
                 setTheme(isDark)
             }
@@ -29,7 +29,7 @@ class AppLayoutViewModel(
 
     fun setTheme(isDark: Boolean) {
         try {
-            viewModelScope.launch(AppDispatchers.io) {
+            viewModelScope.launch(appDispatchers.io) {
                 userPreferencesRepository.saveLayoutPreference(isDark)
             }
             _uiState.update { currentState ->

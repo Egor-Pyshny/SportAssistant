@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -51,7 +52,7 @@ fun RegistrationCreateAccountScreen(
         Column {
             Text(
                 text = stringResource(R.string.create_account_text),
-                style = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center),
+                style = MaterialTheme.typography.headlineLarge.copy(textAlign = TextAlign.Center, fontWeight = FontWeight.Bold),
                 modifier = Modifier.fillMaxWidth(),
             )
             Column (
@@ -122,7 +123,7 @@ fun RegistrationCreateAccountScreen(
             }
         }
         Column(
-            modifier = Modifier.padding(bottom = 60.dp)
+            verticalArrangement = Arrangement.Center,
         ) {
             if (isAllFilled(uiState)) {
                 StyledButton(
@@ -130,7 +131,8 @@ fun RegistrationCreateAccountScreen(
                     onClick = onContinueRegistrationButtonClick,
                     isEnabled = true,
                     trailingIcon = R.drawable.chevron_right,
-                    trailingIconModifier = Modifier.padding(top = 1.dp)
+                    trailingIconModifier = Modifier.padding(top = 1.dp),
+                    modifier = Modifier.padding(bottom = 45.dp, top = 45.dp)
                 )
             } else {
                 StyledOutlinedButton(
@@ -138,7 +140,8 @@ fun RegistrationCreateAccountScreen(
                     onClick = onContinueRegistrationButtonClick,
                     isEnabled = false,
                     trailingIcon = R.drawable.chevron_right,
-                    trailingIconModifier = Modifier.padding(top = 1.dp)
+                    trailingIconModifier = Modifier.padding(top = 1.dp),
+                    modifier = Modifier.padding(bottom = 45.dp, top = 45.dp)
                 )
             }
         }
