@@ -1,5 +1,6 @@
 package com.example.sportassistant.presentation.registration.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,13 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,21 +29,29 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
+import com.example.sportassistant.data.schemas.user.requests.CheckEmailRequest
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.registration.domain.model.RegistrationUiState
+import com.example.sportassistant.presentation.registration.viewmodel.CheckEmailViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RegistrationCreateAccountScreen(
     viewModel: RegistrationViewModel,
+    checkEmailViewModel: CheckEmailViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
     onContinueRegistrationButtonClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val checkEmailState by checkEmailViewModel.checkEmailResponse.observeAsState()
+
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(
@@ -121,6 +134,14 @@ fun RegistrationCreateAccountScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+            if (checkEmailState is ApiResponse.Failure) {
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.Red,
+                    text = (checkEmailState as ApiResponse.Failure).errorMessage
+                )
+            }
         }
         Column(
             verticalArrangement = Arrangement.Center,
@@ -128,7 +149,13 @@ fun RegistrationCreateAccountScreen(
             if (isAllFilled(uiState)) {
                 StyledButton(
                     text = stringResource(R.string.continue_button_text),
-                    onClick = onContinueRegistrationButtonClick,
+                    onClick = {
+                        checkEmailViewModel.checkEmail(
+                            CheckEmailRequest(
+                                email = uiState.userMail,
+                            )
+                        )
+                    },
                     isEnabled = true,
                     trailingIcon = R.drawable.chevron_right,
                     trailingIconModifier = Modifier.padding(top = 1.dp),
@@ -137,7 +164,7 @@ fun RegistrationCreateAccountScreen(
             } else {
                 StyledOutlinedButton(
                     text = stringResource(R.string.continue_button_text),
-                    onClick = onContinueRegistrationButtonClick,
+                    onClick = { },
                     isEnabled = false,
                     trailingIcon = R.drawable.chevron_right,
                     trailingIconModifier = Modifier.padding(top = 1.dp),
@@ -146,10 +173,38 @@ fun RegistrationCreateAccountScreen(
             }
         }
     }
+
+    when (checkEmailState) {
+        is ApiResponse.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is ApiResponse.Success -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+            LaunchedEffect(Unit) {
+                onContinueRegistrationButtonClick()
+                checkEmailViewModel.resetCheckEmailResponse()
+            }
+        }
+        else -> {}
+    }
 }
 
 private fun isAllFilled(state: RegistrationUiState): Boolean {
-    return true
+//    return true
     return (!state.userMailError &&
             !state.userPasswordError
             && state.userName.isNotEmpty()

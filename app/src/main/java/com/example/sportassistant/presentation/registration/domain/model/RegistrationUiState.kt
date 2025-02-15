@@ -1,5 +1,8 @@
 package com.example.sportassistant.presentation.registration.domain.model
 
+import com.example.sportassistant.domain.model.Coach
+import java.util.UUID
+
 data class RegistrationUiState(
     val userName: String = "",
     val userSurname: String = "",
@@ -16,7 +19,5 @@ data class RegistrationUiState(
     val phoneNumber: String = "",
     val gender: String = "",
 
-    val coachFIO: String = "",
-    val coachPhone: String = "",
-    val coachInstitution: String = "",
+    val selectedCoach: Coach? = null,
 )

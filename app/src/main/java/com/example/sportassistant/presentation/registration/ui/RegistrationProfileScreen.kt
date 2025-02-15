@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -164,10 +165,7 @@ fun RegistrationProfileScreen(
                             )
                         },
                         trailingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.arrow_down),
-                                contentDescription = null
-                            )
+                            GetDropdownTrailingIcon(expanded)
                         },
                         shape = MaterialTheme.shapes.large,
                         modifier = Modifier.menuAnchor().fillMaxWidth(),
@@ -228,7 +226,7 @@ fun RegistrationProfileScreen(
 }
 
 private fun isAllFilled(state: RegistrationUiState): Boolean {
-    return true
+//    return true
     return (state.gender.isNotEmpty()
             && state.sportType.isNotEmpty()
             && state.qualification.isNotEmpty()

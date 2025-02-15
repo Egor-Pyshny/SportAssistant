@@ -65,10 +65,11 @@ sealed class HomeRoutes {
 @Composable
 fun RootNavGraph(
     navController: NavHostController = rememberNavController(),
-    registrationViewModel: RegistrationViewModel = viewModel(),
+    registrationViewModel: RegistrationViewModel = koinViewModel(),
 ) {
     val startDestination = GraphRoutes.AuthNav.route
     val themeViewModel: AppLayoutViewModel = koinViewModel()
+    themeViewModel.loadTheme()
     SportAssistantTheme(
         viewModel = themeViewModel
     ) {

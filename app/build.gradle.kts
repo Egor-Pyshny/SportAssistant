@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation (libs.androidx.runtime.livedata)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.datastore.preferences.core.jvm)
     implementation("androidx.compose.material3:material3-window-size-class")
@@ -70,5 +71,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("io.insert-koin:koin-androidx-compose:3.2.0")
     implementation("io.insert-koin:koin-core:3.2.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 //    implementation(libs.koin.android)
 }

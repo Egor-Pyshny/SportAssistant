@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.domain.model.AppDispatchers
 import com.example.sportassistant.presentation.applayout.domain.AppLayoutUiState
-import com.example.sportassistant.presentation.login.domain.LogInUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +20,7 @@ class AppLayoutViewModel(
 
     fun loadTheme() {
         viewModelScope.launch(appDispatchers.io) {
-            userPreferencesRepository.isDarkTheme.collect { isDark ->
+            userPreferencesRepository.isDarkTheme().collect { isDark ->
                 setTheme(isDark)
             }
         }

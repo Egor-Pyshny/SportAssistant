@@ -16,6 +16,7 @@
     <string name="address_placeholder">Адрес проживания</string>
     <string name="phone_placeholder">Телефон</string>
     <string name="gender_placeholder">Пол</string>
+    <string name="choose_coach">Выберите тренера</string>
     <string name="login_text">Войти</string>
     <string name="create_profile_text">Настроим\nваш профиль</string>
     <string name="create_coach_text">Ваш тренер</string>

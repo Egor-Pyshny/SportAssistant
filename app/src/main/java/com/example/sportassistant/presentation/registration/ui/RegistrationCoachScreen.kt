@@ -1,7 +1,9 @@
 package com.example.sportassistant.presentation.registration.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,13 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,22 +32,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.data.schemas.auth.requests.RegistrationRequest
+import com.example.sportassistant.domain.model.Coach
 import com.example.sportassistant.presentation.components.StyledButton
+import com.example.sportassistant.presentation.components.StyledDropdownList
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.registration.domain.model.RegistrationUiState
+import com.example.sportassistant.presentation.registration.viewmodel.CoachViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun RegistrationCoachScreen(
     viewModel: RegistrationViewModel,
+    coachViewModel: CoachViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     onFinishRegistrationButtonClick: () -> Unit = {},
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val coaches by coachViewModel.coachesResponse.observeAsState()
+    val registrationState by viewModel.registrationResponse.observeAsState()
+
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(
@@ -79,47 +95,21 @@ fun RegistrationCoachScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                StyledInput(
-                    value = uiState.coachFIO,
-                    onValueChange = {
-                        viewModel.setCoachFIO(it)
-                    },
-                    placeholder = stringResource(R.string.coach_name_placeholder),
-                    leadingIcon = R.drawable.user_icon,
-                    onTrailingIconClick = {},
-                    isError = false,
-                    modifier = Modifier.fillMaxWidth()
+                StyledDropdownList(
+                    coaches = if (coaches is ApiResponse.Success) {(coaches as ApiResponse.Success<List<Coach>?>).data ?: listOf()} else listOf(),
+                    selectedCoach = uiState.selectedCoach,
+                    onCoachSelected = {
+                        viewModel.setCoach(it)
+                    }
                 )
-                StyledInput(
-                    value = uiState.coachPhone,
-                    onValueChange = {
-                        var temp = it.replace("_","")
-                        if (temp.length <= 9) {
-                            val newPhone = temp + "_".repeat(9-temp.length)
-                            viewModel.setCoachPhone(newPhone)
-                        }
-                    },
-                    placeholder = "__) ___-__-__",
-                    leadingIcon = R.drawable.phone,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
-                    visualTransformation = PhoneVisualTransformation(
-                        mask = "XX) XXX-XX-XX",
-                        maskNumber = 'X',
-                    ),
-                    prefix = "+375 (",
-                    modifier = Modifier.fillMaxWidth()
-                )
-                StyledInput(
-                    value = uiState.coachInstitution,
-                    onValueChange = {
-                        viewModel.setCoachInstitution(it)
-                    },
-                    placeholder = stringResource(R.string.coach_institution_placeholder),
-                    leadingIcon = R.drawable.institution,
-                    onTrailingIconClick = {},
-                    isError = false,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                if (registrationState is ApiResponse.Failure) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                        textAlign = TextAlign.Center,
+                        color = Color.Red,
+                        text = (registrationState as ApiResponse.Failure).errorMessage
+                    )
+                }
             }
         }
         Column(
@@ -128,7 +118,22 @@ fun RegistrationCoachScreen(
             if (isAllFilled(uiState)) {
                 StyledButton(
                     text = stringResource(R.string.continue_button_text),
-                    onClick = onFinishRegistrationButtonClick,
+                    onClick = {
+                        viewModel.registration(
+                            RegistrationRequest(
+                                name = uiState.userName,
+                                surname = uiState.userSurname,
+                                sportType = uiState.sportType,
+                                qualification = uiState.qualification,
+                                address = uiState.address,
+                                phoneNumber = uiState.phoneNumber,
+                                sex = uiState.gender,
+                                coachId = uiState.selectedCoach!!.id,
+                                email = uiState.userMail,
+                                password = uiState.userPassword
+                            )
+                        )
+                    },
                     isEnabled = true,
                     trailingIcon = R.drawable.chevron_right,
                     trailingIconModifier = Modifier.padding(top = 1.dp),
@@ -137,7 +142,7 @@ fun RegistrationCoachScreen(
             } else {
                 StyledOutlinedButton(
                     text = stringResource(R.string.continue_button_text),
-                    onClick = onFinishRegistrationButtonClick,
+                    onClick = {},
                     isEnabled = false,
                     trailingIcon = R.drawable.chevron_right,
                     trailingIconModifier = Modifier.padding(top = 1.dp),
@@ -146,11 +151,36 @@ fun RegistrationCoachScreen(
             }
         }
     }
+    when (registrationState) {
+        is ApiResponse.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is ApiResponse.Success -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+            LaunchedEffect(Unit) {
+                onFinishRegistrationButtonClick()
+            }
+        }
+        else -> {}
+    }
+
 }
 
 private fun isAllFilled(state: RegistrationUiState): Boolean {
-    return true
-    return (state.coachInstitution.isNotEmpty()
-            && state.coachFIO.isNotEmpty()
-            && state.coachPhone.length == 9)
+//    return true
+    return state.selectedCoach != null
 }

@@ -1,49 +1,63 @@
 package com.example.sportassistant.presentation.login.ui
 
+import android.opengl.Visibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.login.domain.LogInUiState
 import com.example.sportassistant.presentation.login.viewmodel.LogInViewModel
+import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LogInScreen(
-    viewModel: LogInViewModel = viewModel(),
+    viewModel: LogInViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     onLogInButtonClick: () -> Unit = {},
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val loginState by viewModel.loginResponse.observeAsState()
     Column (
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .padding(
                 start = screenSizeProvider.getEdgeSpacing(),
                 end = screenSizeProvider.getEdgeSpacing(),
                 top = 60.dp
-            ).verticalScroll(rememberScrollState()),
+            )
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -54,7 +68,8 @@ fun LogInScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             Column (
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
@@ -90,6 +105,14 @@ fun LogInScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+            if (loginState is ApiResponse.Failure) {
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.Red,
+                    text = (loginState as ApiResponse.Failure).errorMessage
+                )
+            }
         }
         Column(
             modifier = Modifier.padding(bottom = 60.dp)
@@ -97,7 +120,14 @@ fun LogInScreen(
             if (isAllFilled(uiState)) {
                 StyledButton(
                     text = stringResource(R.string.continue_button_text),
-                    onClick = onLogInButtonClick,
+                    onClick = {
+                        viewModel.login(
+                            LoginRequest(
+                                email = uiState.email,
+                                password = uiState.password,
+                            )
+                        )
+                    },
                     isEnabled = true,
                     trailingIcon = R.drawable.chevron_right,
                     trailingIconModifier = Modifier.padding(top = 1.dp)
@@ -105,7 +135,7 @@ fun LogInScreen(
             } else {
                 StyledOutlinedButton(
                     text = stringResource(R.string.continue_button_text),
-                    onClick = onLogInButtonClick,
+                    onClick = { },
                     isEnabled = false,
                     trailingIcon = R.drawable.chevron_right,
                     trailingIconModifier = Modifier.padding(top = 1.dp)
@@ -113,10 +143,37 @@ fun LogInScreen(
             }
         }
     }
+
+    when (loginState) {
+        is ApiResponse.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+        is ApiResponse.Success -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+            LaunchedEffect(Unit) {
+                onLogInButtonClick()
+            }
+        }
+        else -> {}
+    }
 }
 
 private fun isAllFilled(state: LogInUiState): Boolean {
-    return true
+    return true;
     return (!state.userMailError && state.email.isNotEmpty()
             && state.password.isNotEmpty())
 }

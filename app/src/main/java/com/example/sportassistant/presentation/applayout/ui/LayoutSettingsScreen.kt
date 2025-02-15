@@ -24,12 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
-import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LayoutSettingsScreen(

@@ -9,10 +9,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
-import org.koin.androidx.compose.get
-import org.koin.androidx.compose.koinViewModel
 
 
 val ColorScheme.homeScreenListBackground: Color

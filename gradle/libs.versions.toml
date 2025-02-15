@@ -13,8 +13,10 @@ navigationRuntimeKtx = "2.8.4"
 navigationCompose = "2.8.4"
 datastorePreferencesCoreJvm = "1.1.1"
 koin-android = "3.2.0"
+runtimeLivedata = "1.6.5"
 
 [libraries]
+androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
