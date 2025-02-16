@@ -48,6 +48,14 @@ class UserPreferencesRepository(
         }
     }
 
+    suspend fun setIsLoggedIn(isLoggedIn: Boolean) {
+        withContext(appDispatchers.io) {
+            context.dataStore.edit {preferences ->
+                preferences[IS_LOGGED_IN] = isLoggedIn
+            }
+        }
+    }
+
     suspend fun saveLayoutPreference(theme: Boolean) {
         withContext(appDispatchers.io) {
             context.dataStore.edit {preferences ->

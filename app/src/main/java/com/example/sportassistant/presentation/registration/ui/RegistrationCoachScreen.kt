@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
+import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.auth.requests.RegistrationRequest
 import com.example.sportassistant.domain.model.Coach
@@ -57,6 +58,7 @@ fun RegistrationCoachScreen(
     val uiState by viewModel.uiState.collectAsState()
     val coaches by coachViewModel.coachesResponse.observeAsState()
     val registrationState by viewModel.registrationResponse.observeAsState()
+    val preferences: UserPreferencesRepository = get()
 
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -172,6 +174,7 @@ fun RegistrationCoachScreen(
                 CircularProgressIndicator()
             }
             LaunchedEffect(Unit) {
+                preferences.setIsLoggedIn(true)
                 onFinishRegistrationButtonClick()
             }
         }

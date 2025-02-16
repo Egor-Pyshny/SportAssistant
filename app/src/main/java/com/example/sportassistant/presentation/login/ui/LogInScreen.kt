@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
+import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
 import com.example.sportassistant.presentation.components.StyledButton
@@ -49,6 +50,7 @@ fun LogInScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val loginState by viewModel.loginResponse.observeAsState()
+    val preferences: UserPreferencesRepository = get()
     Column (
         modifier = modifier
             .fillMaxSize()
@@ -165,6 +167,7 @@ fun LogInScreen(
                 CircularProgressIndicator()
             }
             LaunchedEffect(Unit) {
+                preferences.setIsLoggedIn(true)
                 onLogInButtonClick()
             }
         }

@@ -12,4 +12,8 @@ class UserRepository(
     fun checkEmail(data: CheckEmailRequest) = apiRequestFlow {
         userService.checkEmail(data)
     }
+
+    fun getMe() = apiRequestFlow {
+        userService.getMe()
+    }
 }

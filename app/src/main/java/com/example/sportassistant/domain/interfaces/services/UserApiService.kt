@@ -10,7 +10,7 @@ import retrofit2.http.POST
 
 interface UserApiService {
     @GET("user/get_me")
-    suspend fun login(): Response<User>
+    suspend fun getMe(): Response<User>
 
     @POST("user/check_email")
     suspend fun checkEmail(

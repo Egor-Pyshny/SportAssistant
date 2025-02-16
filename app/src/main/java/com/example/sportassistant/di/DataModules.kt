@@ -7,6 +7,7 @@ import com.example.sportassistant.data.repository.UserRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
 import com.example.sportassistant.presentation.login.viewmodel.LogInViewModel
+import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.CheckEmailViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.CoachViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
@@ -51,6 +52,11 @@ val dataModules = module {
     viewModel{
         CoachViewModel(
             coachRepository = get(),
+        )
+    }
+    viewModel{
+        ProfileInfoViewModel(
+            userRepository = get(),
         )
     }
 }

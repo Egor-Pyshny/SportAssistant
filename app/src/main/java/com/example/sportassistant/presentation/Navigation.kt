@@ -8,8 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -17,6 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.example.sportassistant.data.repository.UserPreferencesRepository
+import com.example.sportassistant.domain.model.Coach
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
@@ -25,6 +33,9 @@ import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.login.ui.LogInScreen
 import com.example.sportassistant.presentation.pinned.ui.PinnedScreen
 import com.example.sportassistant.presentation.premium.ui.PremiumScreen
+import com.example.sportassistant.presentation.profile.ui.ProfileScreen
+import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoViewModel
+import com.example.sportassistant.presentation.profile.viewmodel.ProfileViewModel
 import com.example.sportassistant.presentation.registration.ui.RegistrationCoachScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationCreateAccountScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationProfileScreen
@@ -32,6 +43,10 @@ import com.example.sportassistant.presentation.registration.viewmodel.Registrati
 import com.example.sportassistant.presentation.settings.ui.SettingsScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
 import com.example.sportassistant.presentation.theme.SportAssistantTheme
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.KoinContext
@@ -67,7 +82,13 @@ fun RootNavGraph(
     navController: NavHostController = rememberNavController(),
     registrationViewModel: RegistrationViewModel = koinViewModel(),
 ) {
-    val startDestination = GraphRoutes.AuthNav.route
+    val preferences: UserPreferencesRepository = get()
+    var startDestination = GraphRoutes.AuthNav.route
+    val isUserLoggedIn by preferences.isLoggedIn().collectAsState(initial = false)
+    if (isUserLoggedIn) {
+        startDestination = GraphRoutes.HomeNav.route
+    }
+    val coroutineScope = rememberCoroutineScope()
     val themeViewModel: AppLayoutViewModel = koinViewModel()
     themeViewModel.loadTheme()
     SportAssistantTheme(
@@ -85,6 +106,10 @@ fun RootNavGraph(
                 HomeScreen(
                     themeViewModel = themeViewModel,
                     logout = {
+                        coroutineScope.launch {
+                            preferences.setIsLoggedIn(false)
+                            preferences.saveSID("")
+                        }
                         navController.navigate(GraphRoutes.AuthNav.route) { popUpTo(0) }
                     }
                 )
@@ -100,6 +125,8 @@ fun HomeNavGraph(
     modifier: Modifier = Modifier,
     logout: () -> Unit,
 ) {
+    val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
     NavHost(
         navController = navController,
         route = GraphRoutes.HomeNav.route,
@@ -125,17 +152,17 @@ fun HomeNavGraph(
             PinnedScreen()
         }
         composable(route = HomeRoutes.Profile.route) {
-            Scaffold { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text="Profile")
+            if (profileInfoViewModel.shouldRefetch.collectAsState().value) {
+                LaunchedEffect(Unit) {
+                    profileInfoViewModel.fetchData()
                 }
             }
+            ProfileScreen(
+                navController = navController,
+                viewModel = profileViewModel,
+                infoViewModel = profileInfoViewModel,
+                logout = logout,
+            )
         }
         composable(route = HomeRoutes.Calendar.route) {
             Scaffold { paddingValues ->

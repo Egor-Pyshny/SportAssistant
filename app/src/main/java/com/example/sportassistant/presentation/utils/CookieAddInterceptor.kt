@@ -22,10 +22,23 @@ class CookieAddInterceptor(
         }
 
         request = request.newBuilder()
-            .addHeader("Cookie", "sid=$sid")
+            .addHeader("Cookie", sid)
             .build()
 
         val response: Response = chain.proceed(request)
+
+        if (!response.headers("Set-Cookie").isEmpty()) {
+            var cookies = ""
+
+            for (header in response.headers("Set-Cookie")) {
+                cookies += "$header;"
+            }
+
+            runBlocking {
+                preferences.saveSID(cookies)
+            }
+        }
+
         return response
     }
 }
