@@ -1,32 +1,32 @@
-package com.example.sportassistant.presentation.home.ui
+package com.example.sportassistant.presentation.homemain.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -35,15 +35,18 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.presentation.GraphRoutes
 import com.example.sportassistant.presentation.HomeNavGraph
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.Route
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
+import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionTitleViewModel
 import org.koin.androidx.compose.get
 
 @Composable
 fun HomeScreen(
     themeViewModel: AppLayoutViewModel,
+    competitionTitleViewModel: CompetitionTitleViewModel,
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
     logout: () -> Unit,
@@ -61,12 +64,14 @@ fun HomeScreen(
         topBar = {
             GetTopBar(
                 navController = navController,
+                competitionTitleViewModel = competitionTitleViewModel,
             )
         },
         modifier = modifier
     ) { padding ->
         HomeNavGraph(
             themeViewModel = themeViewModel,
+            competitionTitleViewModel = competitionTitleViewModel,
             navController = navController,
             logout = logout,
             modifier = Modifier.padding(padding)
@@ -156,6 +161,7 @@ private data class NavigationItemContent(
 @Composable
 private fun GetTopBar(
     navController: NavHostController,
+    competitionTitleViewModel: CompetitionTitleViewModel,
     modifier: Modifier = Modifier,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -173,7 +179,8 @@ private fun GetTopBar(
     if (!screensWithoutTopBar.contains(currentDestination?.route)) {
 
         val currentScreen = getTopBarTitles(
-            route = currentDestination?.route ?: ""
+            route = currentDestination?.route ?: "",
+            competitionTitleViewModel = competitionTitleViewModel,
         )
         val iconText = getIconText(currentDestination?.route)
         CenterAlignedTopAppBar(
@@ -182,10 +189,13 @@ private fun GetTopBar(
                     text = currentScreen,
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold
-                    )
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             },
-            modifier = modifier,
+            modifier = modifier.wrapContentHeight(),
             navigationIcon = {
                 Row(
                     modifier = Modifier
@@ -206,7 +216,8 @@ private fun GetTopBar(
                         text = iconText,
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontSize = 17.sp
-                        )
+                        ),
+                        modifier = Modifier.padding(end=10.dp)
                     )
                 }
             }
@@ -227,8 +238,11 @@ private fun getIconText(route: String?): String {
 }
 
 @Composable
-private fun getTopBarTitles(route: String): String {
-    val title = when (route) {
+private fun getTopBarTitles(
+    route: String,
+    competitionTitleViewModel: CompetitionTitleViewModel,
+): String {
+    var title = when (route) {
         HomeRoutes.Pinned.route -> stringResource(R.string.nav_bar_pinned_text)
         HomeRoutes.Profile.route -> stringResource(R.string.nav_bar_profile_text)
         HomeRoutes.Settings.route -> stringResource(R.string.nav_bar_settings_text)
@@ -236,7 +250,14 @@ private fun getTopBarTitles(route: String): String {
         HomeRoutes.LayoutSettings.route -> stringResource(R.string.nav_bar_layout_settings_text)
         HomeRoutes.AboutApp.route -> stringResource(R.string.nav_bar_about_app_text)
         HomeRoutes.Premium.route -> stringResource(R.string.nav_bar_about_app_text)
+        HomeRoutes.ProfileUser.route -> stringResource(R.string.nav_bar_profile_user)
+        HomeRoutes.ProfileCoach.route -> stringResource(R.string.nav_bar_profile_coach)
         else -> "ERROR"
     }
+    if (route == GraphRoutes.CompetitionNav.route) {
+        val newTitle by competitionTitleViewModel.uiState.collectAsState()
+        title = newTitle
+    }
+    println(route)
     return title
 }

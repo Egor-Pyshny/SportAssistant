@@ -52,7 +52,7 @@ fun HomeMainScreen(
                     StyledButtonListItem (
                         text = entry.value,
                         onClick = {
-                            Log.d("Navigation", "to -> $entry.key")
+                            Log.d("Navigation", "to -> ${entry.key.route}")
                         },
                         cornerShape = MaterialTheme.shapes.large,
                         border = Border.None,
@@ -62,7 +62,8 @@ fun HomeMainScreen(
                     StyledButtonListItem(
                         text = entry.value,
                         onClick = {
-                            Log.d("Navigation", "to -> ${entry.key}")
+                            navController.navigate(entry.key.route)
+                            Log.d("Navigation", "to -> ${entry.key.route}")
                         },
                         cornerShape = getCornerShape(index, itemsLen),
                         border = getBorder(index, itemsLen),
@@ -101,7 +102,7 @@ fun getCornerShape(index: Int, lastIndex: Int): CornerBasedShape {
 @Composable
 private fun getRouteForMenuItemMap(): HashMap<Route, String> {
     return linkedMapOf(
-        Route("competition_calendar") to stringResource(R.string.home_list_item_competition_calendar),
+        Route("COMPETITION_GRAPH") to stringResource(R.string.home_list_item_competition_calendar),
         Route("working_process") to stringResource(R.string.home_list_item_working_process),
         Route("ofp_testing") to stringResource(R.string.home_list_item_ofp_testing),
         Route("cfp_testing") to stringResource(R.string.home_list_item_cfp_testing),

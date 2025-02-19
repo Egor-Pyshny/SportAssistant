@@ -30,6 +30,8 @@
     <string name="nav_bar_calendar_text">Календарь</string>
     <string name="nav_bar_layout_settings_text">Внешний вид</string>
     <string name="nav_bar_about_app_text">О приложении</string>
+    <string name="nav_bar_profile_user">Персонализация</string>
+    <string name="nav_bar_profile_coach">Информация о тренере</string>
     <string name="nav_bar_premium_text">Premium</string>
     <string name="nav_bar_main_text">Главная</string>
     <string name="nav_bar_pinned_text">Закрепленное</string>

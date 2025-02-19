@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.model.User
+import com.example.sportassistant.presentation.components.StyledCard
 import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoViewModel
 import com.example.sportassistant.presentation.profile.viewmodel.ProfileViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.CoachViewModel
@@ -30,10 +32,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel,
     infoViewModel: ProfileInfoViewModel,
-    navController: NavController,
     logout: () -> Unit,
+    onUserClick: () -> Unit,
+    onCoachClick: () -> Unit,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
@@ -44,10 +46,10 @@ fun ProfileScreen(
             .padding(
                 start = screenSizeProvider.getEdgeSpacing(),
                 end = screenSizeProvider.getEdgeSpacing(),
-                top = 45.dp
+                top = 30.dp
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         when (data) {
             is ApiResponse.Loading -> {
@@ -61,7 +63,19 @@ fun ProfileScreen(
                 }
             }
             is ApiResponse.Success -> {
-                println((data as ApiResponse.Success).data)
+                val user: User? = (data as ApiResponse.Success).data
+                if (user != null) {
+                    StyledCard(
+                        title = "${user.name} ${user.surname}",
+                        subtitle = user.sportType,
+                        onClick = onUserClick
+                    )
+                    StyledCard(
+                        title = user.coach.fio,
+                        subtitle = user.coach.institution,
+                        onClick = onCoachClick
+                    )
+                }
             }
             is ApiResponse.Failure -> {
                 if ((data as ApiResponse.Failure).code == 403) {
