@@ -1,7 +1,7 @@
 package com.example.sportassistant.domain.model
 
 import com.google.gson.annotations.SerializedName
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 import java.util.UUID
 
 data class User(
@@ -18,7 +18,7 @@ data class User(
     val coach: Coach,
     val email: String,
     @SerializedName("created_at")
-    val createdAt: ZonedDateTime,
+    val createdAt: LocalDateTime,
     @SerializedName("updated_at")
-    val updatedAt: ZonedDateTime,
+    val updatedAt: LocalDateTime,
 )

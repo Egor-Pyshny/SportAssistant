@@ -27,12 +27,16 @@ import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionTitleViewModel
+import com.example.sportassistant.presentation.competition_add.ui.CompetitionAddScreen
+import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionAllDaysScreen
+import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionDayScreen
+import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarMainScreen
 import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
+import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.login.ui.LogInScreen
 import com.example.sportassistant.presentation.pinned.ui.PinnedScreen
 import com.example.sportassistant.presentation.premium.ui.PremiumScreen
@@ -65,14 +69,6 @@ sealed class AuthRoutes {
 sealed class GraphRoutes {
     data object AuthNav : Route("AUTH_GRAPH")
     data object HomeNav : Route("HOME_GRAPH")
-    data object CompetitionNav : Route("COMPETITION_GRAPH")
-}
-
-sealed class CompetitionRoutes {
-    data object MainScreenNav : Route("prev_competitions")
-    data object AddNewCompetitionNav : Route("add_new_competitions")
-    data object CompetitionAllDaysNav : Route("all_competition_days")
-    data object CompetitionDayNav : Route("competition_day")
 }
 
 sealed class HomeRoutes {
@@ -86,15 +82,18 @@ sealed class HomeRoutes {
     data object AboutApp : Route("settings_about_app")
     data object LayoutSettings : Route("settings_layout_settings")
     data object Premium : Route("settings_premium")
+    data object CompetitionAllDaysNav : Route("all_competition_days")
+    data object CompetitionDay : Route("competition_days")
+    data object CompetitionAdd : Route("competition_add")
+    data object Competitions : Route("all_competitions")
 }
 
 @Composable
 fun RootNavGraph(
     navController: NavHostController = rememberNavController(),
     registrationViewModel: RegistrationViewModel = koinViewModel(),
-    competitionTitleViewModel: CompetitionTitleViewModel = viewModel(),
+    titleViewModel: TitleViewModel = viewModel(),
 ) {
-    competitionTitleViewModel.setTitle(stringResource(R.string.home_list_item_competition_calendar))
     val preferences: UserPreferencesRepository = get()
     var startDestination = GraphRoutes.AuthNav.route
     val isUserLoggedIn by preferences.isLoggedIn().collectAsState(initial = false)
@@ -104,6 +103,8 @@ fun RootNavGraph(
     val coroutineScope = rememberCoroutineScope()
     val themeViewModel: AppLayoutViewModel = koinViewModel()
     themeViewModel.loadTheme()
+    val tabsViewModel: TabsViewModel = viewModel()
+
     SportAssistantTheme(
         viewModel = themeViewModel
     ) {
@@ -118,14 +119,14 @@ fun RootNavGraph(
             composable(route = GraphRoutes.HomeNav.route) {
                 HomeScreen(
                     themeViewModel = themeViewModel,
-                    competitionTitleViewModel = competitionTitleViewModel,
+                    titleViewModel = titleViewModel,
                     logout = {
                         coroutineScope.launch {
                             preferences.setIsLoggedIn(false)
                             preferences.saveSID("")
                         }
                         navController.navigate(GraphRoutes.AuthNav.route) { popUpTo(0) }
-                    }
+                    },
                 )
             }
         }
@@ -135,9 +136,10 @@ fun RootNavGraph(
 @Composable
 fun HomeNavGraph(
     themeViewModel: AppLayoutViewModel,
-    competitionTitleViewModel: CompetitionTitleViewModel,
+    titleViewModel: TitleViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    competitionViewModel: CompetitionViewModel = koinViewModel(),
     logout: () -> Unit,
 ) {
     val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
@@ -194,10 +196,32 @@ fun HomeNavGraph(
                 infoViewModel = profileInfoViewModel
             )
         }
-        composable(route = GraphRoutes.CompetitionNav.route) {
+        composable(route = HomeRoutes.Competitions.route) {
             CompetitionCalendarScreen(
-                competitionTitleViewModel = competitionTitleViewModel,
+                competitionViewModel = competitionViewModel,
                 tabsViewModel = tabsViewModel,
+                titleViewModel = titleViewModel,
+                navController = navController,
+            )
+        }
+        composable(route = HomeRoutes.CompetitionAllDaysNav.route){
+            CompetitionAllDaysScreen(
+                navController = navController,
+                competitionViewModel = competitionViewModel,
+                titleViewModel = titleViewModel,
+            )
+        }
+        composable(route = HomeRoutes.CompetitionDay.route){
+            CompetitionDayScreen(
+                titleViewModel = titleViewModel,
+                competitionViewModel = competitionViewModel,
+            )
+        }
+        composable(route = HomeRoutes.CompetitionAdd.route){
+            CompetitionAddScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                competitionViewModel = competitionViewModel,
             )
         }
         composable(route = HomeRoutes.Calendar.route) {
@@ -274,28 +298,6 @@ fun NavGraphBuilder.authNavGraph(
     }
 }
 
-@Composable
-fun CompetitionNavGraph(
-    navController: NavHostController,
-    competitionTitleViewModel: CompetitionTitleViewModel,
-    tabsViewModel: TabsViewModel,
-    modifier: Modifier,
-) {
-    NavHost(
-        navController = navController,
-        route = GraphRoutes.HomeNav.route,
-        startDestination = CompetitionRoutes.MainScreenNav.route,
-        modifier = modifier,
-    ) {
-        composable(route = CompetitionRoutes.MainScreenNav.route){
-            CompetitionCalendarMainScreen(
-                navController = navController,
-                competitionTitleViewModel = competitionTitleViewModel,
-                tabsViewModel = tabsViewModel,
-            )
-        }
-    }
-}
 
 private fun navigateTo(
     appScreen: Route,

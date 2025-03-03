@@ -38,7 +38,7 @@ fun StyledCard(
 ) {
     Row (
         modifier = modifier.fillMaxWidth().background(
-            color = MaterialTheme.colorScheme.onTertiary,
+            color = MaterialTheme.colorScheme.surfaceVariant,
             shape = MaterialTheme.shapes.large,
         ).clickable {
             onClick()

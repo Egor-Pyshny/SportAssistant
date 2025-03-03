@@ -2,9 +2,7 @@ package com.example.sportassistant.presentation.homemain.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -40,13 +38,14 @@ import com.example.sportassistant.presentation.HomeNavGraph
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.Route
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionTitleViewModel
+import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
+import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import org.koin.androidx.compose.get
 
 @Composable
 fun HomeScreen(
     themeViewModel: AppLayoutViewModel,
-    competitionTitleViewModel: CompetitionTitleViewModel,
+    titleViewModel: TitleViewModel,
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
     logout: () -> Unit,
@@ -64,14 +63,14 @@ fun HomeScreen(
         topBar = {
             GetTopBar(
                 navController = navController,
-                competitionTitleViewModel = competitionTitleViewModel,
+                titleViewModel = titleViewModel,
             )
         },
         modifier = modifier
     ) { padding ->
         HomeNavGraph(
             themeViewModel = themeViewModel,
-            competitionTitleViewModel = competitionTitleViewModel,
+            titleViewModel = titleViewModel,
             navController = navController,
             logout = logout,
             modifier = Modifier.padding(padding)
@@ -161,7 +160,7 @@ private data class NavigationItemContent(
 @Composable
 private fun GetTopBar(
     navController: NavHostController,
-    competitionTitleViewModel: CompetitionTitleViewModel,
+    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -180,14 +179,14 @@ private fun GetTopBar(
 
         val currentScreen = getTopBarTitles(
             route = currentDestination?.route ?: "",
-            competitionTitleViewModel = competitionTitleViewModel,
+            titleViewModel = titleViewModel,
         )
         val iconText = getIconText(currentDestination?.route)
         CenterAlignedTopAppBar(
             title = {
                 Text(
                     text = currentScreen,
-                    style = MaterialTheme.typography.titleLarge.copy(
+                    style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold
                     ),
                     textAlign = TextAlign.Center,
@@ -240,7 +239,7 @@ private fun getIconText(route: String?): String {
 @Composable
 private fun getTopBarTitles(
     route: String,
-    competitionTitleViewModel: CompetitionTitleViewModel,
+    titleViewModel: TitleViewModel,
 ): String {
     var title = when (route) {
         HomeRoutes.Pinned.route -> stringResource(R.string.nav_bar_pinned_text)
@@ -252,11 +251,13 @@ private fun getTopBarTitles(
         HomeRoutes.Premium.route -> stringResource(R.string.nav_bar_about_app_text)
         HomeRoutes.ProfileUser.route -> stringResource(R.string.nav_bar_profile_user)
         HomeRoutes.ProfileCoach.route -> stringResource(R.string.nav_bar_profile_coach)
+        HomeRoutes.Competitions.route -> stringResource(R.string.home_list_item_competition_calendar)
+        HomeRoutes.CompetitionAdd.route -> stringResource(R.string.add_competition)
         else -> "ERROR"
     }
-    if (route == GraphRoutes.CompetitionNav.route) {
-        val newTitle by competitionTitleViewModel.uiState.collectAsState()
-        title = newTitle
+    if (title == "ERROR") {
+        val uiState by titleViewModel.uiState.collectAsState()
+        title = uiState
     }
     println(route)
     return title

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.Route
 import com.example.sportassistant.presentation.components.Border
 import com.example.sportassistant.presentation.components.StyledButtonListItem
@@ -102,7 +103,7 @@ fun getCornerShape(index: Int, lastIndex: Int): CornerBasedShape {
 @Composable
 private fun getRouteForMenuItemMap(): HashMap<Route, String> {
     return linkedMapOf(
-        Route("COMPETITION_GRAPH") to stringResource(R.string.home_list_item_competition_calendar),
+        HomeRoutes.Competitions to stringResource(R.string.home_list_item_competition_calendar),
         Route("working_process") to stringResource(R.string.home_list_item_working_process),
         Route("ofp_testing") to stringResource(R.string.home_list_item_ofp_testing),
         Route("cfp_testing") to stringResource(R.string.home_list_item_cfp_testing),

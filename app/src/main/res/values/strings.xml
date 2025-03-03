@@ -11,6 +11,7 @@
     <string name="mail_input_placeholder">Почта</string>
     <string name="password_input_placeholder">Пароль</string>
     <string name="continue_button_text">Продолжить</string>
+    <string name="save_button_text">Сохранить</string>
     <string name="sport_type_placeholder">Вид спорта</string>
     <string name="qualification_placeholder">Квалификация</string>
     <string name="address_placeholder">Адрес проживания</string>
@@ -36,6 +37,7 @@
     <string name="nav_bar_main_text">Главная</string>
     <string name="nav_bar_pinned_text">Закрепленное</string>
     <string name="nav_bar_back_text">Назад</string>
+    <string name="add_competition">Новое соревнование</string>
     <string name="home_list_item_competition_calendar">Календарь соревнований</string>
     <string name="home_list_item_working_process">Учебно-тренировочный процесс</string>
     <string name="home_list_item_ofp_testing">Тестирование ОФП</string>
@@ -52,9 +54,20 @@
     <string name="home_list_item_ofp">ОФП</string>
     <string name="home_list_item_cfp">СФП</string>
     <string name="home_list_item_night_mode">Ночной режим</string>
+    <string name="add_competition_title">Соревнования</string>
+    <string name="start_date">Начало</string>
+    <string name="end_date">Конец</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отменить</string>
+    <string name="add_competition_date">Дата</string>
+    <string name="add_competition_location">Место проведения</string>
+    <string name="add_competition_notes">Примечание</string>
     <string name="home_list_item_privacy_and_policy">Политика конфиденциальности</string>
     <string name="home_list_item_rules">Правила использования</string>
     <string name="database_text">Базы данных</string>
+    <string name="missing_date_error">Заполните даты</string>
+    <string name="missing_start_date_error">Заполните дату начала</string>
+    <string name="missing_end_date_error">Заполните дату конца</string>
     <string name="pinned_screen_title">Это премиум функция</string>
     <string name="pinned_screen_text">Пожалуйста, подключите premium,\nчтобы иметь возможность закреплять\nи быстро просматривать\nзакрепленные события!</string>
     <string-array name="gender_options">

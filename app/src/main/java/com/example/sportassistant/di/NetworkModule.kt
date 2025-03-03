@@ -4,30 +4,33 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.sportassistant.domain.interfaces.services.AuthApiService
 import com.example.sportassistant.domain.interfaces.services.CoachApiService
+import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
 import com.example.sportassistant.domain.interfaces.services.UserApiService
 import com.example.sportassistant.presentation.utils.CookieAddInterceptor
-import com.example.sportassistant.presentation.utils.ZonedDateTimeAdapter
+import com.example.sportassistant.presentation.utils.LocalDateAdapter
+import com.example.sportassistant.presentation.utils.LocalDateTimeAdapter
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.ZonedDateTime
+import java.time.LocalDate
+import java.time.LocalDateTime
 
-@RequiresApi(Build.VERSION_CODES.O)
 val networkModule = module {
     factory { CookieAddInterceptor(get()) }
     factory { provideOkHttpClient(get()) }
     factory { provideAuthApi(get()) }
     factory { provideUserApi(get()) }
     factory { provideCoachApi(get()) }
+    factory { provideCompetitionApi(get()) }
     single { provideRetrofit(get()) }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
     val gson = GsonBuilder()
-        .registerTypeAdapter(ZonedDateTime::class.java, ZonedDateTimeAdapter())
+        .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+        .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
         .create()
 
     return Retrofit.Builder().baseUrl("http://10.0.2.2:8000/api/v1.0/").client(okHttpClient)
@@ -41,3 +44,4 @@ fun provideOkHttpClient(authInterceptor: CookieAddInterceptor): OkHttpClient {
 fun provideAuthApi(retrofit: Retrofit): AuthApiService = retrofit.create(AuthApiService::class.java)
 fun provideUserApi(retrofit: Retrofit): UserApiService = retrofit.create(UserApiService::class.java)
 fun provideCoachApi(retrofit: Retrofit): CoachApiService = retrofit.create(CoachApiService::class.java)
+fun provideCompetitionApi(retrofit: Retrofit): CompetitionApiService = retrofit.create(CompetitionApiService::class.java)

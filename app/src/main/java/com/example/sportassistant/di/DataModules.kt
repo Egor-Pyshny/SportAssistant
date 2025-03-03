@@ -2,10 +2,12 @@ package com.example.sportassistant.di
 
 import com.example.sportassistant.data.repository.AuthRepository
 import com.example.sportassistant.data.repository.CoachRepository
+import com.example.sportassistant.data.repository.CompetitionRepository
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.UserRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
+import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.login.viewmodel.LogInViewModel
 import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.CheckEmailViewModel
@@ -34,6 +36,7 @@ val dataModules = module {
     factory { AuthRepository(get()) }
     factory { UserRepository(get()) }
     factory { CoachRepository(get()) }
+    factory { CompetitionRepository(get()) }
     viewModel{
         LogInViewModel(
             authRepository = get(),
@@ -57,6 +60,11 @@ val dataModules = module {
     viewModel{
         ProfileInfoViewModel(
             userRepository = get(),
+        )
+    }
+    viewModel{
+        CompetitionViewModel(
+            competitionRepository = get(),
         )
     }
 }

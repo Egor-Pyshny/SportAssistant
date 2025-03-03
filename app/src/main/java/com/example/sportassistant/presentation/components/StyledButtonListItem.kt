@@ -36,7 +36,7 @@ fun StyledButtonListItem(
             .fillMaxWidth()
             .clickable { onClick() }
             .background(
-                color = MaterialTheme.colorScheme.onTertiary,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = cornerShape
             ).drawBehind {
                 val borderSize = 2.dp.toPx()
@@ -53,7 +53,8 @@ fun StyledButtonListItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row (
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = text,

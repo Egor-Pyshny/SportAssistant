@@ -22,12 +22,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 
 
 @Composable
 fun TopTabsNavigation(
     tabsViewModel: TabsViewModel,
+    updateData: (Int) -> Unit,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -49,7 +51,10 @@ fun TopTabsNavigation(
         tabs.forEachIndexed { index, title ->
             Tab(
                 selected = selectedTabIndex == index,
-                onClick = { tabsViewModel.setSelectedTab(index) }
+                onClick = {
+                    tabsViewModel.setSelectedTab(index)
+                    updateData(index)
+                }
             ) {
                 Text(
                     text = title,

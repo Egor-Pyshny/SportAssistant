@@ -8,10 +8,10 @@ import retrofit2.http.Path
 import java.util.UUID
 
 interface CoachApiService {
-    @GET("coach/coaches")
+    @GET("coaches")
     suspend fun getCoaches(): Response<List<Coach>>
 
-    @GET("coach/coaches/{coach_id}")
+    @GET("coaches/{coach_id}")
     suspend fun getCoach(
         @Path("coach_id") coachId: UUID,
     ): Response<Coach>

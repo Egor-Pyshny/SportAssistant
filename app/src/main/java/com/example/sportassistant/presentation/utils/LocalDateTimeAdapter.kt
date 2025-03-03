@@ -4,26 +4,23 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.google.gson.*
 import java.lang.reflect.Type
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-class ZonedDateTimeAdapter : JsonDeserializer<ZonedDateTime>, JsonSerializer<ZonedDateTime> {
-    @RequiresApi(Build.VERSION_CODES.O)
+class LocalDateTimeAdapter : JsonDeserializer<LocalDateTime>, JsonSerializer<LocalDateTime> {
     private val formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun deserialize(
         json: JsonElement,
         typeOfT: Type,
         context: JsonDeserializationContext
-    ): ZonedDateTime {
-        return ZonedDateTime.parse(json.asString, formatter)
+    ): LocalDateTime {
+        return LocalDateTime.parse(json.asString, formatter)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun serialize(
-        src: ZonedDateTime?,
+        src: LocalDateTime?,
         typeOfSrc: Type?,
         context: JsonSerializationContext?
     ): JsonElement {
