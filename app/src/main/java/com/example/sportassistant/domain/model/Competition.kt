@@ -12,4 +12,5 @@ data class Competition(
     val endDate: LocalDate,
     val location: String,
     val notes: String,
+    val name: String,
 )

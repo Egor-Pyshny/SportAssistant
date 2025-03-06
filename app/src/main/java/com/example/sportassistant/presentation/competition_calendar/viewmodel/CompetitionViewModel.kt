@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 
 class CompetitionViewModel(
     private val competitionRepository: CompetitionRepository,
@@ -40,10 +41,28 @@ class CompetitionViewModel(
     private val _getCompetitionsNextResponse = MutableLiveData<ApiResponse<List<Competition>?>>()
     val getCompetitionsNextResponse = _getCompetitionsNextResponse
 
+    private val _getCompetitionInfoResponse = MutableLiveData<ApiResponse<Competition?>>()
+    val getCompetitionInfoResponse = _getCompetitionInfoResponse
+
+    private val _updateCompetitionResponse = MutableLiveData<ApiResponse<Void?>>()
+    val updateCompetitionResponse = _updateCompetitionResponse
+
     fun createCompetition(competition: CreateCompetitionRequest) = baseRequest(
         _competitionsAddResponse
     ) {
         competitionRepository.createCompetition(competition)
+    }
+
+    fun updateCompetition(competition: CreateCompetitionRequest) = baseRequest(
+        _updateCompetitionResponse
+    ) {
+        competitionRepository.createCompetition(competition)
+    }
+
+    fun getCompetition(id: UUID) = baseRequest(
+        _getCompetitionInfoResponse
+    ) {
+        competitionRepository.getCompetition(id)
     }
 
     fun getCompetitions(index: Int) {

@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.competition_add.ui
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,8 +43,7 @@ import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.presentation.HomeRoutes
-import com.example.sportassistant.presentation.competition_add.domain.CompetitionAddUiState
-import com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionAddViewModel
+import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
 import com.example.sportassistant.presentation.components.StyledButton
@@ -70,11 +67,10 @@ fun CompetitionAddScreen(
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    competitionAddViewModel: CompetitionAddViewModel = viewModel(),
+    competitionAddViewModel: com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionModelViewModel = viewModel(),
 ) {
     val uiState by competitionAddViewModel.uiState.collectAsState()
     val competitionAddState by competitionViewModel.competitionsAddResponse.observeAsState()
-    var text by remember { mutableStateOf("") }
     var missingDate by remember { mutableStateOf(false) }
     val dateRangePickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = System.currentTimeMillis(),
@@ -136,7 +132,7 @@ fun CompetitionAddScreen(
                 StyledCardTextField(
                     value = "$startDate - $endDate",
                     label = R.string.add_competition_date,
-                    onValueChange = { text = it },
+                    onValueChange = { },
                     enabled = false,
                     modifier = Modifier.padding(
                         start = 15.dp,
@@ -316,7 +312,7 @@ fun CompetitionAddScreen(
     }
 }
 
-private fun isAllFilled(state: CompetitionAddUiState): Boolean {
+private fun isAllFilled(state: CompetitionUiState): Boolean {
     return (state.name.isNotEmpty()
             && state.location.isNotEmpty()
             && state.notes.isNotEmpty()

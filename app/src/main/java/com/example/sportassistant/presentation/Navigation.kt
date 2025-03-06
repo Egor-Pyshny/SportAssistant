@@ -32,6 +32,7 @@ import com.example.sportassistant.presentation.competition_calendar.ui.Competiti
 import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionDayScreen
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
+import com.example.sportassistant.presentation.competition_info.ui.CompetitionInfoScreen
 import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarMainScreen
 import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeScreen
@@ -86,6 +87,7 @@ sealed class HomeRoutes {
     data object CompetitionDay : Route("competition_days")
     data object CompetitionAdd : Route("competition_add")
     data object Competitions : Route("all_competitions")
+    data object CompetitionInfo : Route("competition_info")
 }
 
 @Composable
@@ -221,6 +223,11 @@ fun HomeNavGraph(
             CompetitionAddScreen(
                 navController = navController,
                 titleViewModel = titleViewModel,
+                competitionViewModel = competitionViewModel,
+            )
+        }
+        composable(route = HomeRoutes.CompetitionInfo.route) {
+            CompetitionInfoScreen(
                 competitionViewModel = competitionViewModel,
             )
         }

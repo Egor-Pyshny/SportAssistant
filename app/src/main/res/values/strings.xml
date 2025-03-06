@@ -11,6 +11,8 @@
     <string name="mail_input_placeholder">Почта</string>
     <string name="password_input_placeholder">Пароль</string>
     <string name="continue_button_text">Продолжить</string>
+    <string name="get_detailed_info">Подробнее</string>
+    <string name="delete_item">Удалить</string>
     <string name="save_button_text">Сохранить</string>
     <string name="sport_type_placeholder">Вид спорта</string>
     <string name="qualification_placeholder">Квалификация</string>

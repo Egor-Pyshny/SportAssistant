@@ -1,21 +1,19 @@
 package com.example.sportassistant.presentation.components
 
-import android.util.Log
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StyledButtonList(
-    items: List<String>,
+fun StyledButtonListWithDropDownMenu(
+    items: List<ListItem>,
+    menuItems: List<MenuItem>,
     modifier: Modifier = Modifier,
-    onClick: (Int, String) -> Unit,
+    onClick: (Int, ListItem) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -23,9 +21,10 @@ fun StyledButtonList(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items.forEachIndexed(){ index, item ->
-            StyledButtonListItem(
+            StyledButtonListItemWithDropDown(
+                menuItems = menuItems,
                 modifier = Modifier,
-                text = item,
+                item = item,
                 cornerShape = MaterialTheme.shapes.large,
                 border = Border.None,
                 onClick = {
@@ -35,3 +34,8 @@ fun StyledButtonList(
         }
     }
 }
+
+data class ListItem(
+    val key: Any,
+    val item: String,
+)

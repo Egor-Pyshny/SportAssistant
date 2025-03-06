@@ -2,7 +2,7 @@ package com.example.sportassistant.presentation.competition_add.domain
 
 import java.time.LocalDate
 
-data class CompetitionAddUiState(
+data class CompetitionUiState(
     val name: String = "",
     val location: String = "",
     val notes: String = "",

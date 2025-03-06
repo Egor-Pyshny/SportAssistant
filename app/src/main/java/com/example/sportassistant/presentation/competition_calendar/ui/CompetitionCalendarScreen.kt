@@ -38,6 +38,7 @@ fun CompetitionCalendarScreen(
         modifier = modifier.fillMaxSize()
     ) { padding ->
         CompetitionCalendarMainScreen(
+            navController = navController,
             competitionViewModel = competitionViewModel,
             titleViewModel = titleViewModel,
             tabsViewModel = tabsViewModel,

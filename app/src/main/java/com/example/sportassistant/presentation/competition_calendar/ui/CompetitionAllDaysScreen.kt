@@ -39,12 +39,16 @@ fun CompetitionAllDaysScreen(
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val uiState by competitionViewModel.uiState.collectAsState()
+    val formatter = DateTimeFormatter.ofPattern("EEEE - dd.MM.yyyy", Locale("ru"))
+
     LaunchedEffect(Unit) {
-        titleViewModel.setTitle("${uiState.selectedCompetition?.startDate} - ${uiState.selectedCompetition?.endDate}")
+        val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
+        val startDate = uiState.selectedCompetition?.startDate?.format(dateFormatter)
+        val endDate = uiState.selectedCompetition?.endDate?.format(dateFormatter)
+        titleViewModel.setTitle("$startDate - $endDate")
     }
     val numberOfDays = ChronoUnit.DAYS.between(uiState.selectedCompetition?.startDate, uiState.selectedCompetition?.endDate)
     val data = (0..numberOfDays).map { uiState.selectedCompetition!!.startDate.plusDays(it) }
-    val formatter = DateTimeFormatter.ofPattern("EEEE - dd.MM.yyyy", Locale("ru"))
     val items = data
         .map { date ->
             date?.format(formatter)?.replaceFirstChar { it.uppercase() } ?: ""
