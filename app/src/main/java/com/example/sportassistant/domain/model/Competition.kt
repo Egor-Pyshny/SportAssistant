@@ -7,7 +7,7 @@ import java.util.UUID
 data class Competition(
     val id: UUID,
     @SerializedName("start_date")
-    val startDate: LocalDate,
+    var startDate: LocalDate,
     @SerializedName("end_date")
     val endDate: LocalDate,
     val location: String,

@@ -73,6 +73,7 @@ fun CompetitionInfoScreen(
 ) {
     val competitionInfoResponse by competitionViewModel.getCompetitionInfoResponse.observeAsState()
     val competitionUpdateResponse by competitionViewModel.updateCompetitionResponse.observeAsState()
+    var prevState by remember { mutableStateOf<Competition?>(null) }
     val uiState by competitionInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
     val dateRangePickerState = rememberDateRangePickerState(
@@ -104,6 +105,7 @@ fun CompetitionInfoScreen(
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
                     val competitionData = (competitionInfoResponse as ApiResponse.Success<Competition?>).data!!
+                    prevState = competitionData
                     competitionInfoViewModel.setName(competitionData.name)
                     competitionInfoViewModel.setNotes(competitionData.notes)
                     competitionInfoViewModel.setLocation(competitionData.location)
@@ -278,19 +280,19 @@ fun CompetitionInfoScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    val competitionData = (competitionInfoResponse as ApiResponse.Success<Competition?>).data!!
-                    if (isAllFilled(uiState) && isModified(uiState, competitionData)) {
+                    if (isAllFilled(uiState) && isModified(uiState, prevState!!)) {
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
                                 competitionViewModel.updateCompetition(
-                                    CreateCompetitionRequest(
+                                    competition = CreateCompetitionRequest(
                                         startDate = uiState.startDate!!,
                                         endDate = uiState.endDate!!,
                                         name = uiState.name,
                                         notes = uiState.notes,
                                         location = uiState.location,
-                                    )
+                                    ),
+                                    id = prevState!!.id,
                                 )
                             },
                             isEnabled = true,
@@ -331,18 +333,20 @@ fun CompetitionInfoScreen(
             }
         }
         is ApiResponse.Success -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.7f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
             LaunchedEffect(Unit) {
+                val newState = Competition(
+                    id = prevState!!.id,
+                    startDate = uiState.startDate!!,
+                    endDate = uiState.endDate!!,
+                    location = uiState.location,
+                    notes = uiState.notes,
+                    name = uiState.name
+                )
+                prevState = newState
                 competitionViewModel.shouldUpdateNext(true)
                 competitionViewModel.shouldUpdateCurrent(true)
                 competitionViewModel.setLastFetched(null)
+                competitionViewModel.clearUpdateResponse()
             }
         }
         else -> {}
@@ -360,7 +364,7 @@ private fun isAllFilled(state: CompetitionUiState): Boolean {
 private fun isModified(state: CompetitionUiState, prevState: Competition): Boolean {
     return (state.name != prevState.name
             || state.location != prevState.location
-            || state.notes != prevState.location
+            || state.notes != prevState.notes
             || state.startDate != prevState.startDate
             || state.endDate != prevState.endDate)
 }

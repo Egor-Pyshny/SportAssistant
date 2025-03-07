@@ -305,6 +305,7 @@ fun CompetitionAddScreen(
                 competitionViewModel.shouldUpdateNext(true)
                 competitionViewModel.shouldUpdateCurrent(true)
                 competitionViewModel.setLastFetched(null)
+                competitionViewModel.clearCreateResponse()
                 navController.navigate(HomeRoutes.Competitions.route)
             }
         }

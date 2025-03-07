@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -70,20 +71,10 @@ fun CompetitionCalendarMainScreen(
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val tabIndex by tabsViewModel.uiState.collectAsState()
-    val competitionsResponse by when (tabIndex) {
-        0 -> {
-            competitionViewModel.getCompetitionsPrevResponse.observeAsState()
-        }
-        1 -> {
-            competitionViewModel.getCompetitionsCurrentResponse.observeAsState()
-        }
-        2 -> {
-            competitionViewModel.getCompetitionsNextResponse.observeAsState()
-        }
-        else -> {
-            throw Exception()
-        }
-    }
+    val competitionsResponse by getCompetitions(
+        competitionViewModel = competitionViewModel,
+        tabIndex = tabIndex,
+    )
     LaunchedEffect(Unit) {
         competitionViewModel.getCompetitions(tabIndex)
     }
@@ -138,7 +129,7 @@ fun CompetitionCalendarMainScreen(
                             MenuItem(
                                 text = stringResource(R.string.delete_item),
                                 onClick = {item ->
-                                    
+                                    competitionViewModel.deleteCompetition(item.key as UUID)
                                 }
                             ),
                         ),
@@ -165,6 +156,48 @@ fun CompetitionCalendarMainScreen(
                 )
             }
             else -> {}
+        }
+    }
+}
+
+@SuppressLint("UnrememberedMutableState")
+@Composable
+private fun getCompetitions(
+    competitionViewModel: CompetitionViewModel,
+    tabIndex: Int,
+): State<ApiResponse<List<Competition>?>?> {
+    val deleteState by competitionViewModel.deleteCompetitionResponse.observeAsState()
+
+    if (deleteState != null) {
+        when (deleteState) {
+            is ApiResponse.Loading -> {
+                return mutableStateOf(ApiResponse.Loading)
+            }
+            is ApiResponse.Success -> {
+                competitionViewModel.clearDeleteResponse()
+                competitionViewModel.shouldUpdateNext(true)
+                competitionViewModel.shouldUpdateCurrent(true)
+                competitionViewModel.setLastFetched(null)
+                competitionViewModel.getCompetitions(tabIndex)
+            }
+            is ApiResponse.Failure -> {
+                throw Error()
+            }
+            else -> {}
+        }
+    }
+    return when (tabIndex) {
+        0 -> {
+            competitionViewModel.getCompetitionsPrevResponse.observeAsState()
+        }
+        1 -> {
+            competitionViewModel.getCompetitionsCurrentResponse.observeAsState()
+        }
+        2 -> {
+            competitionViewModel.getCompetitionsNextResponse.observeAsState()
+        }
+        else -> {
+            throw Error()
         }
     }
 }

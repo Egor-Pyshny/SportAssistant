@@ -29,7 +29,7 @@ class CompetitionViewModel(
     private val _uiState = MutableStateFlow<CompetitionUiState>(CompetitionUiState())
     val uiState: StateFlow<CompetitionUiState> = _uiState.asStateFlow()
 
-    private val _competitionsAddResponse = MutableLiveData<ApiResponse<Void?>>()
+    private val _competitionsAddResponse = MutableLiveData<ApiResponse<Void?>?>()
     val competitionsAddResponse = _competitionsAddResponse
 
     private val _getCompetitionsCurrentResponse = MutableLiveData<ApiResponse<List<Competition>?>>()
@@ -44,8 +44,23 @@ class CompetitionViewModel(
     private val _getCompetitionInfoResponse = MutableLiveData<ApiResponse<Competition?>>()
     val getCompetitionInfoResponse = _getCompetitionInfoResponse
 
-    private val _updateCompetitionResponse = MutableLiveData<ApiResponse<Void?>>()
+    private val _updateCompetitionResponse = MutableLiveData<ApiResponse<Competition?>?>()
     val updateCompetitionResponse = _updateCompetitionResponse
+
+    private val _deleteCompetitionResponse = MutableLiveData<ApiResponse<Void?>?>()
+    val deleteCompetitionResponse = _deleteCompetitionResponse
+
+    fun clearUpdateResponse() {
+        _updateCompetitionResponse.postValue(null)
+    }
+
+    fun clearDeleteResponse() {
+        _deleteCompetitionResponse.postValue(null)
+    }
+
+    fun clearCreateResponse() {
+        _competitionsAddResponse.postValue(null)
+    }
 
     fun createCompetition(competition: CreateCompetitionRequest) = baseRequest(
         _competitionsAddResponse
@@ -53,10 +68,16 @@ class CompetitionViewModel(
         competitionRepository.createCompetition(competition)
     }
 
-    fun updateCompetition(competition: CreateCompetitionRequest) = baseRequest(
+    fun updateCompetition(competition: CreateCompetitionRequest, id: UUID) = baseRequest(
         _updateCompetitionResponse
     ) {
-        competitionRepository.createCompetition(competition)
+        competitionRepository.updateCompetition(competition, id)
+    }
+
+    fun deleteCompetition(id: UUID) = baseRequest(
+        _deleteCompetitionResponse
+    ) {
+        competitionRepository.deleteCompetition(id)
     }
 
     fun getCompetition(id: UUID) = baseRequest(

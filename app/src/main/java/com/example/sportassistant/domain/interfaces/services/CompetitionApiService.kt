@@ -5,6 +5,7 @@ import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.CompetitionDay
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -19,10 +20,21 @@ interface CompetitionApiService {
         @Query("current_date") date: LocalDate,
     ): Response<List<Competition>>
 
+    @POST("competition/update/{competition_id}")
+    suspend fun updateCompetitions(
+        @Path("competition_id") competitionId: UUID,
+        @Body body: CreateCompetitionRequest,
+    ): Response<Competition>
+
     @GET("competition/{competition_id}")
     suspend fun getCompetition(
         @Path("competition_id") competitionId: UUID,
     ): Response<Competition>
+
+    @DELETE("competition/delete/{competition_id}")
+    suspend fun deleteCompetition(
+        @Path("competition_id") competitionId: UUID,
+    ): Response<Void>
 
     @POST("competition/create")
     suspend fun createCompetition(

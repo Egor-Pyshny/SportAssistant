@@ -21,8 +21,22 @@ class CompetitionRepository (
         )
     }
 
+    fun updateCompetition(
+        competition: CreateCompetitionRequest,
+        id: UUID,
+    ) = apiRequestFlow {
+        competitionService.updateCompetitions(
+            body = competition,
+            competitionId = id,
+        )
+    }
+
     fun getCompetition(id: UUID) = apiRequestFlow {
         competitionService.getCompetition(id)
+    }
+
+    fun deleteCompetition(id: UUID) = apiRequestFlow {
+        competitionService.deleteCompetition(id)
     }
 
     fun createCompetition(data: CreateCompetitionRequest) = apiRequestFlow {
