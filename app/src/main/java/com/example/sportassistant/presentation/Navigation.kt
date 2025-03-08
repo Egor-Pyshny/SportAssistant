@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -22,18 +21,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
 import com.example.sportassistant.presentation.competition_add.ui.CompetitionAddScreen
 import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionAllDaysScreen
-import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionDayScreen
+import com.example.sportassistant.presentation.competition_day.ui.CompetitionDayScreen
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.competition_info.ui.CompetitionInfoScreen
-import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarMainScreen
 import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
@@ -84,7 +81,7 @@ sealed class HomeRoutes {
     data object LayoutSettings : Route("settings_layout_settings")
     data object Premium : Route("settings_premium")
     data object CompetitionAllDaysNav : Route("all_competition_days")
-    data object CompetitionDay : Route("competition_days")
+    data object CompetitionDay : Route("competition_day")
     data object CompetitionAdd : Route("competition_add")
     data object Competitions : Route("all_competitions")
     data object CompetitionInfo : Route("competition_info")

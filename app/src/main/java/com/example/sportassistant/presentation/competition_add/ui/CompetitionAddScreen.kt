@@ -316,7 +316,6 @@ fun CompetitionAddScreen(
 private fun isAllFilled(state: CompetitionUiState): Boolean {
     return (state.name.isNotEmpty()
             && state.location.isNotEmpty()
-            && state.notes.isNotEmpty()
             && state.startDate != null
             && state.endDate != null)
 }

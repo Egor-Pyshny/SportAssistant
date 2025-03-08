@@ -1,6 +1,7 @@
 package com.example.sportassistant.domain.interfaces.services
 
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
+import com.example.sportassistant.data.schemas.competition_day.requests.CompetitionDayUpdateRequest
 import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.CompetitionDay
 import retrofit2.Response
@@ -20,11 +21,23 @@ interface CompetitionApiService {
         @Query("current_date") date: LocalDate,
     ): Response<List<Competition>>
 
+    @GET("competition/{competition_id}/days/{day}")
+    suspend fun getCompetitionDay(
+        @Path("competition_id") competitionId: UUID,
+        @Path("day") day: LocalDate,
+    ): Response<CompetitionDay>
+
     @POST("competition/update/{competition_id}")
     suspend fun updateCompetitions(
         @Path("competition_id") competitionId: UUID,
         @Body body: CreateCompetitionRequest,
     ): Response<Competition>
+
+    @POST("competition/update_day/{competition_id}")
+    suspend fun updateCompetitionDay(
+        @Path("competition_id") competitionId: UUID,
+        @Body body: CompetitionDayUpdateRequest,
+    ): Response<CompetitionDay>
 
     @GET("competition/{competition_id}")
     suspend fun getCompetition(

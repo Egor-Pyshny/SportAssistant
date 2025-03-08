@@ -64,6 +64,7 @@
     <string name="add_competition_date">Дата</string>
     <string name="add_competition_location">Место проведения</string>
     <string name="add_competition_notes">Примечание</string>
+    <string name="add_competition_result">Результат план/факт</string>
     <string name="home_list_item_privacy_and_policy">Политика конфиденциальности</string>
     <string name="home_list_item_rules">Правила использования</string>
     <string name="database_text">Базы данных</string>

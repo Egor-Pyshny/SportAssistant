@@ -60,13 +60,16 @@ fun CompetitionAllDaysScreen(
             .padding(
                 start = screenSizeProvider.getEdgeSpacing(),
                 end = screenSizeProvider.getEdgeSpacing(),
-                top = 20.dp,
                 bottom = 20.dp
             ).verticalScroll(rememberScrollState()),
         items = items,
         onClick = { index, title ->
             titleViewModel.setTitle(title)
             competitionViewModel.setSelectedDay(data[index])
+            competitionViewModel.getCompetitionDay(
+                competitionId = uiState.selectedCompetition!!.id,
+                day = data[index]
+            )
             navController.navigate(HomeRoutes.CompetitionDay.route)
         }
     )

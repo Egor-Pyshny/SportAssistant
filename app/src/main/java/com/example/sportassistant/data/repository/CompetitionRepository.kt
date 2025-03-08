@@ -1,9 +1,11 @@
 package com.example.sportassistant.data.repository
 
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
+import com.example.sportassistant.data.schemas.competition_day.requests.CompetitionDayUpdateRequest
 import com.example.sportassistant.domain.enums.CompetitionStatus
 import com.example.sportassistant.domain.interfaces.services.CoachApiService
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
+import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.presentation.utils.apiRequestFlow
 import java.time.LocalDate
 import java.util.UUID
@@ -18,6 +20,25 @@ class CompetitionRepository (
         competitionService.getCompetitions(
             date = date,
             status = status.name,
+        )
+    }
+
+    fun updateCompetitionDay(
+        competitionDay: CompetitionDayUpdateRequest, competitionId: UUID
+    ) = apiRequestFlow {
+        competitionService.updateCompetitionDay(
+            body = competitionDay,
+            competitionId = competitionId,
+        )
+    }
+
+    fun getCompetitionDay(
+        competitionId: UUID,
+        day: LocalDate,
+    ) = apiRequestFlow {
+        competitionService.getCompetitionDay(
+            competitionId = competitionId,
+            day = day,
         )
     }
 
