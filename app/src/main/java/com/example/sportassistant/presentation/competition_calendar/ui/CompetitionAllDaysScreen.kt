@@ -53,7 +53,9 @@ fun CompetitionAllDaysScreen(
         .map { date ->
             date?.format(formatter)?.replaceFirstChar { it.uppercase() } ?: ""
         }
-        .toList()
+        .toList().toMutableList()
+    val resultTitle = stringResource(R.string.competition_result_title)
+    items += resultTitle
     StyledButtonList(
         modifier = Modifier
             .fillMaxSize()
@@ -65,12 +67,19 @@ fun CompetitionAllDaysScreen(
         items = items,
         onClick = { index, title ->
             titleViewModel.setTitle(title)
-            competitionViewModel.setSelectedDay(data[index])
-            competitionViewModel.getCompetitionDay(
-                competitionId = uiState.selectedCompetition!!.id,
-                day = data[index]
-            )
-            navController.navigate(HomeRoutes.CompetitionDay.route)
+            if (title == resultTitle) {
+                navController.navigate(HomeRoutes.CompetitionResult.route)
+                competitionViewModel.getCompetitionResult(
+                    competitionId = uiState.selectedCompetition!!.id
+                )
+            } else {
+                competitionViewModel.setSelectedDay(data[index])
+                competitionViewModel.getCompetitionDay(
+                    competitionId = uiState.selectedCompetition!!.id,
+                    day = data[index]
+                )
+                navController.navigate(HomeRoutes.CompetitionDay.route)
+            }
         }
     )
 }

@@ -10,10 +10,12 @@ import com.example.sportassistant.data.repository.CompetitionRepository
 import com.example.sportassistant.data.repository.UserRepository
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.data.schemas.competition_day.requests.CompetitionDayUpdateRequest
+import com.example.sportassistant.data.schemas.competition_result.requests.CompetitionResultUpdateRequest
 import com.example.sportassistant.data.schemas.user.requests.CheckEmailRequest
 import com.example.sportassistant.domain.enums.CompetitionStatus
 import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.CompetitionDay
+import com.example.sportassistant.domain.model.CompetitionResult
 import com.example.sportassistant.presentation.competition_calendar.domain.CompetitionUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel
@@ -50,6 +52,9 @@ class CompetitionViewModel(
     private val _updateCompetitionResponse = MutableLiveData<ApiResponse<Competition?>?>()
     val updateCompetitionResponse = _updateCompetitionResponse
 
+    private val _updateCompetitionResultResponse = MutableLiveData<ApiResponse<CompetitionResult?>?>()
+    val updateCompetitionResultResponse = _updateCompetitionResultResponse
+
     private val _updateCompetitionDayResponse = MutableLiveData<ApiResponse<CompetitionDay?>?>()
     val updateCompetitionDayResponse = _updateCompetitionDayResponse
 
@@ -58,6 +63,9 @@ class CompetitionViewModel(
 
     private val _getCompetitionDayResponse = MutableLiveData<ApiResponse<CompetitionDay?>?>()
     val getCompetitionDayResponse = _getCompetitionDayResponse
+
+    private val _getCompetitionResultResponse = MutableLiveData<ApiResponse<CompetitionResult?>?>()
+    val getCompetitionResultResponse = _getCompetitionResultResponse
 
     fun getCompetitionDay(competitionId: UUID, day: LocalDate) = baseRequest(
         _getCompetitionDayResponse
@@ -68,8 +76,18 @@ class CompetitionViewModel(
         )
     }
 
+    fun getCompetitionResult(competitionId: UUID) = baseRequest(
+        _getCompetitionResultResponse
+    ) {
+        competitionRepository.getCompetitionResult(competitionId = competitionId)
+    }
+
     fun clearUpdateResponse() {
         _updateCompetitionResponse.postValue(null)
+    }
+
+    fun clearUpdateResultResponse() {
+        _updateCompetitionResultResponse.postValue(null)
     }
 
     fun clearUpdateDayResponse() {
@@ -94,6 +112,12 @@ class CompetitionViewModel(
         _updateCompetitionDayResponse
     ) {
         competitionRepository.updateCompetitionDay(competitionDay, competitionId)
+    }
+
+    fun updateCompetitionResult(competitionResult: CompetitionResultUpdateRequest, competitionId: UUID) = baseRequest(
+        _updateCompetitionResultResponse
+    ) {
+        competitionRepository.updateCompetitionResult(competitionResult, competitionId)
     }
 
     fun updateCompetition(competition: CreateCompetitionRequest, id: UUID) = baseRequest(

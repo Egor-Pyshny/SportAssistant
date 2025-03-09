@@ -50,7 +50,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun CompetitionDayScreen(
     competitionViewModel: CompetitionViewModel,
-    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
     competitionDayViewModel: CompetitionDayViewModel = viewModel(),
@@ -97,7 +96,7 @@ fun CompetitionDayScreen(
                     shape = MaterialTheme.shapes.large,
                 ) {
                     StyledCardTextField(
-                        value = data.competitionName,
+                        value = competitionUiState.selectedCompetition!!.name,
                         label = R.string.add_competition_title,
                         onValueChange = { },
                         enabled = false,
@@ -116,8 +115,8 @@ fun CompetitionDayScreen(
                     ) {
                         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-                        val startDate = data.competitionStartDate.format(formatter)
-                        val endDate = data.competitionEndDate.format(formatter)
+                        val startDate = competitionUiState.selectedCompetition!!.startDate.format(formatter)
+                        val endDate = competitionUiState.selectedCompetition!!.endDate.format(formatter)
 
                         StyledCardTextField(
                             value = "$startDate - $endDate",
@@ -134,7 +133,7 @@ fun CompetitionDayScreen(
                     }
                     HorizontalDivider(thickness = 2.dp)
                     StyledCardTextField(
-                        value = data.competitionLocation,
+                        value = competitionUiState.selectedCompetition!!.location,
                         label = R.string.add_competition_location,
                         onValueChange = { },
                         enabled = false,

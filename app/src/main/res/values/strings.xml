@@ -40,6 +40,7 @@
     <string name="nav_bar_pinned_text">Закрепленное</string>
     <string name="nav_bar_back_text">Назад</string>
     <string name="add_competition">Новое соревнование</string>
+    <string name="competition_result_title">Результаты</string>
     <string name="home_list_item_competition_calendar">Календарь соревнований</string>
     <string name="home_list_item_working_process">Учебно-тренировочный процесс</string>
     <string name="home_list_item_ofp_testing">Тестирование ОФП</string>

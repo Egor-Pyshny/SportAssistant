@@ -2,8 +2,10 @@ package com.example.sportassistant.domain.interfaces.services
 
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.data.schemas.competition_day.requests.CompetitionDayUpdateRequest
+import com.example.sportassistant.data.schemas.competition_result.requests.CompetitionResultUpdateRequest
 import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.CompetitionDay
+import com.example.sportassistant.domain.model.CompetitionResult
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -39,10 +41,21 @@ interface CompetitionApiService {
         @Body body: CompetitionDayUpdateRequest,
     ): Response<CompetitionDay>
 
+    @POST("competition/update_result/{competition_id}")
+    suspend fun updateCompetitionResult(
+        @Path("competition_id") competitionId: UUID,
+        @Body body: CompetitionResultUpdateRequest,
+    ): Response<CompetitionResult>
+
     @GET("competition/{competition_id}")
     suspend fun getCompetition(
         @Path("competition_id") competitionId: UUID,
     ): Response<Competition>
+
+    @GET("competition/result/{competition_id}")
+    suspend fun getCompetitionResult(
+        @Path("competition_id") competitionId: UUID,
+    ): Response<CompetitionResult>
 
     @DELETE("competition/delete/{competition_id}")
     suspend fun deleteCompetition(
