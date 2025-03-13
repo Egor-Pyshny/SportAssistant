@@ -4,6 +4,7 @@ import com.example.sportassistant.data.repository.AuthRepository
 import com.example.sportassistant.data.repository.CoachRepository
 import com.example.sportassistant.data.repository.CompetitionRepository
 import com.example.sportassistant.data.repository.OFPResultsRepository
+import com.example.sportassistant.data.repository.SFPResultsRepository
 import com.example.sportassistant.data.repository.TrainingCampsRepository
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.UserRepository
@@ -16,6 +17,7 @@ import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoView
 import com.example.sportassistant.presentation.registration.viewmodel.CheckEmailViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.CoachViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
 import com.example.sportassistant.presentation.training_camps_calendar.viewmodel.TrainingCampsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -43,6 +45,7 @@ val dataModules = module {
     factory { CompetitionRepository(get()) }
     factory { TrainingCampsRepository(get()) }
     factory { OFPResultsRepository(get()) }
+    factory { SFPResultsRepository(get()) }
     viewModel{
         LogInViewModel(
             authRepository = get(),
@@ -81,6 +84,11 @@ val dataModules = module {
     viewModel{
         OFPResultsViewModel(
             ofpRepository = get(),
+        )
+    }
+    viewModel{
+        SFPResultsViewModel(
+            sfpRepository = get(),
         )
     }
 }

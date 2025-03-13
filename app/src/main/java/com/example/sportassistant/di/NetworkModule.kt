@@ -6,6 +6,7 @@ import com.example.sportassistant.domain.interfaces.services.AuthApiService
 import com.example.sportassistant.domain.interfaces.services.CoachApiService
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
 import com.example.sportassistant.domain.interfaces.services.OFPResultsService
+import com.example.sportassistant.domain.interfaces.services.SFPResultsService
 import com.example.sportassistant.domain.interfaces.services.TrainingCampsApiService
 import com.example.sportassistant.domain.interfaces.services.UserApiService
 import com.example.sportassistant.presentation.utils.CookieAddInterceptor
@@ -28,6 +29,7 @@ val networkModule = module {
     factory { provideCompetitionApi(get()) }
     factory { provideTrainingCampsApi(get()) }
     factory { provideOFPResultsApi(get()) }
+    factory { provideSFPResultsApi(get()) }
     single { provideRetrofit(get()) }
 }
 
@@ -51,3 +53,4 @@ fun provideCoachApi(retrofit: Retrofit): CoachApiService = retrofit.create(Coach
 fun provideCompetitionApi(retrofit: Retrofit): CompetitionApiService = retrofit.create(CompetitionApiService::class.java)
 fun provideTrainingCampsApi(retrofit: Retrofit): TrainingCampsApiService = retrofit.create(TrainingCampsApiService::class.java)
 fun provideOFPResultsApi(retrofit: Retrofit): OFPResultsService = retrofit.create(OFPResultsService::class.java)
+fun provideSFPResultsApi(retrofit: Retrofit): SFPResultsService = retrofit.create(SFPResultsService::class.java)

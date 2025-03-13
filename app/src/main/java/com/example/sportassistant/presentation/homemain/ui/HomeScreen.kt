@@ -254,8 +254,10 @@ private fun getTopBarTitles(
         HomeRoutes.Competitions.route -> stringResource(R.string.home_list_item_competition_calendar)
         HomeRoutes.TrainingCamps.route -> stringResource(R.string.home_list_item_working_process)
         HomeRoutes.OFPResults.route -> stringResource(R.string.home_list_item_ofp_testing)
+        HomeRoutes.SFPResults.route -> stringResource(R.string.home_list_item_cfp_testing)
         HomeRoutes.CompetitionAdd.route -> stringResource(R.string.add_competition)
         HomeRoutes.OFPResultsAdd.route -> stringResource(R.string.add_ofp)
+        HomeRoutes.SFPResultsAdd.route -> stringResource(R.string.add_sfp)
         else -> "ERROR"
     }
     if (title == "ERROR") {

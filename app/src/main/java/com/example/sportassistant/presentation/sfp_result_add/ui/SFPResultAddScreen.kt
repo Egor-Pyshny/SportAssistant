@@ -1,6 +1,7 @@
-package com.example.sportassistant.presentation.ofp_results_info.ui
+package com.example.sportassistant.presentation.sfp_result_add.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +18,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -29,10 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -46,56 +44,55 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
-import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
-import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
+import com.example.sportassistant.data.schemas.sfp_results.requests.SFPResultsCreateRequest
 import com.example.sportassistant.domain.model.CategoryModel
-import com.example.sportassistant.domain.model.Competition
-import com.example.sportassistant.domain.model.OFPResult
-import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
+import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.DatePickerHeadline
-import com.example.sportassistant.presentation.components.DateRangePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
-import com.example.sportassistant.presentation.ofp_result_add.domain.OFPResultModelUiState
-import com.example.sportassistant.presentation.utils.getCategoryText
-import com.example.sportassistant.presentation.ofp_result_add.viewmodel.OFPResultAddViewModel
-import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
+import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
+import com.example.sportassistant.presentation.sfp_result_add.viewmodel.SFPResultAddViewModel
+import com.example.sportassistant.presentation.sfp_result_add.domain.SFPResultModelUiState
+import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
+import com.example.sportassistant.presentation.utils.getCategoryText
 import org.koin.androidx.compose.get
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.UUID
+
 
 @SuppressLint("NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OFPResultsInfoScreen(
-    ofpResultsViewModel: OFPResultsViewModel,
+fun SFPResultAddScreen(
+    navController: NavController,
+    sfpResultsViewModel: SFPResultsViewModel,
+    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    ofpResultsInfoViewModel: OFPResultAddViewModel = viewModel(),
+    sfpResultsAddViewModel: SFPResultAddViewModel = viewModel(),
 ) {
-    val ofpInfoResponse by getResults(ofpResultsViewModel)
-    val ofpUpdateResponse by ofpResultsViewModel.updateOFPResultResponse.observeAsState()
-    val categoriesResponse by ofpResultsViewModel.getCategoriesResponse.observeAsState()
-    var prevState by remember { mutableStateOf<OFPResult?>(null) }
-    val uiState by ofpResultsInfoViewModel.uiState.collectAsState()
+    val uiState by sfpResultsAddViewModel.uiState.collectAsState()
+    val sfpAddState by sfpResultsViewModel.sfpAddResponse.observeAsState()
+    val categoriesResponse by sfpResultsViewModel.getCategoriesResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
-    var expanded by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
         initialDisplayMode = DisplayMode.Input,
     )
     val decimalFormatter = DecimalFormatter()
     var showDialog by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(
@@ -104,31 +101,19 @@ fun OFPResultsInfoScreen(
             ),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        when (ofpInfoResponse) {
+        when (categoriesResponse) {
             is ApiResponse.Loading -> {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(Color.White.copy(alpha = 0.7f)),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
                 }
             }
+
             is ApiResponse.Success -> {
-                LaunchedEffect(Unit) {
-                    val ofpData = (ofpInfoResponse as ApiResponse.Success<OFPResult?>).data!!
-                    prevState = ofpData
-                    val regex = Regex("^(.*)\\.0+$")
-                    val matchResult = regex.matchEntire(ofpData.result.toString())
-                    val newResult = matchResult?.groupValues?.get(1)
-                    ofpResultsInfoViewModel.setCategory(ofpData.categoryId)
-                    ofpResultsInfoViewModel.setNotes(ofpData.notes)
-                    ofpResultsInfoViewModel.setDate(ofpData.date)
-                    ofpResultsInfoViewModel.setResult(newResult ?: ofpData.result.toString())
-                    ofpResultsInfoViewModel.setGoals(ofpData.goals)
-                    val dateMillis = ofpData.date.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-                    datePickerState.selectedDateMillis = dateMillis
-                }
                 val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                     ?: listOf()
                 Card(
@@ -148,7 +133,7 @@ fun OFPResultsInfoScreen(
                     ) {
                         StyledCardTextField(
                             value = getCategoryText(uiState.categoryId, categories),
-                            label = R.string.ofp_test_name,
+                            label = R.string.sfp_test_name,
                             onValueChange = { },
                             enabled = false,
                             modifier = Modifier.menuAnchor(),
@@ -172,7 +157,7 @@ fun OFPResultsInfoScreen(
                                         )
                                     },
                                     onClick = {
-                                        ofpResultsInfoViewModel.setCategory(option.id)
+                                        sfpResultsAddViewModel.setCategory(option.id)
                                         expanded = false
                                     },
                                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -198,7 +183,7 @@ fun OFPResultsInfoScreen(
                                 Instant.ofEpochMilli(it),
                                 ZoneId.systemDefault()
                             )
-                            ofpResultsInfoViewModel.setDate(date)
+                            sfpResultsAddViewModel.setDate(date)
                             date.format(formatter)
                         } ?: ""
 
@@ -238,7 +223,7 @@ fun OFPResultsInfoScreen(
                                 TextButton(onClick = {
                                     showDialog = false
                                     datePickerState.selectedDateMillis = System.currentTimeMillis()
-                                    ofpResultsInfoViewModel.setDate(LocalDate.now())
+                                    sfpResultsAddViewModel.setDate(LocalDate.now())
                                 }) {
                                     Text(stringResource(R.string.cancel))
                                 }
@@ -263,7 +248,7 @@ fun OFPResultsInfoScreen(
                                 },
                             )
                             if (missingDate) {
-                                val text = stringResource(R.string.missing_ofp_date_error)
+                                val text = stringResource(R.string.missing_sfp_date_error)
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.Center,
@@ -277,13 +262,11 @@ fun OFPResultsInfoScreen(
                     HorizontalDivider(thickness = 2.dp)
                     StyledCardTextField(
                         value = uiState.result,
-                        label = R.string.ofp_test_result,
+                        label = R.string.sfp_test_result,
                         onValueChange = {
                             val formatedText = decimalFormatter.cleanup(it)
-                            if (formatedText.toFloatOrNull() != null){
-                                ofpResultsInfoViewModel.setResult(formatedText)
-                            } else if (formatedText.toFloatOrNull() == null && it == "") {
-                                ofpResultsInfoViewModel.setResult("")
+                            if (formatedText.toFloatOrNull() != null) {
+                                sfpResultsAddViewModel.setResult(formatedText)
                             }
                         },
                         modifier = Modifier.padding(
@@ -300,7 +283,7 @@ fun OFPResultsInfoScreen(
                         value = uiState.goals,
                         label = R.string.add_camp_goals,
                         onValueChange = {
-                            ofpResultsInfoViewModel.setGoals(it)
+                            sfpResultsAddViewModel.setGoals(it)
                         },
                         singleLine = false,
                         maxLines = 3,
@@ -316,7 +299,7 @@ fun OFPResultsInfoScreen(
                         value = uiState.notes,
                         label = R.string.add_competition_notes,
                         onValueChange = {
-                            ofpResultsInfoViewModel.setNotes(it)
+                            sfpResultsAddViewModel.setNotes(it)
                         },
                         singleLine = false,
                         maxLines = 5,
@@ -331,19 +314,18 @@ fun OFPResultsInfoScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (isAllFilled(uiState) && isModified(uiState, prevState!!)) {
+                    if (isAllFilled(uiState)) {
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                ofpResultsViewModel.updateOFPResult(
-                                    data = OFPResultsCreateRequest(
-                                        ofpCategoryId = uiState.categoryId!!,
+                                sfpResultsViewModel.addSFPResult(
+                                    SFPResultsCreateRequest(
+                                        sfpCategoryId = uiState.categoryId!!,
                                         date = uiState.date!!,
                                         result = uiState.result.toFloat(),
                                         notes = uiState.notes,
                                         goals = uiState.goals,
-                                    ),
-                                    ofpId = prevState!!.id,
+                                    )
                                 )
                             },
                             isEnabled = true,
@@ -363,96 +345,48 @@ fun OFPResultsInfoScreen(
                     }
                 }
             }
-            is ApiResponse.Failure -> {
-                Text(
-                    text = (ofpInfoResponse as ApiResponse.Failure).errorMessage
-                )
-            }
+
             else -> {}
         }
     }
 
-    when (ofpUpdateResponse) {
+    when (sfpAddState) {
         is ApiResponse.Loading -> {
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
         }
         is ApiResponse.Success -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
             LaunchedEffect(Unit) {
-                val newState = OFPResult(
-                    id = prevState!!.id,
-                    categoryId = uiState.categoryId!!,
-                    date = uiState.date!!,
-                    result = uiState.result.toFloat(),
-                    notes = uiState.notes,
-                    goals = uiState.goals
-                )
-                prevState = newState
-                ofpResultsViewModel.setShouldRefetch(true)
-                ofpResultsViewModel.clearUpdateResponse()
+                sfpResultsViewModel.clearCreateResponse()
+                sfpResultsViewModel.setShouldRefetch(true)
+                navController.navigate(HomeRoutes.SFPResults.route) {
+                    popUpTo(HomeRoutes.SFPResults.route) {
+                        inclusive = true
+                    }
+                }
             }
         }
         else -> {}
     }
 }
 
-@SuppressLint("UnrememberedMutableState")
-@Composable
-private fun getResults(
-    ofpResultsViewModel: OFPResultsViewModel,
-): State<ApiResponse<OFPResult?>?> {
-    val getCategoriesState by ofpResultsViewModel.getCategoriesResponse.observeAsState()
-    val getInfoState by ofpResultsViewModel.getOFPResultInfoResponse.observeAsState()
-
-    when (getCategoriesState) {
-        is ApiResponse.Loading -> {
-            return mutableStateOf(ApiResponse.Loading)
-        }
-        is ApiResponse.Success -> {
-            when (getInfoState) {
-                is ApiResponse.Loading -> {
-                    return mutableStateOf(ApiResponse.Loading)
-                }
-                is ApiResponse.Success -> {
-                    return ofpResultsViewModel.getOFPResultInfoResponse.observeAsState()
-                }
-                else -> {throw Error()}
-            }
-        }
-        else -> {throw Error()}
-    }
-}
-
-private fun isAllFilled(state: OFPResultModelUiState): Boolean {
+private fun isAllFilled(state: SFPResultModelUiState): Boolean {
     return (state.categoryId != null
             && state.goals.isNotEmpty()
             && state.date != null
             && state.result.toFloatOrNull() != null)
-}
-
-private fun isModified(state: OFPResultModelUiState, prevState: OFPResult): Boolean {
-    val regex = Regex("^(.*)\\.0+$")
-    val prevMatchResult = regex.matchEntire(prevState.result.toString())
-    val prevResult = prevMatchResult?.groupValues?.get(1) ?: prevState.result.toString()
-
-    val currentMatchResult = regex.matchEntire(state.result)
-    val currentResult = currentMatchResult?.groupValues?.get(1) ?: state.result
-    if (currentResult != prevResult && currentResult.endsWith('.')) {
-        val temp = currentResult.dropLast(1)
-        return (state.categoryId != prevState.categoryId
-                || state.date != prevState.date
-                || state.notes != prevState.notes
-                || state.goals != prevState.goals
-                || (temp != prevResult))
-    }
-    return (state.categoryId != prevState.categoryId
-            || state.date != prevState.date
-            || state.notes != prevState.notes
-            || state.goals != prevState.goals
-            || (currentResult != prevResult))
 }

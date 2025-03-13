@@ -54,6 +54,10 @@ import com.example.sportassistant.presentation.registration.ui.RegistrationCreat
 import com.example.sportassistant.presentation.registration.ui.RegistrationProfileScreen
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
 import com.example.sportassistant.presentation.settings.ui.SettingsScreen
+import com.example.sportassistant.presentation.sfp_result_add.ui.SFPResultAddScreen
+import com.example.sportassistant.presentation.sfp_results.ui.SFPResultsScreen
+import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
+import com.example.sportassistant.presentation.sfp_results_info.ui.SFPResultsInfoScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
 import com.example.sportassistant.presentation.theme.SportAssistantTheme
 import com.example.sportassistant.presentation.trainig_camps_add.ui.TrainingCampAddScreen
@@ -106,6 +110,9 @@ sealed class HomeRoutes {
     data object OFPResults : Route("ofp_results")
     data object OFPResultsAdd : Route("ofp_results_add")
     data object OFPResultsInfo : Route("ofp_results_info")
+    data object SFPResults : Route("sfp_results")
+    data object SFPResultsAdd : Route("sfp_results_add")
+    data object SFPResultsInfo : Route("sfp_results_info")
 }
 
 @Composable
@@ -162,6 +169,7 @@ fun HomeNavGraph(
     competitionViewModel: CompetitionViewModel = koinViewModel(),
     trainingCampsViewModel: TrainingCampsViewModel = koinViewModel(),
     ofpResultsViewModel: OFPResultsViewModel = koinViewModel(),
+    sfpResultsViewModel: SFPResultsViewModel = koinViewModel(),
     logout: () -> Unit,
 ) {
     val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
@@ -308,6 +316,25 @@ fun HomeNavGraph(
         composable(route = HomeRoutes.OFPResultsInfo.route) {
             OFPResultsInfoScreen(
                 ofpResultsViewModel = ofpResultsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.SFPResults.route) {
+            SFPResultsScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                sfpResultsViewModel = sfpResultsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.SFPResultsAdd.route) {
+            SFPResultAddScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                sfpResultsViewModel = sfpResultsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.SFPResultsInfo.route) {
+            SFPResultsInfoScreen(
+                sfpResultsViewModel = sfpResultsViewModel,
             )
         }
     }

@@ -42,7 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringArrayResource
+import com.example.sportassistant.presentation.utils.getCategoryText
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -384,15 +384,6 @@ fun OFPResultAddScreen(
         }
         else -> {}
     }
-}
-
-@Composable
-fun getCategoryText(categoryId: UUID?, categories: List<CategoryModel>): String {
-    if (categoryId == null) {
-        return stringResource(R.string.ofp_test_name_placeholder)
-    }
-    val category = categories.find { it.id == categoryId }
-    return category?.name ?: "ERROR"
 }
 
 private fun isAllFilled(state: OFPResultModelUiState): Boolean {
