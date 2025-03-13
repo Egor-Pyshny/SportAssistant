@@ -23,6 +23,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
+import com.example.sportassistant.presentation.ant_params.ui.AnthropometricParamsScreen
+import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
+import com.example.sportassistant.presentation.ant_params_add.ui.AnthropometricParamsAddScreen
+import com.example.sportassistant.presentation.ant_params_info.ui.AnthropometricParamsInfoScreen
 import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
 import com.example.sportassistant.presentation.calendar.ui.CalendarScreen
@@ -113,6 +117,9 @@ sealed class HomeRoutes {
     data object SFPResults : Route("sfp_results")
     data object SFPResultsAdd : Route("sfp_results_add")
     data object SFPResultsInfo : Route("sfp_results_info")
+    data object AnthropometricParams : Route("anthropometric_params_results")
+    data object AnthropometricParamsAdd : Route("anthropometric_params_add")
+    data object AnthropometricParamsInfo : Route("anthropometric_params_info")
 }
 
 @Composable
@@ -170,6 +177,7 @@ fun HomeNavGraph(
     trainingCampsViewModel: TrainingCampsViewModel = koinViewModel(),
     ofpResultsViewModel: OFPResultsViewModel = koinViewModel(),
     sfpResultsViewModel: SFPResultsViewModel = koinViewModel(),
+    anthropometricParamsViewModel: AnthropometricParamsViewModel = koinViewModel(),
     logout: () -> Unit,
 ) {
     val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
@@ -335,6 +343,25 @@ fun HomeNavGraph(
         composable(route = HomeRoutes.SFPResultsInfo.route) {
             SFPResultsInfoScreen(
                 sfpResultsViewModel = sfpResultsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.AnthropometricParams.route) {
+            AnthropometricParamsScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                anthropometricParamsViewModel = anthropometricParamsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.AnthropometricParamsAdd.route) {
+            AnthropometricParamsAddScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                anthropometricParamsViewModel = anthropometricParamsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.AnthropometricParamsInfo.route) {
+            AnthropometricParamsInfoScreen(
+                anthropometricParamsViewModel = anthropometricParamsViewModel,
             )
         }
     }

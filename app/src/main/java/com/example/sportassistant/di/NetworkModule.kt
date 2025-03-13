@@ -2,6 +2,7 @@ package com.example.sportassistant.di
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.sportassistant.domain.interfaces.services.AnthropometricParamsService
 import com.example.sportassistant.domain.interfaces.services.AuthApiService
 import com.example.sportassistant.domain.interfaces.services.CoachApiService
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
@@ -30,6 +31,7 @@ val networkModule = module {
     factory { provideTrainingCampsApi(get()) }
     factory { provideOFPResultsApi(get()) }
     factory { provideSFPResultsApi(get()) }
+    factory { provideAnthropometricParamsApi(get()) }
     single { provideRetrofit(get()) }
 }
 
@@ -54,3 +56,4 @@ fun provideCompetitionApi(retrofit: Retrofit): CompetitionApiService = retrofit.
 fun provideTrainingCampsApi(retrofit: Retrofit): TrainingCampsApiService = retrofit.create(TrainingCampsApiService::class.java)
 fun provideOFPResultsApi(retrofit: Retrofit): OFPResultsService = retrofit.create(OFPResultsService::class.java)
 fun provideSFPResultsApi(retrofit: Retrofit): SFPResultsService = retrofit.create(SFPResultsService::class.java)
+fun provideAnthropometricParamsApi(retrofit: Retrofit): AnthropometricParamsService = retrofit.create(AnthropometricParamsService::class.java)

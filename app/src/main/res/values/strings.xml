@@ -43,6 +43,7 @@
     <string name="add_competition">Новое соревнование</string>
     <string name="add_ofp">Новое тестирование ОФП</string>
     <string name="add_sfp">Новое тестирование СФП</string>
+    <string name="add_ant_params">Новые антропометрические данные</string>
     <string name="competition_result_title">Результаты</string>
     <string name="home_list_item_competition_calendar">Календарь соревнований</string>
     <string name="home_list_item_working_process">Учебно-тренировочные сборы</string>
@@ -73,6 +74,9 @@
     <string name="add_camps_date">Сроки</string>
     <string name="add_competition_location">Место проведения</string>
     <string name="ofp_test_result">Показатели</string>
+    <string name="ant_param_weight">Масса тела, кг</string>
+    <string name="ant_param_height">Длина тела, см</string>
+    <string name="ant_param_chest_сircumference">Окружность грудной клетки, см</string>
     <string name="sfp_test_result">Показатели</string>
     <string name="add_camp_goals">Задачи</string>
     <string name="add_competition_notes">Примечание</string>
