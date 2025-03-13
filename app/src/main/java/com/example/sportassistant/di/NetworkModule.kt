@@ -5,6 +5,8 @@ import androidx.annotation.RequiresApi
 import com.example.sportassistant.domain.interfaces.services.AuthApiService
 import com.example.sportassistant.domain.interfaces.services.CoachApiService
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
+import com.example.sportassistant.domain.interfaces.services.OFPResultsService
+import com.example.sportassistant.domain.interfaces.services.TrainingCampsApiService
 import com.example.sportassistant.domain.interfaces.services.UserApiService
 import com.example.sportassistant.presentation.utils.CookieAddInterceptor
 import com.example.sportassistant.presentation.utils.LocalDateAdapter
@@ -24,6 +26,8 @@ val networkModule = module {
     factory { provideUserApi(get()) }
     factory { provideCoachApi(get()) }
     factory { provideCompetitionApi(get()) }
+    factory { provideTrainingCampsApi(get()) }
+    factory { provideOFPResultsApi(get()) }
     single { provideRetrofit(get()) }
 }
 
@@ -45,3 +49,5 @@ fun provideAuthApi(retrofit: Retrofit): AuthApiService = retrofit.create(AuthApi
 fun provideUserApi(retrofit: Retrofit): UserApiService = retrofit.create(UserApiService::class.java)
 fun provideCoachApi(retrofit: Retrofit): CoachApiService = retrofit.create(CoachApiService::class.java)
 fun provideCompetitionApi(retrofit: Retrofit): CompetitionApiService = retrofit.create(CompetitionApiService::class.java)
+fun provideTrainingCampsApi(retrofit: Retrofit): TrainingCampsApiService = retrofit.create(TrainingCampsApiService::class.java)
+fun provideOFPResultsApi(retrofit: Retrofit): OFPResultsService = retrofit.create(OFPResultsService::class.java)

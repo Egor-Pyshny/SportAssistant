@@ -104,8 +104,8 @@ fun getCornerShape(index: Int, lastIndex: Int): CornerBasedShape {
 private fun getRouteForMenuItemMap(): HashMap<Route, String> {
     return linkedMapOf(
         HomeRoutes.Competitions to stringResource(R.string.home_list_item_competition_calendar),
-        Route("working_process") to stringResource(R.string.home_list_item_working_process),
-        Route("ofp_testing") to stringResource(R.string.home_list_item_ofp_testing),
+        HomeRoutes.TrainingCamps to stringResource(R.string.home_list_item_working_process),
+        HomeRoutes.OFPResults to stringResource(R.string.home_list_item_ofp_testing),
         Route("cfp_testing") to stringResource(R.string.home_list_item_cfp_testing),
         Route("ant_params") to stringResource(R.string.home_list_item_ant_params),
         Route("mc_calendar") to stringResource(R.string.home_list_item_mc_calendar),

@@ -150,8 +150,7 @@ fun LogInScreen(
         is ApiResponse.Loading -> {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.7f)),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -160,8 +159,7 @@ fun LogInScreen(
         is ApiResponse.Success -> {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.7f)),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()

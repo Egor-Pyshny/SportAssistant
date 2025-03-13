@@ -30,7 +30,6 @@ import com.example.sportassistant.presentation.competition_calendar.viewmodel.Ta
 fun TopTabsNavigation(
     tabsViewModel: TabsViewModel,
     updateData: (Int) -> Unit,
-    navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
     val selectedTabIndex by tabsViewModel.uiState.collectAsState()

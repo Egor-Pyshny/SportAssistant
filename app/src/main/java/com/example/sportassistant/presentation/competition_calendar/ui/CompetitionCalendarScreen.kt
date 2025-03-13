@@ -32,7 +32,6 @@ fun CompetitionCalendarScreen(
                 updateData = { index ->
                     competitionViewModel.getCompetitions(index)
                 },
-                navController = navController,
             )
         },
         modifier = modifier.fillMaxSize()

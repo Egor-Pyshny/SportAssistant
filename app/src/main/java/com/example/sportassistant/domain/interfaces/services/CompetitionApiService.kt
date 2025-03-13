@@ -66,9 +66,4 @@ interface CompetitionApiService {
     suspend fun createCompetition(
         @Body body: CreateCompetitionRequest,
     ): Response<Void>
-
-    @GET("competition/{competition_id}/days")
-    suspend fun getCompetitionDays(
-        @Path("competition_id") competitionId: UUID,
-    ): Response<List<CompetitionDay>>
 }

@@ -44,6 +44,7 @@ import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
+import com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionModelViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
 import com.example.sportassistant.presentation.components.StyledButton
@@ -67,7 +68,7 @@ fun CompetitionAddScreen(
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    competitionAddViewModel: com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionModelViewModel = viewModel(),
+    competitionAddViewModel: CompetitionModelViewModel = viewModel(),
 ) {
     val uiState by competitionAddViewModel.uiState.collectAsState()
     val competitionAddState by competitionViewModel.competitionsAddResponse.observeAsState()
@@ -306,7 +307,11 @@ fun CompetitionAddScreen(
                 competitionViewModel.shouldUpdateCurrent(true)
                 competitionViewModel.setLastFetched(null)
                 competitionViewModel.clearCreateResponse()
-                navController.navigate(HomeRoutes.Competitions.route)
+                navController.navigate(HomeRoutes.Competitions.route){
+                    popUpTo(HomeRoutes.Competitions.route) {
+                        inclusive = true
+                    }
+                }
             }
         }
         else -> {}

@@ -25,6 +25,7 @@ import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
+import com.example.sportassistant.presentation.calendar.ui.CalendarScreen
 import com.example.sportassistant.presentation.competition_add.ui.CompetitionAddScreen
 import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionAllDaysScreen
 import com.example.sportassistant.presentation.competition_day.ui.CompetitionDayScreen
@@ -37,6 +38,10 @@ import com.example.sportassistant.presentation.homemain.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.login.ui.LogInScreen
+import com.example.sportassistant.presentation.ofp_result_add.ui.OFPResultAddScreen
+import com.example.sportassistant.presentation.ofp_results.ui.OFPResultsScreen
+import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
+import com.example.sportassistant.presentation.ofp_results_info.ui.OFPResultsInfoScreen
 import com.example.sportassistant.presentation.pinned.ui.PinnedScreen
 import com.example.sportassistant.presentation.premium.ui.PremiumScreen
 import com.example.sportassistant.presentation.profile.ui.CoachInfoScreen
@@ -51,6 +56,12 @@ import com.example.sportassistant.presentation.registration.viewmodel.Registrati
 import com.example.sportassistant.presentation.settings.ui.SettingsScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
 import com.example.sportassistant.presentation.theme.SportAssistantTheme
+import com.example.sportassistant.presentation.trainig_camps_add.ui.TrainingCampAddScreen
+import com.example.sportassistant.presentation.training_camp_info_info.ui.TrainingCampInfoScreen
+import com.example.sportassistant.presentation.training_camps_calendar.ui.TrainingCampsAllDaysScreen
+import com.example.sportassistant.presentation.training_camps_calendar.ui.TrainingCampsCalendarScreen
+import com.example.sportassistant.presentation.training_camps_calendar.viewmodel.TrainingCampsViewModel
+import com.example.sportassistant.presentation.training_camps_day.ui.TrainingCampDayScreen
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
@@ -87,6 +98,14 @@ sealed class HomeRoutes {
     data object CompetitionAdd : Route("competition_add")
     data object Competitions : Route("all_competitions")
     data object CompetitionInfo : Route("competition_info")
+    data object TrainingCampsAllDaysNav : Route("all_camps_days")
+    data object TrainingCampsDay : Route("camp_day")
+    data object TrainingCampsAdd : Route("camp_add")
+    data object TrainingCamps : Route("all_camps")
+    data object TrainingCampsInfo : Route("camp_info")
+    data object OFPResults : Route("ofp_results")
+    data object OFPResultsAdd : Route("ofp_results_add")
+    data object OFPResultsInfo : Route("ofp_results_info")
 }
 
 @Composable
@@ -141,11 +160,14 @@ fun HomeNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
     competitionViewModel: CompetitionViewModel = koinViewModel(),
+    trainingCampsViewModel: TrainingCampsViewModel = koinViewModel(),
+    ofpResultsViewModel: OFPResultsViewModel = koinViewModel(),
     logout: () -> Unit,
 ) {
     val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
     val profileViewModel: ProfileViewModel = viewModel()
-    val tabsViewModel: TabsViewModel = viewModel()
+    val competitionTabsViewModel: TabsViewModel = viewModel()
+    val trainingCampsTabsViewModel: TabsViewModel = viewModel()
     NavHost(
         navController = navController,
         route = GraphRoutes.HomeNav.route,
@@ -200,7 +222,15 @@ fun HomeNavGraph(
         composable(route = HomeRoutes.Competitions.route) {
             CompetitionCalendarScreen(
                 competitionViewModel = competitionViewModel,
-                tabsViewModel = tabsViewModel,
+                tabsViewModel = competitionTabsViewModel,
+                titleViewModel = titleViewModel,
+                navController = navController,
+            )
+        }
+        composable(route = HomeRoutes.TrainingCamps.route) {
+            TrainingCampsCalendarScreen(
+                trainingCampsViewModel = trainingCampsViewModel,
+                tabsViewModel = trainingCampsTabsViewModel,
                 titleViewModel = titleViewModel,
                 navController = navController,
             )
@@ -212,9 +242,21 @@ fun HomeNavGraph(
                 titleViewModel = titleViewModel,
             )
         }
+        composable(route = HomeRoutes.TrainingCampsAllDaysNav.route){
+            TrainingCampsAllDaysScreen(
+                navController = navController,
+                trainingCampsViewModel = trainingCampsViewModel,
+                titleViewModel = titleViewModel,
+            )
+        }
         composable(route = HomeRoutes.CompetitionDay.route){
             CompetitionDayScreen(
                 competitionViewModel = competitionViewModel,
+            )
+        }
+        composable(route = HomeRoutes.TrainingCampsDay.route){
+            TrainingCampDayScreen(
+                trainingCampsViewModel = trainingCampsViewModel,
             )
         }
         composable(route = HomeRoutes.CompetitionResult.route){
@@ -229,23 +271,44 @@ fun HomeNavGraph(
                 competitionViewModel = competitionViewModel,
             )
         }
+        composable(route = HomeRoutes.TrainingCampsAdd.route){
+            TrainingCampAddScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                trainingCampsViewModel = trainingCampsViewModel,
+            )
+        }
         composable(route = HomeRoutes.CompetitionInfo.route) {
             CompetitionInfoScreen(
                 competitionViewModel = competitionViewModel,
             )
         }
+        composable(route = HomeRoutes.TrainingCampsInfo.route) {
+            TrainingCampInfoScreen(
+                trainingCampViewModel = trainingCampsViewModel,
+            )
+        }
         composable(route = HomeRoutes.Calendar.route) {
-            Scaffold { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(text="Calendar")
-                }
-            }
+            CalendarScreen()
+        }
+        composable(route = HomeRoutes.OFPResults.route) {
+            OFPResultsScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                ofpResultsViewModel = ofpResultsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.OFPResultsAdd.route) {
+            OFPResultAddScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                ofpResultsViewModel = ofpResultsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.OFPResultsInfo.route) {
+            OFPResultsInfoScreen(
+                ofpResultsViewModel = ofpResultsViewModel,
+            )
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePickerFormatter
@@ -114,6 +115,36 @@ fun DateRangePickerHeadline(
             Text(text = formatterEndDate)
         } else {
             endDatePlaceholder()
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerHeadline(
+    selectedDateMillis: Long?,
+    dateFormatter: DatePickerFormatter,
+    modifier: Modifier,
+    datePlaceholder: @Composable () -> Unit,
+) {
+    val defaultLocale = Locale.getDefault()
+    val formatterDate = dateFormatter.formatDate(
+        dateMillis = selectedDateMillis,
+        locale = defaultLocale
+    )
+
+    Row(
+        modifier = modifier.clearAndSetSemantics {
+            liveRegion = LiveRegionMode.Polite
+        }.fillMaxWidth().wrapContentHeight(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        if (formatterDate != null) {
+            Text(text = formatterDate)
+        } else {
+            datePlaceholder()
         }
     }
 }

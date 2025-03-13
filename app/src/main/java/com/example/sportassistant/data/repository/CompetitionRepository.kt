@@ -79,8 +79,4 @@ class CompetitionRepository (
     fun createCompetition(data: CreateCompetitionRequest) = apiRequestFlow {
         competitionService.createCompetition(data)
     }
-
-    fun getCompetitionDays(id: UUID) = apiRequestFlow {
-        competitionService.getCompetitionDays(id)
-    }
 }

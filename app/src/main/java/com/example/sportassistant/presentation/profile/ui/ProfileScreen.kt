@@ -55,9 +55,8 @@ fun ProfileScreen(
             is ApiResponse.Loading -> {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(alpha = 0.7f)),
-                    contentAlignment = Alignment.Center
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }

@@ -76,8 +76,7 @@ fun CompetitionDayScreen(
             is ApiResponse.Loading -> {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(alpha = 0.7f)),
+                        .fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
@@ -96,7 +95,7 @@ fun CompetitionDayScreen(
                     shape = MaterialTheme.shapes.large,
                 ) {
                     StyledCardTextField(
-                        value = competitionUiState.selectedCompetition!!.name,
+                        value = data.competitionName,
                         label = R.string.add_competition_title,
                         onValueChange = { },
                         enabled = false,
@@ -115,8 +114,8 @@ fun CompetitionDayScreen(
                     ) {
                         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-                        val startDate = competitionUiState.selectedCompetition!!.startDate.format(formatter)
-                        val endDate = competitionUiState.selectedCompetition!!.endDate.format(formatter)
+                        val startDate = data.competitionStartDate.format(formatter)
+                        val endDate = data.competitionEndDate.format(formatter)
 
                         StyledCardTextField(
                             value = "$startDate - $endDate",
@@ -133,7 +132,7 @@ fun CompetitionDayScreen(
                     }
                     HorizontalDivider(thickness = 2.dp)
                     StyledCardTextField(
-                        value = competitionUiState.selectedCompetition!!.location,
+                        value = data.competitionLocation,
                         label = R.string.add_competition_location,
                         onValueChange = { },
                         enabled = false,
@@ -224,8 +223,7 @@ fun CompetitionDayScreen(
         is ApiResponse.Loading -> {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.7f)),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
