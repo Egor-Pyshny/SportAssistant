@@ -1,14 +1,14 @@
 package com.example.sportassistant.data.repository
 
 import com.example.sportassistant.data.schemas.ant_params.requests.AnthropometricParamsCreateRequest
-import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
-import com.example.sportassistant.domain.interfaces.services.AnthropometricParamsService
-import com.example.sportassistant.domain.interfaces.services.OFPResultsService
+import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
+import com.example.sportassistant.domain.interfaces.services.AnthropometricParamsApiService
 import com.example.sportassistant.presentation.utils.apiRequestFlow
+import java.time.LocalDate
 import java.util.UUID
 
 class AnthropometricParamsRepository(
-    private val anthropometricParamsResultsService: AnthropometricParamsService
+    private val anthropometricParamsResultsService: AnthropometricParamsApiService
 ) {
     fun getAnthropometricParams() = apiRequestFlow {
         anthropometricParamsResultsService.getAnthropometricParams()
@@ -19,6 +19,18 @@ class AnthropometricParamsRepository(
     ) = apiRequestFlow {
         anthropometricParamsResultsService.createAnthropometricParams(
             body = data,
+        )
+    }
+
+    fun getGraphicData(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        category: AnthropometricParamsMeasures
+    ) = apiRequestFlow {
+        anthropometricParamsResultsService.getGraphicData(
+            startDate = startDate,
+            endDate = endDate,
+            category = category,
         )
     }
 

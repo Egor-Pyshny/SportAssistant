@@ -109,9 +109,9 @@ private fun getRouteForMenuItemMap(): HashMap<Route, String> {
         HomeRoutes.SFPResults to stringResource(R.string.home_list_item_cfp_testing),
         HomeRoutes.AnthropometricParams to stringResource(R.string.home_list_item_ant_params),
         Route("mc_calendar") to stringResource(R.string.home_list_item_mc_calendar),
-        Route("med_exam") to stringResource(R.string.home_list_item_med_exam),
-        Route("complex_exam") to stringResource(R.string.home_list_item_complex_exam),
-        Route("note") to stringResource(R.string.home_list_item_note),
+        HomeRoutes.MedExamination to stringResource(R.string.home_list_item_med_exam),
+        HomeRoutes.ComprehensiveExamination to stringResource(R.string.home_list_item_complex_exam),
+        HomeRoutes.Notes to stringResource(R.string.home_list_item_note),
         Route("train_diary") to stringResource(R.string.home_list_item_train_diary)
     )
 }

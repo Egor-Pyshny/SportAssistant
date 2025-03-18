@@ -11,7 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import java.util.UUID
 
-interface OFPResultsService {
+interface OFPResultsApiService {
     @GET("ofp/categories")
     suspend fun getOFPCategories(): Response<List<CategoryModel>>
 

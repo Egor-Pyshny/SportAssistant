@@ -31,6 +31,7 @@ import com.example.sportassistant.domain.model.SFPResult
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.MenuItem
+import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
@@ -56,6 +57,21 @@ fun SFPResultsScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+        StyledButton(
+            text = stringResource(R.string.draw_graphic),
+            onClick = {
+                navController.navigate(HomeRoutes.SFPResultsGraphic.route)
+            },
+            isEnabled = true,
+            trailingIcon = R.drawable.line_chart,
+            trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
+            modifier = Modifier.padding(
+                start = screenSizeProvider.getEdgeSpacing(),
+                end = screenSizeProvider.getEdgeSpacing(),
+                bottom = 25.dp,
+                top = 20.dp
+            )
+        )
         when (sfpResultsResponse) {
             is ApiResponse.Loading -> {
                 Box(
@@ -83,7 +99,6 @@ fun SFPResultsScreen(
                             .padding(
                                 start = screenSizeProvider.getEdgeSpacing(),
                                 end = screenSizeProvider.getEdgeSpacing(),
-                                top = 20.dp,
                                 bottom = 20.dp
                             )
                             .verticalScroll(rememberScrollState()),

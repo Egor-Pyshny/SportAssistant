@@ -5,13 +5,13 @@ import com.example.sportassistant.data.schemas.training_camp_day.requests.Traini
 import com.example.sportassistant.data.schemas.training_camps.requests.CreateTrainingCampRequest
 import com.example.sportassistant.domain.enums.CompetitionStatus
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
-import com.example.sportassistant.domain.interfaces.services.OFPResultsService
+import com.example.sportassistant.domain.interfaces.services.OFPResultsApiService
 import com.example.sportassistant.presentation.utils.apiRequestFlow
 import java.time.LocalDate
 import java.util.UUID
 
 class OFPResultsRepository (
-    private val ofpResultsService: OFPResultsService
+    private val ofpResultsService: OFPResultsApiService
 ) {
     fun getCategories() = apiRequestFlow {
         ofpResultsService.getOFPCategories()

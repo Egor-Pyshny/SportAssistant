@@ -27,11 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
 import com.example.sportassistant.domain.model.AnthropometricParams
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.MenuItem
+import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
@@ -55,6 +57,21 @@ fun AnthropometricParamsScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+        StyledButton(
+            text = stringResource(R.string.draw_graphic),
+            onClick = {
+                navController.navigate(HomeRoutes.AnthropometricParamsGraphic.route)
+            },
+            isEnabled = true,
+            trailingIcon = R.drawable.line_chart,
+            trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
+            modifier = Modifier.padding(
+                start = screenSizeProvider.getEdgeSpacing(),
+                end = screenSizeProvider.getEdgeSpacing(),
+                bottom = 25.dp,
+                top = 20.dp
+            )
+        )
         when (anthropometricParamsResultsResponse) {
             is ApiResponse.Loading -> {
                 Box(
@@ -82,7 +99,6 @@ fun AnthropometricParamsScreen(
                             .padding(
                                 start = screenSizeProvider.getEdgeSpacing(),
                                 end = screenSizeProvider.getEdgeSpacing(),
-                                top = 20.dp,
                                 bottom = 20.dp
                             )
                             .verticalScroll(rememberScrollState()),

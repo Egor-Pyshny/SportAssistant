@@ -268,6 +268,9 @@ fun SFPResultAddScreen(
                             if (formatedText.toFloatOrNull() != null) {
                                 sfpResultsAddViewModel.setResult(formatedText)
                             }
+                            if (it == "") {
+                                sfpResultsAddViewModel.setResult("")
+                            }
                         },
                         modifier = Modifier.padding(
                             start = 15.dp,

@@ -270,6 +270,9 @@ fun OFPResultAddScreen(
                             if (formatedText.toFloatOrNull() != null) {
                                 ofpResultsAddViewModel.setResult(formatedText)
                             }
+                            if (it == "") {
+                                ofpResultsAddViewModel.setResult("")
+                            }
                         },
                         modifier = Modifier.padding(
                             start = 15.dp,

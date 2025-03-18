@@ -3,7 +3,9 @@ package com.example.sportassistant.presentation.ant_params.viewmodel
 import androidx.lifecycle.MutableLiveData
 import com.example.sportassistant.data.repository.AnthropometricParamsRepository
 import com.example.sportassistant.data.schemas.ant_params.requests.AnthropometricParamsCreateRequest
+import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
 import com.example.sportassistant.domain.model.AnthropometricParams
+import com.example.sportassistant.domain.model.GraphicPoint
 import com.example.sportassistant.presentation.ant_params.domain.AnthropometricParamsUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel
@@ -11,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 import java.util.UUID
 
 class AnthropometricParamsViewModel(
@@ -34,6 +37,9 @@ class AnthropometricParamsViewModel(
     private val _deleteAnthropometricParamsResponse = MutableLiveData<ApiResponse<Void?>?>()
     val deleteAnthropometricParamsResponse = _deleteAnthropometricParamsResponse
 
+    private val _getGraphicDataResponse = MutableLiveData<ApiResponse<List<GraphicPoint>?>?>()
+    val getGraphicDataResponse = _getGraphicDataResponse
+
     fun deleteAnthropometricParams(paramsId: UUID) = baseRequest(
         _deleteAnthropometricParamsResponse
     ) {
@@ -42,8 +48,26 @@ class AnthropometricParamsViewModel(
         )
     }
 
+    fun getGraphicData(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        category: AnthropometricParamsMeasures
+    ) = baseRequest(
+        _getGraphicDataResponse
+    ) {
+        anthropometricParamsRepository.getGraphicData(
+            startDate = startDate,
+            endDate = endDate,
+            category = category,
+        )
+    }
+
     fun clearCreateResponse() {
         _anthropometricParamsAddResponse.postValue(null)
+    }
+
+    fun clearGraphicDataResponse() {
+        _getGraphicDataResponse.postValue(null)
     }
 
     fun clearUpdateResponse() {

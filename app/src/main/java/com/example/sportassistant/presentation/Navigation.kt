@@ -26,6 +26,7 @@ import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.ant_params.ui.AnthropometricParamsScreen
 import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.ant_params_add.ui.AnthropometricParamsAddScreen
+import com.example.sportassistant.presentation.ant_params_graphic.ui.AnthropometricParamsGraphicScreen
 import com.example.sportassistant.presentation.ant_params_info.ui.AnthropometricParamsInfoScreen
 import com.example.sportassistant.presentation.applayout.ui.LayoutSettingsScreen
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
@@ -37,11 +38,23 @@ import com.example.sportassistant.presentation.competition_calendar.viewmodel.Co
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.competition_day.ui.CompetitionResultScreen
 import com.example.sportassistant.presentation.competition_info.ui.CompetitionInfoScreen
+import com.example.sportassistant.presentation.comprehensive_examination.ui.ComprehensiveExaminationScreen
+import com.example.sportassistant.presentation.comprehensive_examination.viewmodel.ComprehensiveExaminationViewModel
+import com.example.sportassistant.presentation.comprehensive_examination_add.ui.ComprehensiveExaminationAddScreen
+import com.example.sportassistant.presentation.comprehensive_examination_info.ui.ComprehensiveExaminationInfoScreen
 import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.login.ui.LogInScreen
+import com.example.sportassistant.presentation.med_examination.ui.MedExaminationScreen
+import com.example.sportassistant.presentation.med_examination.viewmodel.MedExaminationViewModel
+import com.example.sportassistant.presentation.med_examination_add.ui.MedExaminationAddScreen
+import com.example.sportassistant.presentation.med_examination_info.ui.MedExaminationInfoScreen
+import com.example.sportassistant.presentation.note_add.ui.NoteAddScreen
+import com.example.sportassistant.presentation.note_info.ui.NoteInfoScreen
+import com.example.sportassistant.presentation.notes.ui.NotesScreen
+import com.example.sportassistant.presentation.notes.viewmodel.NotesViewModel
 import com.example.sportassistant.presentation.ofp_result_add.ui.OFPResultAddScreen
 import com.example.sportassistant.presentation.ofp_results.ui.OFPResultsScreen
 import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
@@ -117,9 +130,21 @@ sealed class HomeRoutes {
     data object SFPResults : Route("sfp_results")
     data object SFPResultsAdd : Route("sfp_results_add")
     data object SFPResultsInfo : Route("sfp_results_info")
+    data object Notes : Route("notes")
+    data object NotesAdd : Route("notes_add")
+    data object NotesInfo : Route("notes_info")
+    data object MedExamination : Route("med_examination")
+    data object MedExaminationAdd : Route("med_examination_add")
+    data object MedExaminationInfo : Route("med_examination_info")
+    data object ComprehensiveExamination : Route("comprehensive_examination")
+    data object ComprehensiveExaminationAdd : Route("comprehensive_examination_add")
+    data object ComprehensiveExaminationInfo : Route("comprehensive_examination_info")
     data object AnthropometricParams : Route("anthropometric_params_results")
     data object AnthropometricParamsAdd : Route("anthropometric_params_add")
     data object AnthropometricParamsInfo : Route("anthropometric_params_info")
+    data object AnthropometricParamsGraphic : Route("anthropometric_params_graphic")
+    data object SFPResultsGraphic : Route("sfp_results_graphic")
+    data object OFPResultsGraphic : Route("ofp_results_graphic")
 }
 
 @Composable
@@ -178,6 +203,9 @@ fun HomeNavGraph(
     ofpResultsViewModel: OFPResultsViewModel = koinViewModel(),
     sfpResultsViewModel: SFPResultsViewModel = koinViewModel(),
     anthropometricParamsViewModel: AnthropometricParamsViewModel = koinViewModel(),
+    notesViewModel: NotesViewModel = koinViewModel(),
+    medExaminationViewModel: MedExaminationViewModel = koinViewModel(),
+    comprehensiveExaminationViewModel: ComprehensiveExaminationViewModel = koinViewModel(),
     logout: () -> Unit,
 ) {
     val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
@@ -352,6 +380,60 @@ fun HomeNavGraph(
                 anthropometricParamsViewModel = anthropometricParamsViewModel,
             )
         }
+        composable(route = HomeRoutes.Notes.route) {
+            NotesScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                notesViewModel = notesViewModel,
+            )
+        }
+        composable(route = HomeRoutes.NotesAdd.route) {
+            NoteAddScreen(
+                navController = navController,
+                notesViewModel = notesViewModel,
+            )
+        }
+        composable(route = HomeRoutes.NotesInfo.route) {
+            NoteInfoScreen(
+                noteViewModel = notesViewModel,
+            )
+        }
+        composable(route = HomeRoutes.MedExamination.route) {
+            MedExaminationScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                medExaminationViewModel = medExaminationViewModel,
+            )
+        }
+        composable(route = HomeRoutes.MedExaminationAdd.route) {
+            MedExaminationAddScreen(
+                navController = navController,
+                medExaminationViewModel = medExaminationViewModel,
+            )
+        }
+        composable(route = HomeRoutes.MedExaminationInfo.route) {
+            MedExaminationInfoScreen(
+                medExaminationViewModel = medExaminationViewModel,
+            )
+        }
+        composable(route = HomeRoutes.ComprehensiveExamination.route) {
+            ComprehensiveExaminationScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+                comprehensiveExaminationViewModel = comprehensiveExaminationViewModel,
+            )
+        }
+        composable(route = HomeRoutes.ComprehensiveExaminationAdd.route) {
+            ComprehensiveExaminationAddScreen(
+                navController = navController,
+                comprehensiveExaminationViewModel = comprehensiveExaminationViewModel,
+            )
+        }
+        composable(route = HomeRoutes.ComprehensiveExaminationInfo.route) {
+            ComprehensiveExaminationInfoScreen(
+                comprehensiveExaminationViewModel = comprehensiveExaminationViewModel,
+            )
+        }
         composable(route = HomeRoutes.AnthropometricParamsAdd.route) {
             AnthropometricParamsAddScreen(
                 navController = navController,
@@ -361,6 +443,11 @@ fun HomeNavGraph(
         }
         composable(route = HomeRoutes.AnthropometricParamsInfo.route) {
             AnthropometricParamsInfoScreen(
+                anthropometricParamsViewModel = anthropometricParamsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.AnthropometricParamsGraphic.route) {
+            AnthropometricParamsGraphicScreen(
                 anthropometricParamsViewModel = anthropometricParamsViewModel,
             )
         }

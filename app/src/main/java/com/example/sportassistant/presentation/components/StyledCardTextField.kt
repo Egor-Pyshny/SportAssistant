@@ -38,7 +38,7 @@ import org.koin.androidx.compose.get
 fun StyledCardTextField(
     value: String,
     @StringRes
-    label: Int,
+    label: Int? = null,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     singleLine: Boolean = true,
@@ -69,8 +69,10 @@ fun StyledCardTextField(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column {
-                        Text(text = stringResource(label))
-                        Spacer(modifier = Modifier.height(0.dp))
+                        if (label != null) {
+                            Text(text = stringResource(label))
+                            Spacer(modifier = Modifier.height(0.dp))
+                        }
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,

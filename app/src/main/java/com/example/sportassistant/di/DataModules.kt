@@ -4,6 +4,9 @@ import com.example.sportassistant.data.repository.AnthropometricParamsRepository
 import com.example.sportassistant.data.repository.AuthRepository
 import com.example.sportassistant.data.repository.CoachRepository
 import com.example.sportassistant.data.repository.CompetitionRepository
+import com.example.sportassistant.data.repository.ComprehensiveExaminationRepository
+import com.example.sportassistant.data.repository.MedExaminationRepository
+import com.example.sportassistant.data.repository.NotesRepository
 import com.example.sportassistant.data.repository.OFPResultsRepository
 import com.example.sportassistant.data.repository.SFPResultsRepository
 import com.example.sportassistant.data.repository.TrainingCampsRepository
@@ -13,7 +16,11 @@ import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
+import com.example.sportassistant.presentation.comprehensive_examination.viewmodel.ComprehensiveExaminationViewModel
 import com.example.sportassistant.presentation.login.viewmodel.LogInViewModel
+import com.example.sportassistant.presentation.med_examination.ui.MedExaminationScreen
+import com.example.sportassistant.presentation.med_examination.viewmodel.MedExaminationViewModel
+import com.example.sportassistant.presentation.notes.viewmodel.NotesViewModel
 import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
 import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.CheckEmailViewModel
@@ -49,6 +56,9 @@ val dataModules = module {
     factory { OFPResultsRepository(get()) }
     factory { SFPResultsRepository(get()) }
     factory { AnthropometricParamsRepository(get()) }
+    factory { NotesRepository(get()) }
+    factory { MedExaminationRepository(get()) }
+    factory { ComprehensiveExaminationRepository(get()) }
     viewModel{
         LogInViewModel(
             authRepository = get(),
@@ -97,6 +107,21 @@ val dataModules = module {
     viewModel{
         AnthropometricParamsViewModel(
             anthropometricParamsRepository = get(),
+        )
+    }
+    viewModel{
+        NotesViewModel(
+            notesRepository = get(),
+        )
+    }
+    viewModel{
+        MedExaminationViewModel(
+            medExaminationRepository = get(),
+        )
+    }
+    viewModel{
+        ComprehensiveExaminationViewModel(
+            comprehensiveExaminationRepository = get(),
         )
     }
 }

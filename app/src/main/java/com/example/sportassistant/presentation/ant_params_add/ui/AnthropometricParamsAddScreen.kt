@@ -197,6 +197,9 @@ fun AnthropometricParamsAddScreen(
                     if (formatedText.toFloatOrNull() != null) {
                         anthropometricParamsAddViewModel.setWeight(formatedText)
                     }
+                    if (it == "") {
+                        anthropometricParamsAddViewModel.setWeight("")
+                    }
                 },
                 modifier = Modifier.padding(
                     start = 15.dp,
@@ -216,6 +219,9 @@ fun AnthropometricParamsAddScreen(
                     if (formatedText.toFloatOrNull() != null) {
                         anthropometricParamsAddViewModel.setHeight(formatedText)
                     }
+                    if (it == "") {
+                        anthropometricParamsAddViewModel.setWeight("")
+                    }
                 },
                 modifier = Modifier.padding(
                     start = 15.dp,
@@ -234,6 +240,9 @@ fun AnthropometricParamsAddScreen(
                     val formatedText = decimalFormatter.cleanup(it)
                     if (formatedText.toFloatOrNull() != null) {
                         anthropometricParamsAddViewModel.setChestCircumference(formatedText)
+                    }
+                    if (it == "") {
+                        anthropometricParamsAddViewModel.setWeight("")
                     }
                 },
                 modifier = Modifier.padding(

@@ -184,7 +184,7 @@ fun CompetitionInfoScreen(
                                         && dateRangePickerState.selectedStartDateMillis != null
                                     ) {
                                         showDialog = false
-                                        missingDate = true
+                                        missingDate = false
                                     } else {
                                         missingDate = true
                                     }

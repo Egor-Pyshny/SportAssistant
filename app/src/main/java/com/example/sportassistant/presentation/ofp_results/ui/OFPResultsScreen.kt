@@ -35,6 +35,7 @@ import com.example.sportassistant.presentation.competition_calendar.viewmodel.Co
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.MenuItem
+import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.ofp_result_add.viewmodel.OFPResultAddViewModel
@@ -61,6 +62,21 @@ fun OFPResultsScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+        StyledButton(
+            text = stringResource(R.string.draw_graphic),
+            onClick = {
+                navController.navigate(HomeRoutes.OFPResultsGraphic.route)
+            },
+            isEnabled = true,
+            trailingIcon = R.drawable.line_chart,
+            trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
+            modifier = Modifier.padding(
+                start = screenSizeProvider.getEdgeSpacing(),
+                end = screenSizeProvider.getEdgeSpacing(),
+                bottom = 25.dp,
+                top = 20.dp
+            )
+        )
         when (ofpResultsResponse) {
             is ApiResponse.Loading -> {
                 Box(
@@ -88,7 +104,6 @@ fun OFPResultsScreen(
                             .padding(
                                 start = screenSizeProvider.getEdgeSpacing(),
                                 end = screenSizeProvider.getEdgeSpacing(),
-                                top = 20.dp,
                                 bottom = 20.dp
                             )
                             .verticalScroll(rememberScrollState()),

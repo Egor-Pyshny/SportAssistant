@@ -349,7 +349,7 @@ fun OFPResultsInfoScreen(
                             isEnabled = true,
                             trailingIcon = R.drawable.save,
                             trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
-                            modifier = Modifier.padding(bottom = 25.dp, top = 45.dp)
+                            modifier = Modifier.padding(bottom = 25.dp, top = 25.dp)
                         )
                     } else {
                         StyledOutlinedButton(
@@ -358,7 +358,7 @@ fun OFPResultsInfoScreen(
                             isEnabled = false,
                             trailingIcon = R.drawable.save,
                             trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
-                            modifier = Modifier.padding(bottom = 25.dp, top = 45.dp)
+                            modifier = Modifier.padding(bottom = 25.dp, top = 25.dp)
                         )
                     }
                 }

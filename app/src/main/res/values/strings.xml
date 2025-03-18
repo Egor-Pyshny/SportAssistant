@@ -15,6 +15,7 @@
     <string name="get_detailed_info">Подробнее</string>
     <string name="delete_item">Удалить</string>
     <string name="save_button_text">Сохранить</string>
+    <string name="draw_graphic">Построить график</string>
     <string name="sport_type_placeholder">Вид спорта</string>
     <string name="qualification_placeholder">Квалификация</string>
     <string name="address_placeholder">Адрес проживания</string>
@@ -26,7 +27,10 @@
     <string name="create_coach_text">Ваш тренер</string>
     <string name="coach_name_placeholder">ФИО тренера</string>
     <string name="coach_phone_placeholder">Телефон тренера</string>
-    <string name="coach_institution_placeholder">Учреждение</string>
+    <string name="institution_placeholder">Учреждение</string>
+    <string name="specialists_placeholder">Специалисты КНГ</string>
+    <string name="recommendations_placeholder">Рекомендации</string>
+    <string name="methods_label">Методы</string>
     <string name="support_text_for_password">Пароль должен быть длиннее 8 символов</string>
     <string name="support_text_for_email">Неверный формат почты</string>
     <string name="nav_bar_settings_text">Настройки</string>
@@ -43,6 +47,7 @@
     <string name="add_competition">Новое соревнование</string>
     <string name="add_ofp">Новое тестирование ОФП</string>
     <string name="add_sfp">Новое тестирование СФП</string>
+    <string name="add_note">Новое примечание</string>
     <string name="add_ant_params">Новые антропометрические данные</string>
     <string name="competition_result_title">Результаты</string>
     <string name="home_list_item_competition_calendar">Календарь соревнований</string>
@@ -51,8 +56,10 @@
     <string name="home_list_item_cfp_testing">Тестирование СФП</string>
     <string name="home_list_item_ant_params">Антропометрические параметры</string>
     <string name="home_list_item_mc_calendar">Календарь МЦ</string>
-    <string name="home_list_item_med_exam">Медицинское обследование</string>
-    <string name="home_list_item_complex_exam">Комплексное обследование</string>
+    <string name="home_list_item_med_exam">Медицинские обследования</string>
+    <string name="add_med_exam">Новое медицинское обследование</string>
+    <string name="add_comprehensive_exam">Новое комплексное обследование</string>
+    <string name="home_list_item_complex_exam">Комплексные обследования</string>
     <string name="home_list_item_note">Примечание</string>
     <string name="home_list_item_train_diary">Дневник тренировок</string>
     <string name="home_list_item_premium">Premium</string>
@@ -63,6 +70,8 @@
     <string name="home_list_item_night_mode">Ночной режим</string>
     <string name="add_competition_title">Соревнования</string>
     <string name="ofp_test_name">Название теста</string>
+    <string name="ant_params_date_period">Выберите промежуток</string>
+    <string name="ant_params_measure">Выберите параметр</string>
     <string name="sfp_test_name">Название теста</string>
     <string name="start_date">Начало</string>
     <string name="date_placeholder">Дата</string>
@@ -70,11 +79,14 @@
     <string name="end_date">Конец</string>
     <string name="confirm">Подтвердить</string>
     <string name="cancel">Отменить</string>
+    <string name="not_enough_data_for_graph">Что бы показать график недостаточно данных. Необходимо более 2 записей</string>
+    <string name="date_period">Промежуток</string>
     <string name="add_competition_date">Дата</string>
     <string name="add_camps_date">Сроки</string>
     <string name="add_competition_location">Место проведения</string>
     <string name="ofp_test_result">Показатели</string>
     <string name="ant_param_weight">Масса тела, кг</string>
+    <string name="note_text">Содержание</string>
     <string name="ant_param_height">Длина тела, см</string>
     <string name="ant_param_chest_сircumference">Окружность грудной клетки, см</string>
     <string name="sfp_test_result">Показатели</string>
@@ -118,4 +130,16 @@
         <item>Ноябрь</item>
         <item>Декабрь</item>
     </string-array>
+    <string-array name="date_periods">
+        <item>За месяц</item>
+        <item>За 3 месяца</item>
+        <item>За пол года</item>
+        <item>За год</item>
+    </string-array>
+    <string-array name="ant_params_measures">
+        <item>Вес</item>
+        <item>Рост</item>
+        <item>Обхват груди</item>
+    </string-array>
+    <string name="custom_date_period">Свой промежуток</string>
 </resources>

@@ -1,13 +1,14 @@
 package com.example.sportassistant.di
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.example.sportassistant.domain.interfaces.services.AnthropometricParamsService
+import com.example.sportassistant.domain.interfaces.services.AnthropometricParamsApiService
 import com.example.sportassistant.domain.interfaces.services.AuthApiService
 import com.example.sportassistant.domain.interfaces.services.CoachApiService
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
-import com.example.sportassistant.domain.interfaces.services.OFPResultsService
-import com.example.sportassistant.domain.interfaces.services.SFPResultsService
+import com.example.sportassistant.domain.interfaces.services.ComprehensiveExaminationApiService
+import com.example.sportassistant.domain.interfaces.services.MedExaminationApiService
+import com.example.sportassistant.domain.interfaces.services.NotesApiService
+import com.example.sportassistant.domain.interfaces.services.OFPResultsApiService
+import com.example.sportassistant.domain.interfaces.services.SFPResultsApiService
 import com.example.sportassistant.domain.interfaces.services.TrainingCampsApiService
 import com.example.sportassistant.domain.interfaces.services.UserApiService
 import com.example.sportassistant.presentation.utils.CookieAddInterceptor
@@ -32,6 +33,9 @@ val networkModule = module {
     factory { provideOFPResultsApi(get()) }
     factory { provideSFPResultsApi(get()) }
     factory { provideAnthropometricParamsApi(get()) }
+    factory { provideNotesApi(get()) }
+    factory { provideComprehensiveExamination(get()) }
+    factory { provideMedExamination(get()) }
     single { provideRetrofit(get()) }
 }
 
@@ -54,6 +58,9 @@ fun provideUserApi(retrofit: Retrofit): UserApiService = retrofit.create(UserApi
 fun provideCoachApi(retrofit: Retrofit): CoachApiService = retrofit.create(CoachApiService::class.java)
 fun provideCompetitionApi(retrofit: Retrofit): CompetitionApiService = retrofit.create(CompetitionApiService::class.java)
 fun provideTrainingCampsApi(retrofit: Retrofit): TrainingCampsApiService = retrofit.create(TrainingCampsApiService::class.java)
-fun provideOFPResultsApi(retrofit: Retrofit): OFPResultsService = retrofit.create(OFPResultsService::class.java)
-fun provideSFPResultsApi(retrofit: Retrofit): SFPResultsService = retrofit.create(SFPResultsService::class.java)
-fun provideAnthropometricParamsApi(retrofit: Retrofit): AnthropometricParamsService = retrofit.create(AnthropometricParamsService::class.java)
+fun provideOFPResultsApi(retrofit: Retrofit): OFPResultsApiService = retrofit.create(OFPResultsApiService::class.java)
+fun provideSFPResultsApi(retrofit: Retrofit): SFPResultsApiService = retrofit.create(SFPResultsApiService::class.java)
+fun provideAnthropometricParamsApi(retrofit: Retrofit): AnthropometricParamsApiService = retrofit.create(AnthropometricParamsApiService::class.java)
+fun provideNotesApi(retrofit: Retrofit): NotesApiService = retrofit.create(NotesApiService::class.java)
+fun provideComprehensiveExamination(retrofit: Retrofit): ComprehensiveExaminationApiService = retrofit.create(ComprehensiveExaminationApiService::class.java)
+fun provideMedExamination(retrofit: Retrofit): MedExaminationApiService = retrofit.create(MedExaminationApiService::class.java)

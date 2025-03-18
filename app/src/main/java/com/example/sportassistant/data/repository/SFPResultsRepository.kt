@@ -1,12 +1,12 @@
 package com.example.sportassistant.data.repository
 
 import com.example.sportassistant.data.schemas.sfp_results.requests.SFPResultsCreateRequest
-import com.example.sportassistant.domain.interfaces.services.SFPResultsService
+import com.example.sportassistant.domain.interfaces.services.SFPResultsApiService
 import com.example.sportassistant.presentation.utils.apiRequestFlow
 import java.util.UUID
 
 class SFPResultsRepository (
-    private val sfpResultsService: SFPResultsService
+    private val sfpResultsService: SFPResultsApiService
 ) {
     fun getCategories() = apiRequestFlow {
         sfpResultsService.getSFPCategories()
