@@ -3,6 +3,7 @@ package com.example.sportassistant.data.repository
 import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
 import com.example.sportassistant.data.schemas.training_camp_day.requests.TrainingCampDayUpdateRequest
 import com.example.sportassistant.data.schemas.training_camps.requests.CreateTrainingCampRequest
+import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
 import com.example.sportassistant.domain.enums.CompetitionStatus
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
 import com.example.sportassistant.domain.interfaces.services.OFPResultsApiService
@@ -45,5 +46,17 @@ class OFPResultsRepository (
 
     fun getOFPResultInfo(id: UUID) = apiRequestFlow {
         ofpResultsService.getOFPResultInfo(id)
+    }
+
+    fun getGraphicData(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        categoryId: UUID
+    ) = apiRequestFlow {
+        ofpResultsService.getGraphicData(
+            startDate = startDate,
+            endDate = endDate,
+            categoryId = categoryId,
+        )
     }
 }

@@ -4,8 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.sportassistant.data.repository.CompetitionRepository
 import com.example.sportassistant.data.repository.OFPResultsRepository
 import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
+import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.Competition
+import com.example.sportassistant.domain.model.GraphicPoint
 import com.example.sportassistant.domain.model.OFPResult
 import com.example.sportassistant.presentation.competition_calendar.domain.CompetitionUiState
 import com.example.sportassistant.presentation.ofp_results.domain.OFPResultsUiState
@@ -42,6 +44,9 @@ class OFPResultsViewModel(
     private val _deleteOFPResultResponse = MutableLiveData<ApiResponse<Void?>?>()
     val deleteOFPResultResponse = _deleteOFPResultResponse
 
+    private val _getGraphicDataResponse = MutableLiveData<ApiResponse<List<GraphicPoint>?>?>()
+    val getGraphicDataResponse = _getGraphicDataResponse
+
     fun deleteOFPResult(ofpId: UUID) = baseRequest(
         _deleteOFPResultResponse
     ) {
@@ -52,6 +57,10 @@ class OFPResultsViewModel(
 
     fun clearCreateResponse() {
         _ofpAddResponse.postValue(null)
+    }
+
+    fun clearGraphicDataResponse() {
+        _getGraphicDataResponse.postValue(null)
     }
 
     fun clearUpdateResponse() {
@@ -68,6 +77,20 @@ class OFPResultsViewModel(
         ofpRepository.updateOFPResult(
             data = data,
             id = ofpId,
+        )
+    }
+
+    fun getGraphicData(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        categoryId: UUID
+    ) = baseRequest(
+        _getGraphicDataResponse
+    ) {
+        ofpRepository.getGraphicData(
+            startDate = startDate,
+            endDate = endDate,
+            categoryId = categoryId,
         )
     }
 

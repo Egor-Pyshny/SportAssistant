@@ -72,6 +72,7 @@
     <string name="ofp_test_name">Название теста</string>
     <string name="ant_params_date_period">Выберите промежуток</string>
     <string name="ant_params_measure">Выберите параметр</string>
+    <string name="pick_category_placeholder">Выберите категорию</string>
     <string name="sfp_test_name">Название теста</string>
     <string name="start_date">Начало</string>
     <string name="date_placeholder">Дата</string>

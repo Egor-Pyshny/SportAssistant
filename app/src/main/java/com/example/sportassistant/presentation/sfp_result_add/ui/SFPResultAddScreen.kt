@@ -54,6 +54,7 @@ import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -103,16 +104,8 @@ fun SFPResultAddScreen(
     ) {
         when (categoriesResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(alpha = 0.7f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
-
             is ApiResponse.Success -> {
                 val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                     ?: listOf()
@@ -355,24 +348,10 @@ fun SFPResultAddScreen(
 
     when (sfpAddState) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.7f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.7f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
             LaunchedEffect(Unit) {
                 sfpResultsViewModel.clearCreateResponse()
                 sfpResultsViewModel.setShouldRefetch(true)

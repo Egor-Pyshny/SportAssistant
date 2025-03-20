@@ -58,9 +58,11 @@ import com.example.sportassistant.presentation.ant_params_graphic.domain.Anthrop
 import com.example.sportassistant.presentation.ant_params_graphic.viewmodel.AnthropometricParamsGraphicViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
+import com.example.sportassistant.presentation.ofp_graphic.domain.OFPResultsGraphicUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
@@ -102,7 +104,7 @@ fun AnthropometricParamsGraphicScreen(
         initialSelectedEndDateMillis = null,
         initialDisplayMode = DisplayMode.Input,
     )
-
+    var prevState = AnthropometricParamsGraphicUiState()
     var showDialog by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
@@ -330,14 +332,7 @@ fun AnthropometricParamsGraphicScreen(
         ) {
             when (getGraphicData) {
                 is ApiResponse.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White.copy(alpha = 0.7f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+                    Loader()
                 }
                 is ApiResponse.Success -> {
                     val points = (getGraphicData as ApiResponse.Success<List<GraphicPoint>?>).data ?: listOf()
@@ -428,11 +423,14 @@ fun AnthropometricParamsGraphicScreen(
             StyledButton(
                 text = stringResource(R.string.draw_graphic),
                 onClick = {
-                    anthropometricParamsViewModel.getGraphicData(
-                        startDate = uiState.startDate!!,
-                        endDate = uiState.endDate!!,
-                        category = uiState.measure!!,
-                    )
+                    if (isModified(prevState, uiState)) {
+                        prevState = uiState
+                        anthropometricParamsViewModel.getGraphicData(
+                            startDate = uiState.startDate!!,
+                            endDate = uiState.endDate!!,
+                            category = uiState.measure!!,
+                        )
+                    }
                 },
                 isEnabled = true,
                 trailingIcon = R.drawable.line_chart,
@@ -460,6 +458,12 @@ fun AnthropometricParamsGraphicScreen(
             )
         }
     }
+}
+
+private fun isModified(prevState: AnthropometricParamsGraphicUiState, uiState: AnthropometricParamsGraphicUiState): Boolean {
+    return (prevState.measure != uiState.measure
+            || prevState.endDate != uiState.endDate
+            || prevState.startDate != uiState.startDate)
 }
 
 private fun isAllFilled(state: AnthropometricParamsGraphicUiState): Boolean {

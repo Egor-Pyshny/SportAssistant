@@ -55,6 +55,7 @@ import com.example.sportassistant.presentation.note_add.ui.NoteAddScreen
 import com.example.sportassistant.presentation.note_info.ui.NoteInfoScreen
 import com.example.sportassistant.presentation.notes.ui.NotesScreen
 import com.example.sportassistant.presentation.notes.viewmodel.NotesViewModel
+import com.example.sportassistant.presentation.ofp_graphic.ui.OFPResultsGraphicScreen
 import com.example.sportassistant.presentation.ofp_result_add.ui.OFPResultAddScreen
 import com.example.sportassistant.presentation.ofp_results.ui.OFPResultsScreen
 import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
@@ -71,6 +72,7 @@ import com.example.sportassistant.presentation.registration.ui.RegistrationCreat
 import com.example.sportassistant.presentation.registration.ui.RegistrationProfileScreen
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
 import com.example.sportassistant.presentation.settings.ui.SettingsScreen
+import com.example.sportassistant.presentation.sfp_graphic.ui.SFPResultsGraphicScreen
 import com.example.sportassistant.presentation.sfp_result_add.ui.SFPResultAddScreen
 import com.example.sportassistant.presentation.sfp_results.ui.SFPResultsScreen
 import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
@@ -449,6 +451,16 @@ fun HomeNavGraph(
         composable(route = HomeRoutes.AnthropometricParamsGraphic.route) {
             AnthropometricParamsGraphicScreen(
                 anthropometricParamsViewModel = anthropometricParamsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.OFPResultsGraphic.route) {
+            OFPResultsGraphicScreen(
+                ofpResultsViewModel = ofpResultsViewModel,
+            )
+        }
+        composable(route = HomeRoutes.SFPResultsGraphic.route) {
+            SFPResultsGraphicScreen(
+                sfpResultsViewModel = sfpResultsViewModel,
             )
         }
     }
