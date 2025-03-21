@@ -26,6 +26,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.GraphicPoint
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
@@ -65,6 +67,7 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.PopupProperties
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -76,13 +79,15 @@ import java.time.temporal.ChronoUnit
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SFPResultsGraphicScreen(
-    sfpResultsViewModel: SFPResultsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    sfpResultsGraphicViewModel: SFPResultsGraphicViewModel = viewModel(),
+    sfpResultsGraphicViewModel: SFPResultsGraphicViewModel = koinViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        sfpResultsGraphicViewModel.getCategories()
+    }
     val uiState by sfpResultsGraphicViewModel.uiState.collectAsState()
-    val getGraphicData by sfpResultsViewModel.getGraphicDataResponse.observeAsState()
+    val getGraphicData by sfpResultsGraphicViewModel.getGraphicDataResponse.observeAsState()
     var expandedDate by remember { mutableStateOf(false) }
     var expandedCategory by remember { mutableStateOf(false) }
     var missingDate by remember { mutableStateOf(false) }
@@ -92,12 +97,12 @@ fun SFPResultsGraphicScreen(
         initialDisplayMode = DisplayMode.Input,
     )
     var prevState = SFPResultsGraphicUiState()
-    val categoriesResponse by sfpResultsViewModel.getCategoriesResponse.observeAsState()
+    val categoriesResponse by sfpResultsGraphicViewModel.getCategoriesResponse.observeAsState()
     var showDialog by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         onDispose {
-            sfpResultsViewModel.clearGraphicDataResponse()
+            sfpResultsGraphicViewModel.clearGraphicDataResponse()
         }
     }
     Column(
@@ -297,6 +302,10 @@ fun SFPResultsGraphicScreen(
                     is ApiResponse.Success -> {
                         val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                             ?: listOf()
+                        val state = ApplicationState.getState()
+                        if (state.SFPCategories == null) {
+                            ApplicationState.setSFPCategories(categories)
+                        }
                         categories.forEach { option ->
                             DropdownMenuItem(
                                 text = {
@@ -424,7 +433,7 @@ fun SFPResultsGraphicScreen(
                 onClick = {
                     if (isModified(prevState, uiState)) {
                         prevState = uiState
-                        sfpResultsViewModel.getGraphicData(
+                        sfpResultsGraphicViewModel.getGraphicData(
                             startDate = uiState.startDate!!,
                             endDate = uiState.endDate!!,
                             categoryId = uiState.selectedCategoryId!!,

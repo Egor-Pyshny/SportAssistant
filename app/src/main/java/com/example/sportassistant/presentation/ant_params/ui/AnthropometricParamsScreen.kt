@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,17 +26,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
-import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.AnthropometricParams
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.components.ListItem
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
@@ -45,9 +46,9 @@ import java.util.UUID
 @Composable
 fun AnthropometricParamsScreen(
     navController: NavController,
-    anthropometricParamsViewModel: AnthropometricParamsViewModel,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
+    anthropometricParamsViewModel: AnthropometricParamsViewModel = koinViewModel(),
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     LaunchedEffect(Unit) {
@@ -74,13 +75,7 @@ fun AnthropometricParamsScreen(
         )
         when (anthropometricParamsResultsResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (anthropometricParamsResultsResponse as ApiResponse.Success<List<AnthropometricParams>?>).data
@@ -104,11 +99,10 @@ fun AnthropometricParamsScreen(
                             .verticalScroll(rememberScrollState()),
                         items = listItems,
                         onClick = { index, title ->
-                            anthropometricParamsViewModel.setSelectedAnthropometricParams(data[index])
+                            ApplicationState.setSelectedAnthropometricParams(data[index])
                             val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
                             val date = data[index].date.format(dateFormatter)
                             titleViewModel.setTitle(date)
-                            anthropometricParamsViewModel.getAnthropometricParamsInfo(data[index].id)
                             navController.navigate(HomeRoutes.AnthropometricParamsInfo.route)
                         },
                         menuItems = listOf(
@@ -161,7 +155,6 @@ private fun getResults(
                 return mutableStateOf(ApiResponse.Loading)
             }
             is ApiResponse.Success -> {
-                anthropometricParamsViewModel.setShouldRefetch(true)
                 anthropometricParamsViewModel.clearDeleteResponse()
                 anthropometricParamsViewModel.getAnthropometricParams()
             }

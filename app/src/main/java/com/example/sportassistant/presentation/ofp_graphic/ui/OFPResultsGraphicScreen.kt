@@ -28,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.GraphicPoint
@@ -71,6 +73,7 @@ import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
 import ir.ehsannarmani.compose_charts.models.PopupProperties
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -82,13 +85,15 @@ import java.time.temporal.ChronoUnit
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OFPResultsGraphicScreen(
-    ofpResultsViewModel: OFPResultsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    ofpResultsGraphicViewModel: OFPResultsGraphicViewModel = viewModel(),
+    ofpResultsGraphicViewModel: OFPResultsGraphicViewModel = koinViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        ofpResultsGraphicViewModel.getCategories()
+    }
     val uiState by ofpResultsGraphicViewModel.uiState.collectAsState()
-    val getGraphicData by ofpResultsViewModel.getGraphicDataResponse.observeAsState()
+    val getGraphicData by ofpResultsGraphicViewModel.getGraphicDataResponse.observeAsState()
     var expandedDate by remember { mutableStateOf(false) }
     var expandedCategory by remember { mutableStateOf(false) }
     var missingDate by remember { mutableStateOf(false) }
@@ -98,12 +103,12 @@ fun OFPResultsGraphicScreen(
         initialDisplayMode = DisplayMode.Input,
     )
     var prevState = OFPResultsGraphicUiState()
-    val categoriesResponse by ofpResultsViewModel.getCategoriesResponse.observeAsState()
+    val categoriesResponse by ofpResultsGraphicViewModel.getCategoriesResponse.observeAsState()
     var showDialog by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
         onDispose {
-            ofpResultsViewModel.clearGraphicDataResponse()
+            ofpResultsGraphicViewModel.clearGraphicDataResponse()
         }
     }
     Column(
@@ -303,6 +308,10 @@ fun OFPResultsGraphicScreen(
                     is ApiResponse.Success -> {
                         val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                             ?: listOf()
+                        val state = ApplicationState.getState()
+                        if (state.OFPCategories == null) {
+                            ApplicationState.setOFPCategories(categories)
+                        }
                         categories.forEach { option ->
                             DropdownMenuItem(
                                 text = {
@@ -430,7 +439,7 @@ fun OFPResultsGraphicScreen(
                 onClick = {
                     if (isModified(prevState, uiState)) {
                         prevState = uiState
-                        ofpResultsViewModel.getGraphicData(
+                        ofpResultsGraphicViewModel.getGraphicData(
                             startDate = uiState.startDate!!,
                             endDate = uiState.endDate!!,
                             categoryId = uiState.selectedCategoryId!!,

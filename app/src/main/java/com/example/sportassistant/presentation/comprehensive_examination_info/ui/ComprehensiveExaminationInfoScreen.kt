@@ -40,17 +40,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.comprehensive_examination.requests.ComprehensiveExaminationCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.ComprehensiveExamination
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.comprehensive_examination.viewmodel.ComprehensiveExaminationViewModel
 import com.example.sportassistant.presentation.comprehensive_examination_add.domain.ComprehensiveExaminationUiState
 import com.example.sportassistant.presentation.comprehensive_examination_add.viewmodel.ComprehensiveExaminationAddViewModel
+import com.example.sportassistant.presentation.comprehensive_examination_info.viewmodel.ComprehensiveExaminationInfoViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -61,13 +65,16 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComprehensiveExaminationInfoScreen(
-    comprehensiveExaminationViewModel: ComprehensiveExaminationViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    comprehensiveExaminationInfoViewModel: ComprehensiveExaminationAddViewModel = viewModel(),
+    comprehensiveExaminationInfoViewModel: ComprehensiveExaminationInfoViewModel = koinViewModel(),
 ) {
-    val comprehensiveExaminationInfoResponse by comprehensiveExaminationViewModel.getComprehensiveExaminationInfoResponse.observeAsState()
-    val comprehensiveExaminationUpdateResponse by comprehensiveExaminationViewModel.updateComprehensiveExaminationResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        comprehensiveExaminationInfoViewModel.getComprehensiveExaminationInfo(state.comprehensiveExamination!!.id)
+    }
+    val comprehensiveExaminationInfoResponse by comprehensiveExaminationInfoViewModel.getComprehensiveExaminationInfoResponse.observeAsState()
+    val comprehensiveExaminationUpdateResponse by comprehensiveExaminationInfoViewModel.updateComprehensiveExaminationResponse.observeAsState()
     var prevState by remember { mutableStateOf<ComprehensiveExamination?>(null) }
     val uiState by comprehensiveExaminationInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -88,13 +95,7 @@ fun ComprehensiveExaminationInfoScreen(
     ) {
         when (comprehensiveExaminationInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -273,7 +274,7 @@ fun ComprehensiveExaminationInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                comprehensiveExaminationViewModel.updateComprehensiveExamination(
+                                comprehensiveExaminationInfoViewModel.updateComprehensiveExamination(
                                     data = ComprehensiveExaminationCreateRequest(
                                         date = uiState.date!!,
                                         institution = uiState.institution,
@@ -312,13 +313,7 @@ fun ComprehensiveExaminationInfoScreen(
 
     when (comprehensiveExaminationUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -331,8 +326,7 @@ fun ComprehensiveExaminationInfoScreen(
                     recommendations = uiState.recommendations,
                 )
                 prevState = newState
-                comprehensiveExaminationViewModel.setShouldRefetch(true)
-                comprehensiveExaminationViewModel.clearUpdateResponse()
+                comprehensiveExaminationInfoViewModel.clearUpdateResponse()
             }
         }
         else -> {}

@@ -43,6 +43,7 @@ import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.notes.requests.NoteCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
@@ -56,6 +57,7 @@ import com.example.sportassistant.presentation.note_add.viewmodel.NotesAddViewMo
 import com.example.sportassistant.presentation.notes.viewmodel.NotesViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -67,13 +69,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun NoteAddScreen(
     navController: NavController,
-    notesViewModel: NotesViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    notesAddViewModel: NotesAddViewModel = viewModel(),
+    notesAddViewModel: NotesAddViewModel = koinViewModel(),
 ) {
     val uiState by notesAddViewModel.uiState.collectAsState()
-    val noteAddState by notesViewModel.noteAddResponse.observeAsState()
+    val noteAddState by notesAddViewModel.noteAddResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
@@ -210,7 +211,7 @@ fun NoteAddScreen(
                 StyledButton(
                     text = stringResource(R.string.save_button_text),
                     onClick = {
-                        notesViewModel.addNote(
+                        notesAddViewModel.addNote(
                             NoteCreateRequest(
                                 date = uiState.date!!,
                                 text = uiState.text,
@@ -242,8 +243,6 @@ fun NoteAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                notesViewModel.clearCreateResponse()
-                notesViewModel.setShouldRefetch(true)
                 navController.navigate(HomeRoutes.Notes.route) {
                     popUpTo(HomeRoutes.Notes.route) {
                         inclusive = true

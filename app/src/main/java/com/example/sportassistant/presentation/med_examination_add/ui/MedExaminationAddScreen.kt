@@ -54,6 +54,7 @@ import com.example.sportassistant.presentation.med_examination_add.domain.MedExa
 import com.example.sportassistant.presentation.med_examination_add.viewmodel.MedExaminationAddViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -65,13 +66,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun MedExaminationAddScreen(
     navController: NavController,
-    medExaminationViewModel: MedExaminationViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    medExaminationAddViewModel: MedExaminationAddViewModel = viewModel(),
+    medExaminationAddViewModel: MedExaminationAddViewModel = koinViewModel(),
 ) {
     val uiState by medExaminationAddViewModel.uiState.collectAsState()
-    val medExaminationAddState by medExaminationViewModel.medExaminationAddResponse.observeAsState()
+    val medExaminationAddState by medExaminationAddViewModel.medExaminationAddResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
@@ -238,7 +238,7 @@ fun MedExaminationAddScreen(
                 StyledButton(
                     text = stringResource(R.string.save_button_text),
                     onClick = {
-                        medExaminationViewModel.addMedExamination(
+                        medExaminationAddViewModel.addMedExamination(
                             MedExaminationCreateRequest(
                                 date = uiState.date!!,
                                 institution = uiState.institution,
@@ -272,8 +272,6 @@ fun MedExaminationAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                medExaminationViewModel.clearCreateResponse()
-                medExaminationViewModel.setShouldRefetch(true)
                 navController.navigate(HomeRoutes.MedExamination.route) {
                     popUpTo(HomeRoutes.MedExamination.route) {
                         inclusive = true

@@ -28,10 +28,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.TrainingCamp
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.components.ListItem
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
@@ -46,7 +48,6 @@ fun TrainingCampsCalendarMainScreen(
     navController: NavController,
     tabsViewModel: TabsViewModel,
     trainingCampsViewModel: TrainingCampsViewModel,
-    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     onAddClick: () -> Unit,
@@ -65,13 +66,7 @@ fun TrainingCampsCalendarMainScreen(
     ) {
         when (campsResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (campsResponse as ApiResponse.Success<List<TrainingCamp>?>).data
@@ -96,14 +91,13 @@ fun TrainingCampsCalendarMainScreen(
                             .verticalScroll(rememberScrollState()),
                         items = listItems,
                         onClick = { index, title ->
-                            trainingCampsViewModel.setSelectedCamp(data[index])
+                            ApplicationState.setSelectedCamp(data[index])
                             onClick()
                         },
                         menuItems = listOf(
                             MenuItem(
                                 text = stringResource(R.string.get_detailed_info),
                                 onClick = {item ->
-                                    trainingCampsViewModel.getCamp(item.key as UUID)
                                     navController.navigate(HomeRoutes.TrainingCampsInfo.route)
                                 }
                             ),
@@ -156,9 +150,6 @@ private fun getCamps(
             }
             is ApiResponse.Success -> {
                 trainingCampsViewModel.clearDeleteResponse()
-                trainingCampsViewModel.shouldUpdateNext(true)
-                trainingCampsViewModel.shouldUpdateCurrent(true)
-                trainingCampsViewModel.setLastFetched(null)
                 trainingCampsViewModel.getCamps(tabIndex)
             }
             is ApiResponse.Failure -> {

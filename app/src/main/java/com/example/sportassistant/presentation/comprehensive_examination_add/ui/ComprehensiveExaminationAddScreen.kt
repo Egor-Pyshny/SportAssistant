@@ -54,6 +54,7 @@ import com.example.sportassistant.presentation.comprehensive_examination_add.dom
 import com.example.sportassistant.presentation.comprehensive_examination_add.viewmodel.ComprehensiveExaminationAddViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -65,13 +66,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ComprehensiveExaminationAddScreen(
     navController: NavController,
-    comprehensiveExaminationViewModel: ComprehensiveExaminationViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    comprehensiveExaminationAddViewModel: ComprehensiveExaminationAddViewModel = viewModel(),
+    comprehensiveExaminationAddViewModel: ComprehensiveExaminationAddViewModel = koinViewModel(),
 ) {
     val uiState by comprehensiveExaminationAddViewModel.uiState.collectAsState()
-    val comprehensiveExaminationAddState by comprehensiveExaminationViewModel.comprehensiveExaminationAddResponse.observeAsState()
+    val comprehensiveExaminationAddState by comprehensiveExaminationAddViewModel.comprehensiveExaminationAddResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
@@ -253,7 +253,7 @@ fun ComprehensiveExaminationAddScreen(
                 StyledButton(
                     text = stringResource(R.string.save_button_text),
                     onClick = {
-                        comprehensiveExaminationViewModel.addComprehensiveExamination(
+                        comprehensiveExaminationAddViewModel.addComprehensiveExamination(
                             ComprehensiveExaminationCreateRequest(
                                 date = uiState.date!!,
                                 institution = uiState.institution,
@@ -288,8 +288,6 @@ fun ComprehensiveExaminationAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                comprehensiveExaminationViewModel.clearCreateResponse()
-                comprehensiveExaminationViewModel.setShouldRefetch(true)
                 navController.navigate(HomeRoutes.ComprehensiveExamination.route) {
                     popUpTo(HomeRoutes.ComprehensiveExamination.route) {
                         inclusive = true

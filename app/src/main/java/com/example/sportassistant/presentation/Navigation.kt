@@ -1,18 +1,11 @@
 package com.example.sportassistant.presentation
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -34,15 +27,14 @@ import com.example.sportassistant.presentation.calendar.ui.CalendarScreen
 import com.example.sportassistant.presentation.competition_add.ui.CompetitionAddScreen
 import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionAllDaysScreen
 import com.example.sportassistant.presentation.competition_day.ui.CompetitionDayScreen
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
-import com.example.sportassistant.presentation.competition_day.ui.CompetitionResultScreen
+import com.example.sportassistant.presentation.competition_result.ui.CompetitionResultScreen
 import com.example.sportassistant.presentation.competition_info.ui.CompetitionInfoScreen
 import com.example.sportassistant.presentation.comprehensive_examination.ui.ComprehensiveExaminationScreen
 import com.example.sportassistant.presentation.comprehensive_examination.viewmodel.ComprehensiveExaminationViewModel
 import com.example.sportassistant.presentation.comprehensive_examination_add.ui.ComprehensiveExaminationAddScreen
 import com.example.sportassistant.presentation.comprehensive_examination_info.ui.ComprehensiveExaminationInfoScreen
-import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarScreen
+import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionCalendarScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
@@ -79,11 +71,11 @@ import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsV
 import com.example.sportassistant.presentation.sfp_results_info.ui.SFPResultsInfoScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
 import com.example.sportassistant.presentation.theme.SportAssistantTheme
+import com.example.sportassistant.presentation.train_diary.ui.TrainDiaryMainScreen
 import com.example.sportassistant.presentation.trainig_camps_add.ui.TrainingCampAddScreen
-import com.example.sportassistant.presentation.training_camp_info_info.ui.TrainingCampInfoScreen
+import com.example.sportassistant.presentation.training_camp_info.ui.TrainingCampInfoScreen
 import com.example.sportassistant.presentation.training_camps_calendar.ui.TrainingCampsAllDaysScreen
 import com.example.sportassistant.presentation.training_camps_calendar.ui.TrainingCampsCalendarScreen
-import com.example.sportassistant.presentation.training_camps_calendar.viewmodel.TrainingCampsViewModel
 import com.example.sportassistant.presentation.training_camps_day.ui.TrainingCampDayScreen
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
@@ -147,6 +139,11 @@ sealed class HomeRoutes {
     data object AnthropometricParamsGraphic : Route("anthropometric_params_graphic")
     data object SFPResultsGraphic : Route("sfp_results_graphic")
     data object OFPResultsGraphic : Route("ofp_results_graphic")
+    data object TrainDiary : Route("train_diary")
+    data object Sleep : Route("train_diary")
+    data object Food : Route("train_diary")
+    data object Preparations : Route("train_diary")
+    data object Activity : Route("train_diary")
 }
 
 @Composable
@@ -200,19 +197,10 @@ fun HomeNavGraph(
     titleViewModel: TitleViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    competitionViewModel: CompetitionViewModel = koinViewModel(),
-    trainingCampsViewModel: TrainingCampsViewModel = koinViewModel(),
-    ofpResultsViewModel: OFPResultsViewModel = koinViewModel(),
-    sfpResultsViewModel: SFPResultsViewModel = koinViewModel(),
-    anthropometricParamsViewModel: AnthropometricParamsViewModel = koinViewModel(),
-    notesViewModel: NotesViewModel = koinViewModel(),
-    medExaminationViewModel: MedExaminationViewModel = koinViewModel(),
-    comprehensiveExaminationViewModel: ComprehensiveExaminationViewModel = koinViewModel(),
     logout: () -> Unit,
 ) {
     val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
     val profileViewModel: ProfileViewModel = viewModel()
-    val competitionTabsViewModel: TabsViewModel = viewModel()
     val trainingCampsTabsViewModel: TabsViewModel = viewModel()
     NavHost(
         navController = navController,
@@ -267,72 +255,51 @@ fun HomeNavGraph(
         }
         composable(route = HomeRoutes.Competitions.route) {
             CompetitionCalendarScreen(
-                competitionViewModel = competitionViewModel,
-                tabsViewModel = competitionTabsViewModel,
-                titleViewModel = titleViewModel,
                 navController = navController,
             )
         }
         composable(route = HomeRoutes.TrainingCamps.route) {
             TrainingCampsCalendarScreen(
-                trainingCampsViewModel = trainingCampsViewModel,
                 tabsViewModel = trainingCampsTabsViewModel,
-                titleViewModel = titleViewModel,
                 navController = navController,
             )
         }
         composable(route = HomeRoutes.CompetitionAllDaysNav.route){
             CompetitionAllDaysScreen(
                 navController = navController,
-                competitionViewModel = competitionViewModel,
                 titleViewModel = titleViewModel,
             )
         }
         composable(route = HomeRoutes.TrainingCampsAllDaysNav.route){
             TrainingCampsAllDaysScreen(
                 navController = navController,
-                trainingCampsViewModel = trainingCampsViewModel,
                 titleViewModel = titleViewModel,
             )
         }
         composable(route = HomeRoutes.CompetitionDay.route){
-            CompetitionDayScreen(
-                competitionViewModel = competitionViewModel,
-            )
+            CompetitionDayScreen()
         }
         composable(route = HomeRoutes.TrainingCampsDay.route){
-            TrainingCampDayScreen(
-                trainingCampsViewModel = trainingCampsViewModel,
-            )
+            TrainingCampDayScreen()
         }
         composable(route = HomeRoutes.CompetitionResult.route){
-            CompetitionResultScreen(
-                competitionViewModel = competitionViewModel,
-            )
+            CompetitionResultScreen()
         }
         composable(route = HomeRoutes.CompetitionAdd.route){
             CompetitionAddScreen(
                 navController = navController,
-                titleViewModel = titleViewModel,
-                competitionViewModel = competitionViewModel,
             )
         }
         composable(route = HomeRoutes.TrainingCampsAdd.route){
             TrainingCampAddScreen(
                 navController = navController,
-                titleViewModel = titleViewModel,
-                trainingCampsViewModel = trainingCampsViewModel,
             )
         }
         composable(route = HomeRoutes.CompetitionInfo.route) {
-            CompetitionInfoScreen(
-                competitionViewModel = competitionViewModel,
-            )
+            CompetitionInfoScreen()
         }
         composable(route = HomeRoutes.TrainingCampsInfo.route) {
-            TrainingCampInfoScreen(
-                trainingCampViewModel = trainingCampsViewModel,
-            )
+            TrainingCampInfoScreen()
         }
         composable(route = HomeRoutes.Calendar.route) {
             CalendarScreen()
@@ -341,126 +308,98 @@ fun HomeNavGraph(
             OFPResultsScreen(
                 navController = navController,
                 titleViewModel = titleViewModel,
-                ofpResultsViewModel = ofpResultsViewModel,
             )
         }
         composable(route = HomeRoutes.OFPResultsAdd.route) {
             OFPResultAddScreen(
                 navController = navController,
-                titleViewModel = titleViewModel,
-                ofpResultsViewModel = ofpResultsViewModel,
             )
         }
         composable(route = HomeRoutes.OFPResultsInfo.route) {
-            OFPResultsInfoScreen(
-                ofpResultsViewModel = ofpResultsViewModel,
-            )
+            OFPResultsInfoScreen()
         }
         composable(route = HomeRoutes.SFPResults.route) {
             SFPResultsScreen(
                 navController = navController,
                 titleViewModel = titleViewModel,
-                sfpResultsViewModel = sfpResultsViewModel,
             )
         }
         composable(route = HomeRoutes.SFPResultsAdd.route) {
             SFPResultAddScreen(
                 navController = navController,
-                titleViewModel = titleViewModel,
-                sfpResultsViewModel = sfpResultsViewModel,
             )
         }
         composable(route = HomeRoutes.SFPResultsInfo.route) {
-            SFPResultsInfoScreen(
-                sfpResultsViewModel = sfpResultsViewModel,
-            )
+            SFPResultsInfoScreen()
         }
         composable(route = HomeRoutes.AnthropometricParams.route) {
             AnthropometricParamsScreen(
                 navController = navController,
                 titleViewModel = titleViewModel,
-                anthropometricParamsViewModel = anthropometricParamsViewModel,
             )
         }
         composable(route = HomeRoutes.Notes.route) {
             NotesScreen(
                 navController = navController,
                 titleViewModel = titleViewModel,
-                notesViewModel = notesViewModel,
             )
         }
         composable(route = HomeRoutes.NotesAdd.route) {
             NoteAddScreen(
                 navController = navController,
-                notesViewModel = notesViewModel,
             )
         }
         composable(route = HomeRoutes.NotesInfo.route) {
-            NoteInfoScreen(
-                noteViewModel = notesViewModel,
-            )
+            NoteInfoScreen()
         }
         composable(route = HomeRoutes.MedExamination.route) {
             MedExaminationScreen(
                 navController = navController,
                 titleViewModel = titleViewModel,
-                medExaminationViewModel = medExaminationViewModel,
             )
         }
         composable(route = HomeRoutes.MedExaminationAdd.route) {
             MedExaminationAddScreen(
                 navController = navController,
-                medExaminationViewModel = medExaminationViewModel,
             )
         }
         composable(route = HomeRoutes.MedExaminationInfo.route) {
-            MedExaminationInfoScreen(
-                medExaminationViewModel = medExaminationViewModel,
-            )
+            MedExaminationInfoScreen()
         }
         composable(route = HomeRoutes.ComprehensiveExamination.route) {
             ComprehensiveExaminationScreen(
                 navController = navController,
                 titleViewModel = titleViewModel,
-                comprehensiveExaminationViewModel = comprehensiveExaminationViewModel,
             )
         }
         composable(route = HomeRoutes.ComprehensiveExaminationAdd.route) {
             ComprehensiveExaminationAddScreen(
                 navController = navController,
-                comprehensiveExaminationViewModel = comprehensiveExaminationViewModel,
             )
         }
         composable(route = HomeRoutes.ComprehensiveExaminationInfo.route) {
-            ComprehensiveExaminationInfoScreen(
-                comprehensiveExaminationViewModel = comprehensiveExaminationViewModel,
-            )
+            ComprehensiveExaminationInfoScreen()
         }
         composable(route = HomeRoutes.AnthropometricParamsAdd.route) {
             AnthropometricParamsAddScreen(
                 navController = navController,
-                titleViewModel = titleViewModel,
-                anthropometricParamsViewModel = anthropometricParamsViewModel,
             )
         }
         composable(route = HomeRoutes.AnthropometricParamsInfo.route) {
-            AnthropometricParamsInfoScreen(
-                anthropometricParamsViewModel = anthropometricParamsViewModel,
-            )
+            AnthropometricParamsInfoScreen()
         }
         composable(route = HomeRoutes.AnthropometricParamsGraphic.route) {
-            AnthropometricParamsGraphicScreen(
-                anthropometricParamsViewModel = anthropometricParamsViewModel,
-            )
+            AnthropometricParamsGraphicScreen()
         }
         composable(route = HomeRoutes.OFPResultsGraphic.route) {
-            OFPResultsGraphicScreen(
-                ofpResultsViewModel = ofpResultsViewModel,
-            )
+            OFPResultsGraphicScreen()
         }
         composable(route = HomeRoutes.SFPResultsGraphic.route) {
-            SFPResultsGraphicScreen(
-                sfpResultsViewModel = sfpResultsViewModel,
+            SFPResultsGraphicScreen()
+        }
+        composable(route = HomeRoutes.TrainDiary.route) {
+            TrainDiaryMainScreen(
+                navController = navController,
             )
         }
     }

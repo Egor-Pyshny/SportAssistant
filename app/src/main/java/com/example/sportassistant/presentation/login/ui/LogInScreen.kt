@@ -31,6 +31,7 @@ import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -148,13 +149,7 @@ fun LogInScreen(
 
     when (loginState) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             Box(

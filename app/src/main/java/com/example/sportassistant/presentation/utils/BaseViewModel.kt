@@ -28,4 +28,12 @@ open class BaseViewModel : ViewModel() {
             }
         }
     }
+
+    fun cancelRequest() {
+        mJob?.let {
+            if (it.isActive) {
+                it.cancel()
+            }
+        }
+    }
 }

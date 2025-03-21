@@ -11,19 +11,17 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.sportassistant.presentation.HomeRoutes
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.components.TopTabsNavigation
-import com.example.sportassistant.presentation.homemain.ui.CompetitionCalendarMainScreen
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.training_camps_calendar.viewmodel.TrainingCampsViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TrainingCampsCalendarScreen(
-    trainingCampsViewModel: TrainingCampsViewModel,
-    titleViewModel: TitleViewModel,
     tabsViewModel: TabsViewModel,
     navController: NavHostController,
+    trainingCampsViewModel: TrainingCampsViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
 ) {
     Scaffold (
@@ -40,7 +38,6 @@ fun TrainingCampsCalendarScreen(
         TrainingCampsCalendarMainScreen(
             navController = navController,
             trainingCampsViewModel = trainingCampsViewModel,
-            titleViewModel = titleViewModel,
             tabsViewModel = tabsViewModel,
             modifier = Modifier.padding(
                 start = padding.calculateStartPadding(LayoutDirection.Ltr),

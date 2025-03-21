@@ -5,9 +5,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -64,6 +68,7 @@ fun HomeScreen(
             GetTopBar(
                 navController = navController,
                 titleViewModel = titleViewModel,
+                logout = logout,
             )
         },
         modifier = modifier
@@ -162,6 +167,7 @@ private fun GetTopBar(
     navController: NavHostController,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
+    logout: () -> Unit,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -217,6 +223,14 @@ private fun GetTopBar(
                             fontSize = 17.sp
                         ),
                         modifier = Modifier.padding(end=10.dp)
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = logout) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = "Выход из аккаунта"
                     )
                 }
             }

@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.homemain.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.sportassistant.presentation.competition_calendar.domain.CompetitionUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -7,19 +7,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.presentation.HomeRoutes
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.components.StyledButtonList
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
-import com.example.sportassistant.presentation.training_camps_calendar.viewmodel.TrainingCampsViewModel
 import org.koin.androidx.compose.get
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -29,22 +24,21 @@ import java.util.Locale
 @Composable
 fun TrainingCampsAllDaysScreen(
     navController: NavHostController,
-    trainingCampsViewModel: TrainingCampsViewModel,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
-    val uiState by trainingCampsViewModel.uiState.collectAsState()
+    val state = ApplicationState.getState()
     val formatter = DateTimeFormatter.ofPattern("EEEE - dd.MM.yyyy", Locale("ru"))
 
     LaunchedEffect(Unit) {
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
-        val startDate = uiState.selectedCamp?.startDate?.format(dateFormatter)
-        val endDate = uiState.selectedCamp?.endDate?.format(dateFormatter)
+        val startDate = state.camp?.startDate?.format(dateFormatter)
+        val endDate = state.camp?.endDate?.format(dateFormatter)
         titleViewModel.setTitle("$startDate - $endDate")
     }
-    val numberOfDays = ChronoUnit.DAYS.between(uiState.selectedCamp?.startDate, uiState.selectedCamp?.endDate)
-    val data = (0..numberOfDays).map { uiState.selectedCamp!!.startDate.plusDays(it) }
+    val numberOfDays = ChronoUnit.DAYS.between(state.camp?.startDate, state.camp?.endDate)
+    val data = (0..numberOfDays).map { state.camp!!.startDate.plusDays(it) }
     val items = data
         .map { date ->
             date?.format(formatter)?.replaceFirstChar { it.uppercase() } ?: ""
@@ -61,11 +55,7 @@ fun TrainingCampsAllDaysScreen(
         items = items,
         onClick = { index, title ->
             titleViewModel.setTitle(title)
-            trainingCampsViewModel.setSelectedDay(data[index])
-            trainingCampsViewModel.getCampsDay(
-                campId = uiState.selectedCamp!!.id,
-                day = data[index]
-            )
+            ApplicationState.setCampDay(data[index])
             navController.navigate(HomeRoutes.TrainingCampsDay.route)
         }
     )

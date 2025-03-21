@@ -48,6 +48,7 @@ import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.sfp_results.requests.SFPResultsCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.DatePickerHeadline
@@ -65,6 +66,7 @@ import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsV
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.getCategoryText
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -77,15 +79,16 @@ import java.util.UUID
 @Composable
 fun SFPResultAddScreen(
     navController: NavController,
-    sfpResultsViewModel: SFPResultsViewModel,
-    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    sfpResultsAddViewModel: SFPResultAddViewModel = viewModel(),
+    sfpResultsAddViewModel: SFPResultAddViewModel = koinViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        sfpResultsAddViewModel.getCategories()
+    }
     val uiState by sfpResultsAddViewModel.uiState.collectAsState()
-    val sfpAddState by sfpResultsViewModel.sfpAddResponse.observeAsState()
-    val categoriesResponse by sfpResultsViewModel.getCategoriesResponse.observeAsState()
+    val sfpAddState by sfpResultsAddViewModel.sfpAddResponse.observeAsState()
+    val categoriesResponse by sfpResultsAddViewModel.getCategoriesResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
@@ -109,6 +112,10 @@ fun SFPResultAddScreen(
             is ApiResponse.Success -> {
                 val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                     ?: listOf()
+                val state = ApplicationState.getState()
+                if (state.SFPCategories == null) {
+                    ApplicationState.setSFPCategories(categories)
+                }
                 Card(
                     modifier = modifier
                         .fillMaxWidth(),
@@ -314,7 +321,7 @@ fun SFPResultAddScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                sfpResultsViewModel.addSFPResult(
+                                sfpResultsAddViewModel.addSFPResult(
                                     SFPResultsCreateRequest(
                                         sfpCategoryId = uiState.categoryId!!,
                                         date = uiState.date!!,
@@ -341,7 +348,7 @@ fun SFPResultAddScreen(
                     }
                 }
             }
-
+            null -> { Loader() }
             else -> {}
         }
     }
@@ -353,8 +360,6 @@ fun SFPResultAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                sfpResultsViewModel.clearCreateResponse()
-                sfpResultsViewModel.setShouldRefetch(true)
                 navController.navigate(HomeRoutes.SFPResults.route) {
                     popUpTo(HomeRoutes.SFPResults.route) {
                         inclusive = true

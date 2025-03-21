@@ -53,6 +53,7 @@ fun HomeMainScreen(
                     StyledButtonListItem (
                         text = entry.value,
                         onClick = {
+                            navController.navigate(entry.key.route)
                             Log.d("Navigation", "to -> ${entry.key.route}")
                         },
                         cornerShape = MaterialTheme.shapes.large,
@@ -76,7 +77,7 @@ fun HomeMainScreen(
     }
 }
 
-fun getBorder(index: Int, lastIndex: Int): Border {
+private fun getBorder(index: Int, lastIndex: Int): Border {
     if (index == lastIndex - 1) {
         return Border.None
     }
@@ -84,7 +85,7 @@ fun getBorder(index: Int, lastIndex: Int): Border {
 }
 
 @Composable
-fun getCornerShape(index: Int, lastIndex: Int): CornerBasedShape {
+private fun getCornerShape(index: Int, lastIndex: Int): CornerBasedShape {
     if (index == 0) {
         return MaterialTheme.shapes.large.copy(
             bottomEnd = CornerSize(0.dp),
@@ -112,6 +113,6 @@ private fun getRouteForMenuItemMap(): HashMap<Route, String> {
         HomeRoutes.MedExamination to stringResource(R.string.home_list_item_med_exam),
         HomeRoutes.ComprehensiveExamination to stringResource(R.string.home_list_item_complex_exam),
         HomeRoutes.Notes to stringResource(R.string.home_list_item_note),
-        Route("train_diary") to stringResource(R.string.home_list_item_train_diary)
+        HomeRoutes.TrainDiary to stringResource(R.string.home_list_item_train_diary)
     )
 }

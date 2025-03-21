@@ -27,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.MedExamination
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.ListItem
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
@@ -37,6 +39,7 @@ import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.med_examination.viewmodel.MedExaminationViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
@@ -44,9 +47,9 @@ import java.util.UUID
 @Composable
 fun MedExaminationScreen(
     navController: NavController,
-    medExaminationViewModel: MedExaminationViewModel,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
+    medExaminationViewModel: MedExaminationViewModel = koinViewModel(),
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     LaunchedEffect(Unit) {
@@ -58,13 +61,7 @@ fun MedExaminationScreen(
     ) {
         when (medExaminationResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (medExaminationResponse as ApiResponse.Success<List<MedExamination>?>).data
@@ -88,11 +85,10 @@ fun MedExaminationScreen(
                             .verticalScroll(rememberScrollState()),
                         items = listItems,
                         onClick = { index, title ->
-                            medExaminationViewModel.setSelectedMedExamination(data[index])
+                            ApplicationState.setSelectedMedExamination(data[index])
                             val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
                             val date = data[index].date.format(dateFormatter)
                             titleViewModel.setTitle(date)
-                            medExaminationViewModel.getMedExaminationInfo(data[index].id)
                             navController.navigate(HomeRoutes.MedExaminationInfo.route)
                         },
                         menuItems = listOf(
@@ -145,7 +141,6 @@ private fun getResults(
                 return mutableStateOf(ApiResponse.Loading)
             }
             is ApiResponse.Success -> {
-                medExaminationViewModel.setShouldRefetch(true)
                 medExaminationViewModel.clearDeleteResponse()
                 medExaminationViewModel.getMedExaminations()
             }

@@ -1,6 +1,5 @@
-package com.example.sportassistant.presentation.competition_day.ui
+package com.example.sportassistant.presentation.competition_result.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,43 +23,44 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
-import com.example.sportassistant.data.schemas.competition_day.requests.CompetitionDayUpdateRequest
 import com.example.sportassistant.data.schemas.competition_result.requests.CompetitionResultUpdateRequest
-import com.example.sportassistant.domain.model.CompetitionDay
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CompetitionResult
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
-import com.example.sportassistant.presentation.competition_day.domain.CompetitionDayUiState
-import com.example.sportassistant.presentation.competition_day.domain.CompetitionResultUiState
-import com.example.sportassistant.presentation.competition_day.viewmodel.CompetitionResultViewModel
+import com.example.sportassistant.presentation.competition_result.domain.CompetitionResultUiState
+import com.example.sportassistant.presentation.competition_result.viewmodel.CompetitionResultViewModel
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun CompetitionResultScreen(
-    competitionViewModel: CompetitionViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    competitionDayViewModel: CompetitionResultViewModel = viewModel(),
+    competitionResultViewModel: CompetitionResultViewModel = koinViewModel(),
 ) {
-    val competitionUpdateResultResponse by competitionViewModel.updateCompetitionResultResponse.observeAsState()
-    val competitionResultResponse by competitionViewModel.getCompetitionResultResponse.observeAsState()
-    val uiState by competitionDayViewModel.uiState.collectAsState()
-    val competitionUiState by competitionViewModel.uiState.collectAsState()
-    var prevState by remember { mutableStateOf<CompetitionResultUiState>(
-        CompetitionResultUiState(
-            notes = "",
-            result = "",
-        ))
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        competitionResultViewModel.getCompetitionResult(state.competition!!.id)
+    }
+    val competitionUpdateResultResponse by competitionResultViewModel.updateCompetitionResultResponse.observeAsState()
+    val competitionResultResponse by competitionResultViewModel.getCompetitionResultResponse.observeAsState()
+    val uiState by competitionResultViewModel.uiState.collectAsState()
+    var prevState by remember {
+        mutableStateOf<CompetitionResultUiState>(
+            CompetitionResultUiState(
+                notes = "",
+                result = "",
+            )
+        )
     }
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -72,20 +71,11 @@ fun CompetitionResultScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         when (competitionResultResponse) {
-            is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
             is ApiResponse.Success -> {
                 val data = (competitionResultResponse as ApiResponse.Success<CompetitionResult?>).data!!
                 LaunchedEffect(Unit) {
-                    competitionDayViewModel.setNotes(data.notes)
-                    competitionDayViewModel.setResult(data.results)
+                    competitionResultViewModel.setNotes(data.notes)
+                    competitionResultViewModel.setResult(data.results)
                     prevState = CompetitionResultUiState(notes = data.notes, result = data.results)
                 }
                 Card(
@@ -94,7 +84,7 @@ fun CompetitionResultScreen(
                     shape = MaterialTheme.shapes.large,
                 ) {
                     StyledCardTextField(
-                        value = competitionUiState.selectedCompetition!!.name,
+                        value = data.competitionName,
                         label = R.string.add_competition_title,
                         onValueChange = { },
                         enabled = false,
@@ -113,8 +103,8 @@ fun CompetitionResultScreen(
                     ) {
                         val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-                        val startDate = competitionUiState.selectedCompetition!!.startDate.format(formatter)
-                        val endDate = competitionUiState.selectedCompetition!!.endDate.format(formatter)
+                        val startDate = data.competitionStartDate.format(formatter)
+                        val endDate = data.competitionEndDate.format(formatter)
 
                         StyledCardTextField(
                             value = "$startDate - $endDate",
@@ -131,7 +121,7 @@ fun CompetitionResultScreen(
                     }
                     HorizontalDivider(thickness = 2.dp)
                     StyledCardTextField(
-                        value = competitionUiState.selectedCompetition!!.location,
+                        value = data.competitionLocation,
                         label = R.string.add_competition_location,
                         onValueChange = { },
                         enabled = false,
@@ -147,7 +137,7 @@ fun CompetitionResultScreen(
                         value = uiState.result,
                         label = R.string.add_competition_result,
                         onValueChange = {
-                            competitionDayViewModel.setResult(it)
+                            competitionResultViewModel.setResult(it)
                         },
                         singleLine = false,
                         maxLines = 2,
@@ -163,7 +153,7 @@ fun CompetitionResultScreen(
                         value = uiState.notes,
                         label = R.string.add_competition_notes,
                         onValueChange = {
-                            competitionDayViewModel.setNotes(it)
+                            competitionResultViewModel.setNotes(it)
                         },
                         singleLine = false,
                         maxLines = 5,
@@ -182,13 +172,13 @@ fun CompetitionResultScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                competitionViewModel.updateCompetitionResult(
+                                competitionResultViewModel.updateCompetitionResult(
                                     competitionResult = CompetitionResultUpdateRequest(
                                         id = data.id,
                                         result = uiState.result,
                                         notes = uiState.notes,
                                     ),
-                                    competitionId = competitionUiState.selectedCompetition!!.id,
+                                    competitionId = state.competition!!.id,
                                 )
                             },
                             isEnabled = true,
@@ -217,20 +207,18 @@ fun CompetitionResultScreen(
         }
     }
 
+    if (competitionResultResponse is ApiResponse.Loading) {
+        Loader()
+    }
+
     when (competitionUpdateResultResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
                 prevState = CompetitionResultUiState(notes = uiState.notes, result = uiState.result)
-                competitionViewModel.clearUpdateResultResponse()
+                competitionResultViewModel.clearUpdate()
             }
         }
         else -> {}

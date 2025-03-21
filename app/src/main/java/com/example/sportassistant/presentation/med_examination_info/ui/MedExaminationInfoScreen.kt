@@ -40,17 +40,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.med_examination.requests.MedExaminationCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.MedExamination
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.med_examination.viewmodel.MedExaminationViewModel
 import com.example.sportassistant.presentation.med_examination_add.domain.MedExaminationUiState
 import com.example.sportassistant.presentation.med_examination_add.viewmodel.MedExaminationAddViewModel
+import com.example.sportassistant.presentation.med_examination_info.viewmodel.MedExaminationInfoViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -62,13 +66,16 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedExaminationInfoScreen(
-    medExaminationViewModel: MedExaminationViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    medExaminationInfoViewModel: MedExaminationAddViewModel = viewModel(),
+    medExaminationInfoViewModel: MedExaminationInfoViewModel = koinViewModel(),
 ) {
-    val medExaminationInfoResponse by medExaminationViewModel.getMedExaminationInfoResponse.observeAsState()
-    val medExaminationUpdateResponse by medExaminationViewModel.updateMedExaminationResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        medExaminationInfoViewModel.getMedExaminationInfo(state.medExamination!!.id)
+    }
+    val medExaminationInfoResponse by medExaminationInfoViewModel.getMedExaminationInfoResponse.observeAsState()
+    val medExaminationUpdateResponse by medExaminationInfoViewModel.updateMedExaminationResponse.observeAsState()
     var prevState by remember { mutableStateOf<MedExamination?>(null) }
     val uiState by medExaminationInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -89,13 +96,7 @@ fun MedExaminationInfoScreen(
     ) {
         when (medExaminationInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -258,7 +259,7 @@ fun MedExaminationInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                medExaminationViewModel.updateMedExamination(
+                                medExaminationInfoViewModel.updateMedExamination(
                                     data = MedExaminationCreateRequest(
                                         date = uiState.date!!,
                                         institution = uiState.institution,
@@ -296,13 +297,7 @@ fun MedExaminationInfoScreen(
 
     when (medExaminationUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -314,8 +309,7 @@ fun MedExaminationInfoScreen(
                     recommendations = uiState.recommendations,
                 )
                 prevState = newState
-                medExaminationViewModel.setShouldRefetch(true)
-                medExaminationViewModel.clearUpdateResponse()
+                medExaminationInfoViewModel.clearUpdateResponse()
             }
         }
         else -> {}

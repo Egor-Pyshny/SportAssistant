@@ -1,4 +1,4 @@
-package com.example.sportassistant.presentation.homemain.ui
+package com.example.sportassistant.presentation.competition_calendar.ui
 
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -9,27 +9,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.components.TopTabsNavigation
-import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CompetitionCalendarScreen(
-    competitionViewModel: CompetitionViewModel,
-    titleViewModel: TitleViewModel,
-    tabsViewModel: TabsViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    tabsViewModel: TabsViewModel = viewModel(),
+    competitionViewModel: CompetitionViewModel = koinViewModel(),
 ) {
     Scaffold (
         topBar = {
             TopTabsNavigation(
                 tabsViewModel = tabsViewModel,
                 updateData = { index ->
+                    competitionViewModel.cancelRequest()
                     competitionViewModel.getCompetitions(index)
                 },
             )
@@ -39,7 +39,6 @@ fun CompetitionCalendarScreen(
         CompetitionCalendarMainScreen(
             navController = navController,
             competitionViewModel = competitionViewModel,
-            titleViewModel = titleViewModel,
             tabsViewModel = tabsViewModel,
             modifier = Modifier.padding(
                 start = padding.calculateStartPadding(LayoutDirection.Ltr),

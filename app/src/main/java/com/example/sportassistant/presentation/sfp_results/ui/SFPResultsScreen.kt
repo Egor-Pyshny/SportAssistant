@@ -27,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.SFPResult
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.ListItem
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
@@ -37,6 +39,7 @@ import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
@@ -44,13 +47,12 @@ import java.util.UUID
 @Composable
 fun SFPResultsScreen(
     navController: NavController,
-    sfpResultsViewModel: SFPResultsViewModel,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
+    sfpResultsViewModel: SFPResultsViewModel = koinViewModel(),
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     LaunchedEffect(Unit) {
-        sfpResultsViewModel.getCategories()
         sfpResultsViewModel.getResults()
     }
     val sfpResultsResponse by getResults(sfpResultsViewModel)
@@ -74,13 +76,7 @@ fun SFPResultsScreen(
         )
         when (sfpResultsResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (sfpResultsResponse as ApiResponse.Success<List<SFPResult>?>).data
@@ -104,11 +100,10 @@ fun SFPResultsScreen(
                             .verticalScroll(rememberScrollState()),
                         items = listItems,
                         onClick = { index, title ->
-                            sfpResultsViewModel.setSelectedSFP(data[index])
+                            ApplicationState.setSelectedSFP(data[index])
                             val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
                             val date = data[index].date.format(dateFormatter)
                             titleViewModel.setTitle(date)
-                            sfpResultsViewModel.getSFPResultInfo(data[index].id)
                             navController.navigate(HomeRoutes.SFPResultsInfo.route)
                         },
                         menuItems = listOf(
@@ -161,7 +156,6 @@ private fun getResults(
                 return mutableStateOf(ApiResponse.Loading)
             }
             is ApiResponse.Success -> {
-                sfpResultsViewModel.setShouldRefetch(true)
                 sfpResultsViewModel.clearDeleteResponse()
                 sfpResultsViewModel.getResults()
             }

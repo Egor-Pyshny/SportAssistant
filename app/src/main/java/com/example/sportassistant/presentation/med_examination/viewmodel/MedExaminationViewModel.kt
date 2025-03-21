@@ -17,26 +17,11 @@ import java.util.UUID
 class MedExaminationViewModel(
     private val medExaminationRepository: MedExaminationRepository,
 ): BaseViewModel() {
-    private val _uiState = MutableStateFlow<MedExaminationUiState>(MedExaminationUiState())
-    val uiState: StateFlow<MedExaminationUiState> = _uiState.asStateFlow()
-
-    private val _medExaminationAddResponse = MutableLiveData<ApiResponse<Void?>?>()
-    val medExaminationAddResponse = _medExaminationAddResponse
-
     private val _getMedExaminationResponse = MutableLiveData<ApiResponse<List<MedExamination>?>>()
     val getMedExaminationResponse = _getMedExaminationResponse
 
-    private val _getMedExaminationInfoResponse = MutableLiveData<ApiResponse<MedExamination?>>()
-    val getMedExaminationInfoResponse = _getMedExaminationInfoResponse
-
-    private val _updateMedExaminationResponse = MutableLiveData<ApiResponse<Void?>?>()
-    val updateMedExaminationResponse = _updateMedExaminationResponse
-
     private val _deleteMedExaminationResponse = MutableLiveData<ApiResponse<Void?>?>()
     val deleteMedExaminationResponse = _deleteMedExaminationResponse
-
-    private val _getGraphicDataResponse = MutableLiveData<ApiResponse<List<GraphicPoint>?>?>()
-    val getGraphicDataResponse = _getGraphicDataResponse
 
     fun deleteMedExamination(paramsId: UUID) = baseRequest(
         _deleteMedExaminationResponse
@@ -46,71 +31,15 @@ class MedExaminationViewModel(
         )
     }
 
-    fun clearCreateResponse() {
-        _medExaminationAddResponse.postValue(null)
-    }
-
-    fun clearGraphicDataResponse() {
-        _getGraphicDataResponse.postValue(null)
-    }
-
-    fun clearUpdateResponse() {
-        _updateMedExaminationResponse.postValue(null)
-    }
-
     fun clearDeleteResponse() {
         _deleteMedExaminationResponse.postValue(null)
     }
 
-    fun updateMedExamination(data: MedExaminationCreateRequest, paramsId: UUID) = baseRequest(
-        _updateMedExaminationResponse
-    ) {
-        medExaminationRepository.updateMedExamination(
-            data = data,
-            id = paramsId,
-        )
-    }
-
-    fun addMedExamination(data: MedExaminationCreateRequest) = baseRequest(
-        _medExaminationAddResponse
-    ) {
-        medExaminationRepository.createMedExamination(
-            data = data
-        )
-    }
-
-    fun getMedExaminationInfo(id: UUID) = baseRequest(
-        _getMedExaminationInfoResponse
-    ) {
-        medExaminationRepository.getMedExaminationInfo(
-            id = id
-        )
-    }
-
     fun getMedExaminations() {
-        if (uiState.value.shouldRefetch) {
-            uiState.value.shouldRefetch = false
-            baseRequest(
-                _getMedExaminationResponse
-            ) {
-                medExaminationRepository.getMedExaminations()
-            }
-        }
-    }
-
-    fun setSelectedMedExamination(params: MedExamination) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                selectedMedExamination = params
-            )
-        }
-    }
-
-    fun setShouldRefetch(flag: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                shouldRefetch = flag
-            )
+        baseRequest(
+            _getMedExaminationResponse
+        ) {
+            medExaminationRepository.getMedExaminations()
         }
     }
 }

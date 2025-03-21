@@ -47,21 +47,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.sfp_results.requests.SFPResultsCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.SFPResult
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.sfp_result_add.domain.SFPResultModelUiState
 import com.example.sportassistant.presentation.sfp_result_add.viewmodel.SFPResultAddViewModel
 import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
+import com.example.sportassistant.presentation.sfp_results_info.viewmodel.SFPResultInfoViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.getCategoryText
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -72,14 +76,18 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SFPResultsInfoScreen(
-    sfpResultsViewModel: SFPResultsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    sfpResultsInfoViewModel: SFPResultAddViewModel = viewModel(),
+    sfpResultsInfoViewModel: SFPResultInfoViewModel = koinViewModel(),
 ) {
-    val sfpInfoResponse by getResults(sfpResultsViewModel)
-    val sfpUpdateResponse by sfpResultsViewModel.updateSFPResultResponse.observeAsState()
-    val categoriesResponse by sfpResultsViewModel.getCategoriesResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        sfpResultsInfoViewModel.getSFPResultInfo(state.SFP!!.id)
+        sfpResultsInfoViewModel.getCategories()
+    }
+    val sfpInfoResponse by getResults(sfpResultsInfoViewModel)
+    val sfpUpdateResponse by sfpResultsInfoViewModel.updateSFPResultResponse.observeAsState()
+    val categoriesResponse by sfpResultsInfoViewModel.getCategoriesResponse.observeAsState()
     var prevState by remember { mutableStateOf<SFPResult?>(null) }
     val uiState by sfpResultsInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -100,13 +108,7 @@ fun SFPResultsInfoScreen(
     ) {
         when (sfpInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -125,6 +127,9 @@ fun SFPResultsInfoScreen(
                 }
                 val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                     ?: listOf()
+                if (state.SFPCategories == null) {
+                    ApplicationState.setSFPCategories(categories)
+                }
                 Card(
                     modifier = modifier
                         .fillMaxWidth(),
@@ -329,7 +334,7 @@ fun SFPResultsInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                sfpResultsViewModel.updateSFPResult(
+                                sfpResultsInfoViewModel.updateSFPResult(
                                     data = SFPResultsCreateRequest(
                                         sfpCategoryId = uiState.categoryId!!,
                                         date = uiState.date!!,
@@ -368,13 +373,7 @@ fun SFPResultsInfoScreen(
 
     when (sfpUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -387,8 +386,7 @@ fun SFPResultsInfoScreen(
                     goals = uiState.goals
                 )
                 prevState = newState
-                sfpResultsViewModel.setShouldRefetch(true)
-                sfpResultsViewModel.clearUpdateResponse()
+                sfpResultsInfoViewModel.clearUpdateResponse()
             }
         }
         else -> {}
@@ -398,7 +396,7 @@ fun SFPResultsInfoScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 private fun getResults(
-    sfpResultsViewModel: SFPResultsViewModel,
+    sfpResultsViewModel: SFPResultInfoViewModel,
 ): State<ApiResponse<SFPResult?>?> {
     val getCategoriesState by sfpResultsViewModel.getCategoriesResponse.observeAsState()
     val getInfoState by sfpResultsViewModel.getSFPResultInfoResponse.observeAsState()
@@ -417,6 +415,9 @@ private fun getResults(
                 }
                 else -> {throw Error()}
             }
+        }
+        null -> {
+            return mutableStateOf(ApiResponse.Loading)
         }
         else -> {throw Error()}
     }

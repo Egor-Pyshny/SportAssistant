@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.competition_info.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -38,25 +36,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.Competition
-import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
-import com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionModelViewModel
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
+import com.example.sportassistant.presentation.competition_info.viewmodel.CompetitionInfoViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -66,13 +62,12 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompetitionInfoScreen(
-    competitionViewModel: CompetitionViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    competitionInfoViewModel: CompetitionModelViewModel = viewModel(),
+    competitionInfoViewModel: CompetitionInfoViewModel = koinViewModel(),
 ) {
-    val competitionInfoResponse by competitionViewModel.getCompetitionInfoResponse.observeAsState()
-    val competitionUpdateResponse by competitionViewModel.updateCompetitionResponse.observeAsState()
+    val competitionInfoResponse by competitionInfoViewModel.getCompetitionInfoResponse.observeAsState()
+    val competitionUpdateResponse by competitionInfoViewModel.updateCompetitionResponse.observeAsState()
     var prevState by remember { mutableStateOf<Competition?>(null) }
     val uiState by competitionInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -93,13 +88,7 @@ fun CompetitionInfoScreen(
     ) {
         when (competitionInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -283,7 +272,7 @@ fun CompetitionInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                competitionViewModel.updateCompetition(
+                                competitionInfoViewModel.updateCompetition(
                                     competition = CreateCompetitionRequest(
                                         startDate = uiState.startDate!!,
                                         endDate = uiState.endDate!!,
@@ -322,13 +311,7 @@ fun CompetitionInfoScreen(
 
     when (competitionUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -341,10 +324,7 @@ fun CompetitionInfoScreen(
                     name = uiState.name
                 )
                 prevState = newState
-                competitionViewModel.shouldUpdateNext(true)
-                competitionViewModel.shouldUpdateCurrent(true)
-                competitionViewModel.setLastFetched(null)
-                competitionViewModel.clearUpdateResponse()
+                competitionInfoViewModel.clearUpdate()
             }
         }
         else -> {}

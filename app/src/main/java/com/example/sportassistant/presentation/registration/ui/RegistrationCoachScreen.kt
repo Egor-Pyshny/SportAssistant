@@ -35,6 +35,7 @@ import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.auth.requests.RegistrationRequest
 import com.example.sportassistant.domain.model.Coach
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledDropdownList
 import com.example.sportassistant.presentation.components.StyledInput
@@ -155,13 +156,7 @@ fun RegistrationCoachScreen(
     }
     when (registrationState) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             Box(

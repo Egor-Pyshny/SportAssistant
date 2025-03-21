@@ -50,6 +50,7 @@ import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.OFPResult
@@ -59,6 +60,7 @@ import com.example.sportassistant.presentation.components.DateRangePickerHeadlin
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -66,8 +68,10 @@ import com.example.sportassistant.presentation.ofp_result_add.domain.OFPResultMo
 import com.example.sportassistant.presentation.utils.getCategoryText
 import com.example.sportassistant.presentation.ofp_result_add.viewmodel.OFPResultAddViewModel
 import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
+import com.example.sportassistant.presentation.ofp_results_info.viewmodel.OFPResultInfoViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -78,14 +82,18 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OFPResultsInfoScreen(
-    ofpResultsViewModel: OFPResultsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    ofpResultsInfoViewModel: OFPResultAddViewModel = viewModel(),
+    ofpResultsInfoViewModel: OFPResultInfoViewModel = koinViewModel(),
 ) {
-    val ofpInfoResponse by getResults(ofpResultsViewModel)
-    val ofpUpdateResponse by ofpResultsViewModel.updateOFPResultResponse.observeAsState()
-    val categoriesResponse by ofpResultsViewModel.getCategoriesResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        ofpResultsInfoViewModel.getOFPResultInfo(state.OFP!!.id)
+        ofpResultsInfoViewModel.getCategories()
+    }
+    val ofpInfoResponse by getResults(ofpResultsInfoViewModel)
+    val ofpUpdateResponse by ofpResultsInfoViewModel.updateOFPResultResponse.observeAsState()
+    val categoriesResponse by ofpResultsInfoViewModel.getCategoriesResponse.observeAsState()
     var prevState by remember { mutableStateOf<OFPResult?>(null) }
     val uiState by ofpResultsInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -106,13 +114,7 @@ fun OFPResultsInfoScreen(
     ) {
         when (ofpInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -131,6 +133,9 @@ fun OFPResultsInfoScreen(
                 }
                 val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                     ?: listOf()
+                if (state.OFPCategories == null) {
+                    ApplicationState.setOFPCategories(categories)
+                }
                 Card(
                     modifier = modifier
                         .fillMaxWidth(),
@@ -335,7 +340,7 @@ fun OFPResultsInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                ofpResultsViewModel.updateOFPResult(
+                                ofpResultsInfoViewModel.updateOFPResult(
                                     data = OFPResultsCreateRequest(
                                         ofpCategoryId = uiState.categoryId!!,
                                         date = uiState.date!!,
@@ -374,13 +379,7 @@ fun OFPResultsInfoScreen(
 
     when (ofpUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -393,8 +392,7 @@ fun OFPResultsInfoScreen(
                     goals = uiState.goals
                 )
                 prevState = newState
-                ofpResultsViewModel.setShouldRefetch(true)
-                ofpResultsViewModel.clearUpdateResponse()
+                ofpResultsInfoViewModel.clearUpdateResponse()
             }
         }
         else -> {}
@@ -404,7 +402,7 @@ fun OFPResultsInfoScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 private fun getResults(
-    ofpResultsViewModel: OFPResultsViewModel,
+    ofpResultsViewModel: OFPResultInfoViewModel,
 ): State<ApiResponse<OFPResult?>?> {
     val getCategoriesState by ofpResultsViewModel.getCategoriesResponse.observeAsState()
     val getInfoState by ofpResultsViewModel.getOFPResultInfoResponse.observeAsState()
@@ -423,6 +421,9 @@ private fun getResults(
                 }
                 else -> {throw Error()}
             }
+        }
+        null -> {
+            return mutableStateOf(ApiResponse.Loading)
         }
         else -> {throw Error()}
     }

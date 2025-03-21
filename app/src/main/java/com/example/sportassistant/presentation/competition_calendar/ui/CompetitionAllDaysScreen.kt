@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.CompetitionDay
 import com.example.sportassistant.presentation.HomeRoutes
@@ -33,22 +35,21 @@ import java.util.UUID
 @Composable
 fun CompetitionAllDaysScreen(
     navController: NavHostController,
-    competitionViewModel: CompetitionViewModel,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
-    val uiState by competitionViewModel.uiState.collectAsState()
+    val state = ApplicationState.getState()
+    val selectedCompetition = state.competition
     val formatter = DateTimeFormatter.ofPattern("EEEE - dd.MM.yyyy", Locale("ru"))
-
     LaunchedEffect(Unit) {
         val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
-        val startDate = uiState.selectedCompetition?.startDate?.format(dateFormatter)
-        val endDate = uiState.selectedCompetition?.endDate?.format(dateFormatter)
+        val startDate = selectedCompetition?.startDate?.format(dateFormatter)
+        val endDate = selectedCompetition?.endDate?.format(dateFormatter)
         titleViewModel.setTitle("$startDate - $endDate")
     }
-    val numberOfDays = ChronoUnit.DAYS.between(uiState.selectedCompetition?.startDate, uiState.selectedCompetition?.endDate)
-    val data = (0..numberOfDays).map { uiState.selectedCompetition!!.startDate.plusDays(it) }
+    val numberOfDays = ChronoUnit.DAYS.between(selectedCompetition?.startDate, selectedCompetition?.endDate)
+    val data = (0..numberOfDays).map { selectedCompetition!!.startDate.plusDays(it) }
     val items = data
         .map { date ->
             date?.format(formatter)?.replaceFirstChar { it.uppercase() } ?: ""
@@ -69,15 +70,8 @@ fun CompetitionAllDaysScreen(
             titleViewModel.setTitle(title)
             if (title == resultTitle) {
                 navController.navigate(HomeRoutes.CompetitionResult.route)
-                competitionViewModel.getCompetitionResult(
-                    competitionId = uiState.selectedCompetition!!.id
-                )
             } else {
-                competitionViewModel.setSelectedDay(data[index])
-                competitionViewModel.getCompetitionDay(
-                    competitionId = uiState.selectedCompetition!!.id,
-                    day = data[index]
-                )
+                ApplicationState.setCompetitionDay(data[index])
                 navController.navigate(HomeRoutes.CompetitionDay.route)
             }
         }

@@ -51,6 +51,7 @@ import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.DatePickerHeadline
@@ -79,15 +80,16 @@ import java.util.UUID
 @Composable
 fun OFPResultAddScreen(
     navController: NavController,
-    ofpResultsViewModel: OFPResultsViewModel,
-    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
     ofpResultsAddViewModel: OFPResultAddViewModel = viewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        ofpResultsAddViewModel.getCategories()
+    }
     val uiState by ofpResultsAddViewModel.uiState.collectAsState()
-    val ofpAddState by ofpResultsViewModel.ofpAddResponse.observeAsState()
-    val categoriesResponse by ofpResultsViewModel.getCategoriesResponse.observeAsState()
+    val ofpAddState by ofpResultsAddViewModel.ofpAddResponse.observeAsState()
+    val categoriesResponse by ofpResultsAddViewModel.getCategoriesResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
@@ -111,6 +113,10 @@ fun OFPResultAddScreen(
             is ApiResponse.Success -> {
                 val categories = (categoriesResponse as ApiResponse.Success<List<CategoryModel>?>).data
                     ?: listOf()
+                val state = ApplicationState.getState()
+                if (state.OFPCategories == null) {
+                    ApplicationState.setOFPCategories(categories)
+                }
                 Card(
                     modifier = modifier
                         .fillMaxWidth(),
@@ -316,7 +322,7 @@ fun OFPResultAddScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                ofpResultsViewModel.addOFPResult(
+                                ofpResultsAddViewModel.addOFPResult(
                                     OFPResultsCreateRequest(
                                         ofpCategoryId = uiState.categoryId!!,
                                         date = uiState.date!!,
@@ -343,7 +349,7 @@ fun OFPResultAddScreen(
                     }
                 }
             }
-
+            null -> { Loader() }
             else -> {}
         }
     }
@@ -355,8 +361,6 @@ fun OFPResultAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                ofpResultsViewModel.clearCreateResponse()
-                ofpResultsViewModel.setShouldRefetch(true)
                 navController.navigate(HomeRoutes.OFPResults.route) {
                     popUpTo(HomeRoutes.OFPResults.route) {
                         inclusive = true

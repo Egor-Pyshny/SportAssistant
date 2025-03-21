@@ -1,11 +1,9 @@
 package com.example.sportassistant.presentation.ant_params_graphic.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -29,7 +26,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -38,22 +34,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
 import com.example.sportassistant.domain.model.GraphicPoint
-import com.example.sportassistant.presentation.HomeRoutes
-import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.ant_params_graphic.domain.AnthropometricParamsGraphicUiState
 import com.example.sportassistant.presentation.ant_params_graphic.viewmodel.AnthropometricParamsGraphicViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
@@ -62,11 +52,8 @@ import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
-import com.example.sportassistant.presentation.ofp_graphic.domain.OFPResultsGraphicUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import ir.ehsannarmani.compose_charts.LineChart
-import ir.ehsannarmani.compose_charts.models.AnimationMode
-import ir.ehsannarmani.compose_charts.models.DividerProperties
 import ir.ehsannarmani.compose_charts.models.DotProperties
 import ir.ehsannarmani.compose_charts.models.DrawStyle
 import ir.ehsannarmani.compose_charts.models.GridProperties
@@ -74,28 +61,26 @@ import ir.ehsannarmani.compose_charts.models.HorizontalIndicatorProperties
 import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
 import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Line
-import ir.ehsannarmani.compose_charts.models.LineProperties
 import ir.ehsannarmani.compose_charts.models.PopupProperties
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.function.DoubleConsumer
 
 
 @SuppressLint("NewApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnthropometricParamsGraphicScreen(
-    anthropometricParamsViewModel: AnthropometricParamsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    anthropometricParamsGraphicViewModel: AnthropometricParamsGraphicViewModel = viewModel(),
+    anthropometricParamsGraphicViewModel: AnthropometricParamsGraphicViewModel = koinViewModel(),
 ) {
     val uiState by anthropometricParamsGraphicViewModel.uiState.collectAsState()
-    val getGraphicData by anthropometricParamsViewModel.getGraphicDataResponse.observeAsState()
+    val getGraphicData by anthropometricParamsGraphicViewModel.getGraphicDataResponse.observeAsState()
     var expandedDate by remember { mutableStateOf(false) }
     var expandedMeasure by remember { mutableStateOf(false) }
     var missingDate by remember { mutableStateOf(false) }
@@ -109,7 +94,7 @@ fun AnthropometricParamsGraphicScreen(
 
     DisposableEffect(Unit) {
         onDispose {
-            anthropometricParamsViewModel.clearGraphicDataResponse()
+            anthropometricParamsGraphicViewModel.clearGraphicDataResponse()
         }
     }
     Column(
@@ -425,7 +410,7 @@ fun AnthropometricParamsGraphicScreen(
                 onClick = {
                     if (isModified(prevState, uiState)) {
                         prevState = uiState
-                        anthropometricParamsViewModel.getGraphicData(
+                        anthropometricParamsGraphicViewModel.getGraphicData(
                             startDate = uiState.startDate!!,
                             endDate = uiState.endDate!!,
                             category = uiState.measure!!,

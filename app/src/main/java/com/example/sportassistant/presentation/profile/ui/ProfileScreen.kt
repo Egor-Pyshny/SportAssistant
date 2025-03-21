@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.domain.model.User
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledCard
 import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoViewModel
 import com.example.sportassistant.presentation.profile.viewmodel.ProfileViewModel
@@ -40,7 +42,6 @@ fun ProfileScreen(
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     val data by infoViewModel.getMeResponse.observeAsState()
-
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(
@@ -52,15 +53,6 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         when (data) {
-            is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
             is ApiResponse.Success -> {
                 val user: User? = (data as ApiResponse.Success).data
                 if (user != null) {
@@ -84,5 +76,7 @@ fun ProfileScreen(
             else -> {}
         }
     }
-
+    if (data is ApiResponse.Loading) {
+        Loader()
+    }
 }

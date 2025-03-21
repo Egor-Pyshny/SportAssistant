@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.trainig_camps_add.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -37,26 +35,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
-import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.data.schemas.training_camps.requests.CreateTrainingCampRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.presentation.HomeRoutes
-import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
-import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.trainig_camps_add.domain.TrainingCampUiState
-import com.example.sportassistant.presentation.trainig_camps_add.viewmodel.TrainingCampViewModel
-import com.example.sportassistant.presentation.training_camps_calendar.viewmodel.TrainingCampsViewModel
+import com.example.sportassistant.presentation.trainig_camps_add.viewmodel.TrainingCampAddViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -68,14 +62,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun TrainingCampAddScreen(
     navController: NavController,
-    trainingCampsViewModel: TrainingCampsViewModel,
-    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    campAddViewModel: TrainingCampViewModel = viewModel(),
+    campAddViewModel: TrainingCampAddViewModel = koinViewModel(),
 ) {
     val uiState by campAddViewModel.uiState.collectAsState()
-    val campAddState by trainingCampsViewModel.campAddResponse.observeAsState()
+    val campAddState by campAddViewModel.campAddResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val dateRangePickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = System.currentTimeMillis(),
@@ -259,7 +251,7 @@ fun TrainingCampAddScreen(
                 StyledButton(
                     text = stringResource(R.string.save_button_text),
                     onClick = {
-                        trainingCampsViewModel.createCamp(
+                        campAddViewModel.createCamp(
                             CreateTrainingCampRequest(
                                 startDate = uiState.startDate!!,
                                 endDate = uiState.endDate!!,
@@ -294,10 +286,6 @@ fun TrainingCampAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                trainingCampsViewModel.shouldUpdateNext(true)
-                trainingCampsViewModel.shouldUpdateCurrent(true)
-                trainingCampsViewModel.setLastFetched(null)
-                trainingCampsViewModel.clearCreateResponse()
                 navController.navigate(HomeRoutes.TrainingCamps.route) {
                     popUpTo(HomeRoutes.TrainingCamps.route) {
                         inclusive = true

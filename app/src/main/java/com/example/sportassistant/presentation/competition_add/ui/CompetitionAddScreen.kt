@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.competition_add.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -42,9 +40,10 @@ import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
-import com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionModelViewModel
+import com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionAddViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
 import com.example.sportassistant.presentation.components.Loader
@@ -54,6 +53,7 @@ import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -65,14 +65,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun CompetitionAddScreen(
     navController: NavController,
-    competitionViewModel: CompetitionViewModel,
-    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    competitionAddViewModel: CompetitionModelViewModel = viewModel(),
+    competitionAddViewModel: CompetitionAddViewModel = koinViewModel(),
 ) {
     val uiState by competitionAddViewModel.uiState.collectAsState()
-    val competitionAddState by competitionViewModel.competitionsAddResponse.observeAsState()
+    val competitionAddState by competitionAddViewModel.competitionsAddResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val dateRangePickerState = rememberDateRangePickerState(
         initialSelectedStartDateMillis = System.currentTimeMillis(),
@@ -255,7 +253,7 @@ fun CompetitionAddScreen(
                 StyledButton(
                     text = stringResource(R.string.save_button_text),
                     onClick = {
-                        competitionViewModel.createCompetition(
+                        competitionAddViewModel.createCompetition(
                             CreateCompetitionRequest(
                                 startDate = uiState.startDate!!,
                                 endDate = uiState.endDate!!,
@@ -290,10 +288,6 @@ fun CompetitionAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                competitionViewModel.shouldUpdateNext(true)
-                competitionViewModel.shouldUpdateCurrent(true)
-                competitionViewModel.setLastFetched(null)
-                competitionViewModel.clearCreateResponse()
                 navController.navigate(HomeRoutes.Competitions.route){
                     popUpTo(HomeRoutes.Competitions.route) {
                         inclusive = true

@@ -50,6 +50,10 @@
     <string name="add_note">Новое примечание</string>
     <string name="add_ant_params">Новые антропометрические данные</string>
     <string name="competition_result_title">Результаты</string>
+    <string name="diary_list_item_sleep">Сон</string>
+    <string name="diary_list_item_food">Дневник питания</string>
+    <string name="diary_list_item_preparations">Этапы подготовки</string>
+    <string name="diary_list_item_activity">Активность в течении дня</string>
     <string name="home_list_item_competition_calendar">Календарь соревнований</string>
     <string name="home_list_item_working_process">Учебно-тренировочные сборы</string>
     <string name="home_list_item_ofp_testing">Тестирование ОФП</string>

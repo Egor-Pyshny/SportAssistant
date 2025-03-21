@@ -31,6 +31,7 @@ import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
 import com.example.sportassistant.data.schemas.user.requests.CheckEmailRequest
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -176,22 +177,10 @@ fun RegistrationCreateAccountScreen(
 
     when (checkEmailState) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
             LaunchedEffect(Unit) {
                 onContinueRegistrationButtonClick()
                 checkEmailViewModel.resetCheckEmailResponse()

@@ -28,12 +28,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.OFPResult
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
 import com.example.sportassistant.presentation.components.ListItem
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
@@ -42,6 +44,7 @@ import com.example.sportassistant.presentation.ofp_result_add.viewmodel.OFPResul
 import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
@@ -49,13 +52,12 @@ import java.util.UUID
 @Composable
 fun OFPResultsScreen(
     navController: NavController,
-    ofpResultsViewModel: OFPResultsViewModel,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
+    ofpResultsViewModel: OFPResultsViewModel = koinViewModel(),
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     LaunchedEffect(Unit) {
-        ofpResultsViewModel.getCategories()
         ofpResultsViewModel.getResults()
     }
     val ofpResultsResponse by getResults(ofpResultsViewModel)
@@ -79,13 +81,7 @@ fun OFPResultsScreen(
         )
         when (ofpResultsResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (ofpResultsResponse as ApiResponse.Success<List<OFPResult>?>).data
@@ -109,11 +105,10 @@ fun OFPResultsScreen(
                             .verticalScroll(rememberScrollState()),
                         items = listItems,
                         onClick = { index, title ->
-                            ofpResultsViewModel.setSelectedOFP(data[index])
+                            ApplicationState.setSelectedOFP(data[index])
                             val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
                             val date = data[index].date.format(dateFormatter)
                             titleViewModel.setTitle(date)
-                            ofpResultsViewModel.getOFPResultInfo(data[index].id)
                             navController.navigate(HomeRoutes.OFPResultsInfo.route)
                         },
                         menuItems = listOf(
@@ -166,7 +161,6 @@ private fun getResults(
                 return mutableStateOf(ApiResponse.Loading)
             }
             is ApiResponse.Success -> {
-                ofpResultsViewModel.setShouldRefetch(true)
                 ofpResultsViewModel.clearDeleteResponse()
                 ofpResultsViewModel.getResults()
             }

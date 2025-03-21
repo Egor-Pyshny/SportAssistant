@@ -16,6 +16,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,31 +34,40 @@ import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.data.schemas.competition_day.requests.CompetitionDayUpdateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.domain.model.CompetitionDay
 import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_day.domain.CompetitionDayUiState
 import com.example.sportassistant.presentation.competition_day.viewmodel.CompetitionDayViewModel
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun CompetitionDayScreen(
-    competitionViewModel: CompetitionViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    competitionDayViewModel: CompetitionDayViewModel = viewModel(),
+    competitionDayViewModel: CompetitionDayViewModel = koinViewModel(),
 ) {
-    val competitionUpdateDayResponse by competitionViewModel.updateCompetitionDayResponse.observeAsState()
-    val competitionDayResponse by competitionViewModel.getCompetitionDayResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        competitionDayViewModel.getCompetitionDay(
+            competitionId = state.competition!!.id,
+            day = state.competitionDay!!,
+        )
+    }
+    val competitionUpdateDayResponse by competitionDayViewModel.updateCompetitionDayResponse.observeAsState()
+    val competitionDayResponse by competitionDayViewModel.getCompetitionDayResponse.observeAsState()
     val uiState by competitionDayViewModel.uiState.collectAsState()
-    val competitionUiState by competitionViewModel.uiState.collectAsState()
+    val competitionUiState by competitionDayViewModel.uiState.collectAsState()
     var prevState by remember { mutableStateOf<CompetitionDayUiState>(
         CompetitionDayUiState(
             notes = "",
@@ -74,13 +84,7 @@ fun CompetitionDayScreen(
     ) {
         when (competitionDayResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (competitionDayResponse as ApiResponse.Success<CompetitionDay?>).data!!
@@ -183,14 +187,14 @@ fun CompetitionDayScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                competitionViewModel.updateCompetitionDay(
+                                competitionDayViewModel.updateCompetitionDay(
                                     competitionDay = CompetitionDayUpdateRequest(
                                         id = data.id,
                                         result = uiState.result,
                                         notes = uiState.notes,
                                         date = data.date
                                     ),
-                                    competitionId = competitionUiState.selectedCompetition!!.id,
+                                    competitionId = state.competition!!.id,
                                 )
                             },
                             isEnabled = true,
@@ -221,18 +225,12 @@ fun CompetitionDayScreen(
 
     when (competitionUpdateDayResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
                 prevState = CompetitionDayUiState(notes = uiState.notes, result = uiState.result)
-                competitionViewModel.clearUpdateDayResponse()
+                competitionDayViewModel.clearUpdate()
             }
         }
         else -> {}

@@ -47,16 +47,19 @@ import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.ant_params.requests.AnthropometricParamsCreateRequest
 import com.example.sportassistant.data.schemas.ofp_results.requests.OFPResultsCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.AnthropometricParams
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.OFPResult
 import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.ant_params_add.domain.AnthropometricParamsUiState
 import com.example.sportassistant.presentation.ant_params_add.viewmodel.AnthropometricParamsAddViewModel
+import com.example.sportassistant.presentation.ant_params_info.viewmodel.AnthropometricParamsInfoViewModel
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -64,6 +67,7 @@ import com.example.sportassistant.presentation.ofp_result_add.domain.OFPResultMo
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.getCategoryText
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -74,13 +78,16 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnthropometricParamsInfoScreen(
-    anthropometricParamsViewModel: AnthropometricParamsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    anthropometricParamsInfoViewModel: AnthropometricParamsAddViewModel = viewModel(),
+    anthropometricParamsInfoViewModel: AnthropometricParamsInfoViewModel = koinViewModel(),
 ) {
-    val anthropometricParamsInfoResponse by anthropometricParamsViewModel.getAnthropometricParamsInfoResponse.observeAsState()
-    val anthropometricParamsUpdateResponse by anthropometricParamsViewModel.updateAnthropometricParamsResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        anthropometricParamsInfoViewModel.getAnthropometricParamsInfo(state.antParams!!.id)
+    }
+    val anthropometricParamsInfoResponse by anthropometricParamsInfoViewModel.getAnthropometricParamsInfoResponse.observeAsState()
+    val anthropometricParamsUpdateResponse by anthropometricParamsInfoViewModel.updateAnthropometricParamsResponse.observeAsState()
     var prevState by remember { mutableStateOf<AnthropometricParams?>(null) }
     val uiState by anthropometricParamsInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -101,13 +108,7 @@ fun AnthropometricParamsInfoScreen(
     ) {
         when (anthropometricParamsInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -295,7 +296,7 @@ fun AnthropometricParamsInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                anthropometricParamsViewModel.updateAnthropometricParams(
+                                anthropometricParamsInfoViewModel.updateAnthropometricParams(
                                     data = AnthropometricParamsCreateRequest(
                                         date = uiState.date!!,
                                         weight = uiState.weight.toFloat(),
@@ -333,13 +334,7 @@ fun AnthropometricParamsInfoScreen(
 
     when (anthropometricParamsUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -351,8 +346,7 @@ fun AnthropometricParamsInfoScreen(
                     chestCircumference = uiState.chestCircumference.toFloat(),
                 )
                 prevState = newState
-                anthropometricParamsViewModel.setShouldRefetch(true)
-                anthropometricParamsViewModel.clearUpdateResponse()
+                anthropometricParamsInfoViewModel.clearUpdateResponse()
             }
         }
         else -> {}

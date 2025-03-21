@@ -1,4 +1,4 @@
-package com.example.sportassistant.presentation.training_camp_info_info.ui
+package com.example.sportassistant.presentation.training_camp_info.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
@@ -39,22 +38,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
-import com.example.sportassistant.data.schemas.competition.requests.CreateCompetitionRequest
 import com.example.sportassistant.data.schemas.training_camps.requests.CreateTrainingCampRequest
-import com.example.sportassistant.domain.model.Competition
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.TrainingCamp
-import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
-import com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionModelViewModel
-import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.trainig_camps_add.domain.TrainingCampUiState
-import com.example.sportassistant.presentation.trainig_camps_add.viewmodel.TrainingCampViewModel
+import com.example.sportassistant.presentation.trainig_camps_add.viewmodel.TrainingCampAddViewModel
+import com.example.sportassistant.presentation.training_camp_info.viewmodel.TrainingCampInfoViewModel
 import com.example.sportassistant.presentation.training_camps_calendar.viewmodel.TrainingCampsViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -66,13 +64,16 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingCampInfoScreen(
-    trainingCampViewModel: TrainingCampsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    trainingCampInfoViewModel: TrainingCampViewModel = viewModel(),
+    trainingCampInfoViewModel: TrainingCampInfoViewModel = koinViewModel(),
 ) {
-    val campInfoResponse by trainingCampViewModel.getCampsInfoResponse.observeAsState()
-    val campUpdateResponse by trainingCampViewModel.updateCampResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        trainingCampInfoViewModel.getCamp(state.camp!!.id)
+    }
+    val campInfoResponse by trainingCampInfoViewModel.getCampsInfoResponse.observeAsState()
+    val campUpdateResponse by trainingCampInfoViewModel.updateCampResponse.observeAsState()
     var prevState by remember { mutableStateOf<TrainingCamp?>(null) }
     val uiState by trainingCampInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -93,13 +94,7 @@ fun TrainingCampInfoScreen(
     ) {
         when (campInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -283,7 +278,7 @@ fun TrainingCampInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                trainingCampViewModel.updateCamp(
+                                trainingCampInfoViewModel.updateCamp(
                                     camp = CreateTrainingCampRequest(
                                         startDate = uiState.startDate!!,
                                         endDate = uiState.endDate!!,
@@ -322,13 +317,7 @@ fun TrainingCampInfoScreen(
 
     when (campUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -341,10 +330,7 @@ fun TrainingCampInfoScreen(
                     goals = uiState.goals
                 )
                 prevState = newState
-                trainingCampViewModel.shouldUpdateNext(true)
-                trainingCampViewModel.shouldUpdateCurrent(true)
-                trainingCampViewModel.setLastFetched(null)
-                trainingCampViewModel.clearUpdateResponse()
+                trainingCampInfoViewModel.clearUpdate()
             }
         }
         else -> {}

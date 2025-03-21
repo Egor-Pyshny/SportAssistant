@@ -41,18 +41,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.notes.requests.NoteCreateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.Note
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
 import com.example.sportassistant.presentation.note_add.domain.NotesModelUiState
 import com.example.sportassistant.presentation.note_add.viewmodel.NotesAddViewModel
+import com.example.sportassistant.presentation.note_info.viewmodel.NotesInfoViewModel
 import com.example.sportassistant.presentation.notes.viewmodel.NotesViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -64,13 +68,16 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteInfoScreen(
-    noteViewModel: NotesViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    noteInfoViewModel: NotesAddViewModel = viewModel(),
+    noteInfoViewModel: NotesInfoViewModel = koinViewModel(),
 ) {
-    val noteInfoResponse by noteViewModel.getNoteInfoResponse.observeAsState()
-    val noteUpdateResponse by noteViewModel.updateNoteResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        noteInfoViewModel.getNoteInfo(state.note!!.id)
+    }
+    val noteInfoResponse by noteInfoViewModel.getNoteInfoResponse.observeAsState()
+    val noteUpdateResponse by noteInfoViewModel.updateNoteResponse.observeAsState()
     var prevState by remember { mutableStateOf<Note?>(null) }
     val uiState by noteInfoViewModel.uiState.collectAsState()
     var missingDate by remember { mutableStateOf(false) }
@@ -91,13 +98,7 @@ fun NoteInfoScreen(
     ) {
         when (noteInfoResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 LaunchedEffect(Unit) {
@@ -227,7 +228,7 @@ fun NoteInfoScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                noteViewModel.updateNote(
+                                noteInfoViewModel.updateNote(
                                     data = NoteCreateRequest(
                                         date = uiState.date!!,
                                         text = uiState.text,
@@ -263,13 +264,7 @@ fun NoteInfoScreen(
 
     when (noteUpdateResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
@@ -279,8 +274,7 @@ fun NoteInfoScreen(
                     text = uiState.text
                 )
                 prevState = newState
-                noteViewModel.setShouldRefetch(true)
-                noteViewModel.clearUpdateResponse()
+                noteInfoViewModel.clearUpdateResponse()
             }
         }
         else -> {}

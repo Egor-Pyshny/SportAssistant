@@ -30,7 +30,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.training_camp_day.requests.TrainingCampDayUpdateRequest
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.TrainingCampDay
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -39,19 +41,25 @@ import com.example.sportassistant.presentation.training_camps_day.domain.Trainin
 import com.example.sportassistant.presentation.training_camps_day.viewmodel.TrainingCampDayViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun TrainingCampDayScreen(
-    trainingCampsViewModel: TrainingCampsViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    campDayViewModel: TrainingCampDayViewModel = viewModel(),
+    campDayViewModel: TrainingCampDayViewModel = koinViewModel(),
 ) {
-    val campUpdateDayResponse by trainingCampsViewModel.updateCampDayResponse.observeAsState()
-    val campDayResponse by trainingCampsViewModel.getCampDayResponse.observeAsState()
+    val state = ApplicationState.getState()
+    LaunchedEffect(Unit) {
+        campDayViewModel.getCampsDay(
+            campId = state.camp!!.id,
+            day = state.campDay!!,
+        )
+    }
+    val campUpdateDayResponse by campDayViewModel.updateCampDayResponse.observeAsState()
+    val campDayResponse by campDayViewModel.getCampDayResponse.observeAsState()
     val uiState by campDayViewModel.uiState.collectAsState()
-    val campUiState by trainingCampsViewModel.uiState.collectAsState()
     var prevState by remember { mutableStateOf<TrainingCampDayUiState>(
         TrainingCampDayUiState(
             notes = "",
@@ -69,13 +77,7 @@ fun TrainingCampDayScreen(
     ) {
         when (campDayResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (campDayResponse as ApiResponse.Success<TrainingCampDay?>).data!!
@@ -165,14 +167,14 @@ fun TrainingCampDayScreen(
                         StyledButton(
                             text = stringResource(R.string.save_button_text),
                             onClick = {
-                                trainingCampsViewModel.updateCampDay(
+                                campDayViewModel.updateCampDay(
                                     campDay = TrainingCampDayUpdateRequest(
                                         id = data.id,
                                         goals = uiState.goals,
                                         notes = uiState.notes,
                                         date = data.date
                                     ),
-                                    campId = campUiState.selectedCamp!!.id,
+                                    campId = state.camp!!.id,
                                 )
                             },
                             isEnabled = true,
@@ -203,18 +205,12 @@ fun TrainingCampDayScreen(
 
     when (campUpdateDayResponse) {
         is ApiResponse.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Loader()
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
                 prevState = TrainingCampDayUiState(notes = uiState.notes, goals = uiState.goals)
-                trainingCampsViewModel.clearUpdateDayResponse()
+                campDayViewModel.clearUpdate()
             }
         }
         else -> {}

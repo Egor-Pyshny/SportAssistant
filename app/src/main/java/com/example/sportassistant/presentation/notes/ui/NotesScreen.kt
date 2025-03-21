@@ -27,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.Note
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.ListItem
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledButtonListWithDropDownMenu
@@ -37,6 +39,7 @@ import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.notes.viewmodel.NotesViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
@@ -44,9 +47,9 @@ import java.util.UUID
 @Composable
 fun NotesScreen(
     navController: NavController,
-    notesViewModel: NotesViewModel,
     titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
+    notesViewModel: NotesViewModel = koinViewModel(),
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
     LaunchedEffect(Unit) {
@@ -58,13 +61,7 @@ fun NotesScreen(
     ) {
         when (notesResponse) {
             is ApiResponse.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+                Loader()
             }
             is ApiResponse.Success -> {
                 val data = (notesResponse as ApiResponse.Success<List<Note>?>).data
@@ -88,11 +85,10 @@ fun NotesScreen(
                             .verticalScroll(rememberScrollState()),
                         items = listItems,
                         onClick = { index, title ->
-                            notesViewModel.setSelectedNote(data[index])
+                            ApplicationState.setSelectedNote(data[index])
                             val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale("ru"))
                             val date = data[index].date.format(dateFormatter)
                             titleViewModel.setTitle(date)
-                            notesViewModel.getNoteInfo(data[index].id)
                             navController.navigate(HomeRoutes.NotesInfo.route)
                         },
                         menuItems = listOf(
@@ -145,7 +141,6 @@ private fun getNotes(
                 return mutableStateOf(ApiResponse.Loading)
             }
             is ApiResponse.Success -> {
-                notesViewModel.setShouldRefetch(true)
                 notesViewModel.clearDeleteResponse()
                 notesViewModel.getNotes()
             }

@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.ant_params_add.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
@@ -38,13 +36,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.ant_params.requests.AnthropometricParamsCreateRequest
 import com.example.sportassistant.presentation.HomeRoutes
-import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.ant_params_add.domain.AnthropometricParamsUiState
 import com.example.sportassistant.presentation.ant_params_add.viewmodel.AnthropometricParamsAddViewModel
 import com.example.sportassistant.presentation.components.DatePickerHeadline
@@ -54,9 +50,9 @@ import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
-import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -68,14 +64,12 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AnthropometricParamsAddScreen(
     navController: NavController,
-    anthropometricParamsViewModel: AnthropometricParamsViewModel,
-    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    anthropometricParamsAddViewModel: AnthropometricParamsAddViewModel = viewModel(),
+    anthropometricParamsAddViewModel: AnthropometricParamsAddViewModel = koinViewModel(),
 ) {
     val uiState by anthropometricParamsAddViewModel.uiState.collectAsState()
-    val anthropometricParamsAddState by anthropometricParamsViewModel.anthropometricParamsAddResponse.observeAsState()
+    val anthropometricParamsAddState by anthropometricParamsAddViewModel.anthropometricParamsAddResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = System.currentTimeMillis(),
@@ -263,7 +257,7 @@ fun AnthropometricParamsAddScreen(
                 StyledButton(
                     text = stringResource(R.string.save_button_text),
                     onClick = {
-                        anthropometricParamsViewModel.addAnthropometricParams(
+                        anthropometricParamsAddViewModel.addAnthropometricParams(
                             AnthropometricParamsCreateRequest(
                                 date = uiState.date!!,
                                 weight = uiState.weight.toFloat(),
@@ -297,8 +291,6 @@ fun AnthropometricParamsAddScreen(
         is ApiResponse.Success -> {
             Loader()
             LaunchedEffect(Unit) {
-                anthropometricParamsViewModel.clearCreateResponse()
-                anthropometricParamsViewModel.setShouldRefetch(true)
                 navController.navigate(HomeRoutes.AnthropometricParams.route) {
                     popUpTo(HomeRoutes.AnthropometricParams.route) {
                         inclusive = true
