@@ -16,12 +16,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -45,14 +41,15 @@ import com.example.sportassistant.presentation.components.GetDropdownTrailingIco
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledInput
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
+import com.example.sportassistant.presentation.registration.domain.model.ProfileInfoUiState
 import com.example.sportassistant.presentation.registration.domain.model.RegistrationUiState
-import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.registration.viewmodel.SetProfileInfoViewModel
 import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationProfileScreen(
-    viewModel: RegistrationViewModel,
+    viewModel: SetProfileInfoViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
     onContinueRegistrationButtonClick: () -> Unit = {},
@@ -225,7 +222,7 @@ fun RegistrationProfileScreen(
     }
 }
 
-private fun isAllFilled(state: RegistrationUiState): Boolean {
+private fun isAllFilled(state: ProfileInfoUiState): Boolean {
 //    return true
     return (state.gender.isNotEmpty()
             && state.sportType.isNotEmpty()

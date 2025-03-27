@@ -42,6 +42,7 @@ import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoView
 import com.example.sportassistant.presentation.registration.viewmodel.CheckEmailViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.CoachViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.registration.viewmodel.SetProfileInfoViewModel
 import com.example.sportassistant.presentation.sfp_graphic.viewmodel.SFPResultsGraphicViewModel
 import com.example.sportassistant.presentation.sfp_result_add.viewmodel.SFPResultAddViewModel
 import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
@@ -88,6 +89,11 @@ val dataModules = module {
     }
     viewModel{
         CheckEmailViewModel(
+            userRepository = get(),
+        )
+    }
+    viewModel{
+        SetProfileInfoViewModel(
             userRepository = get(),
         )
     }

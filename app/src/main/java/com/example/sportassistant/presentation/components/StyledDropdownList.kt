@@ -23,12 +23,13 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import com.example.sportassistant.R
 import com.example.sportassistant.domain.model.Coach
+import com.example.sportassistant.presentation.utils.ApiResponse
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StyledDropdownList(
-    coaches: List<Coach>,
+fun StyledCoachesDropdownList(
+    coaches: ApiResponse<List<Coach>?>?,
     selectedCoach: Coach?,
     onCoachSelected: (Coach) -> Unit,
     modifier: Modifier = Modifier
@@ -62,29 +63,38 @@ fun StyledDropdownList(
             onDismissRequest = { expanded = false },
             modifier = Modifier.exposedDropdownSize()
         ) {
-            coaches.forEach{ coach ->
-                DropdownMenuItem(
-                    text = {
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                text = coach.fio,
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                            )
-                            Text(
-                                text = coach.institution,
-                                style = MaterialTheme.typography.bodySmall.copy(color = Color.DarkGray),
-                                maxLines = 1,
-                            )
-                        }
-                    },
-                    onClick = {
-                        onCoachSelected(coach)
-                        expanded = false
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            when (coaches) {
+                is ApiResponse.Success -> {
+                    val coachesList = coaches.data ?: listOf()
+                    coachesList.forEach{ coach ->
+                        DropdownMenuItem(
+                            text = {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    Text(
+                                        text = coach.fio,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        maxLines = 1,
+                                    )
+                                    Text(
+                                        text = coach.institution,
+                                        style = MaterialTheme.typography.bodySmall.copy(color = Color.DarkGray),
+                                        maxLines = 1,
+                                    )
+                                }
+                            },
+                            onClick = {
+                                onCoachSelected(coach)
+                                expanded = false
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+                is ApiResponse.Loading -> {
+                    Loader()
+                }
+                else -> {}
             }
         }
     }

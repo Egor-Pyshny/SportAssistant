@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -27,22 +26,19 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
-import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
-import com.example.sportassistant.data.schemas.auth.requests.RegistrationRequest
+import com.example.sportassistant.data.schemas.auth.requests.SetProfileDataRequest
 import com.example.sportassistant.domain.model.Coach
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
-import com.example.sportassistant.presentation.components.StyledDropdownList
-import com.example.sportassistant.presentation.components.StyledInput
+import com.example.sportassistant.presentation.components.StyledCoachesDropdownList
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
-import com.example.sportassistant.presentation.registration.domain.model.RegistrationUiState
+import com.example.sportassistant.presentation.registration.domain.model.ProfileInfoUiState
 import com.example.sportassistant.presentation.registration.viewmodel.CoachViewModel
-import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.registration.viewmodel.SetProfileInfoViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
@@ -50,7 +46,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RegistrationCoachScreen(
-    viewModel: RegistrationViewModel,
+    viewModel: SetProfileInfoViewModel,
     coachViewModel: CoachViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     onFinishRegistrationButtonClick: () -> Unit = {},
@@ -58,8 +54,7 @@ fun RegistrationCoachScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coaches by coachViewModel.coachesResponse.observeAsState()
-    val registrationState by viewModel.registrationResponse.observeAsState()
-    val preferences: UserPreferencesRepository = get()
+    val setInfoState by viewModel.setInfoResponse.observeAsState()
 
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -98,19 +93,19 @@ fun RegistrationCoachScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                StyledDropdownList(
-                    coaches = if (coaches is ApiResponse.Success) {(coaches as ApiResponse.Success<List<Coach>?>).data ?: listOf()} else listOf(),
+                StyledCoachesDropdownList(
+                    coaches = coaches,
                     selectedCoach = uiState.selectedCoach,
                     onCoachSelected = {
                         viewModel.setCoach(it)
                     }
                 )
-                if (registrationState is ApiResponse.Failure) {
+                if (setInfoState is ApiResponse.Failure) {
                     Text(
                         modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                         textAlign = TextAlign.Center,
                         color = Color.Red,
-                        text = (registrationState as ApiResponse.Failure).errorMessage
+                        text = (setInfoState as ApiResponse.Failure).errorMessage
                     )
                 }
             }
@@ -122,18 +117,14 @@ fun RegistrationCoachScreen(
                 StyledButton(
                     text = stringResource(R.string.continue_button_text),
                     onClick = {
-                        viewModel.registration(
-                            RegistrationRequest(
-                                name = uiState.userName,
-                                surname = uiState.userSurname,
+                        viewModel.setInfo(
+                            SetProfileDataRequest(
                                 sportType = uiState.sportType,
                                 qualification = uiState.qualification,
                                 address = uiState.address,
                                 phoneNumber = uiState.phoneNumber,
                                 sex = uiState.gender,
                                 coachId = uiState.selectedCoach!!.id,
-                                email = uiState.userMail,
-                                password = uiState.userPassword
                             )
                         )
                     },
@@ -154,9 +145,9 @@ fun RegistrationCoachScreen(
             }
         }
     }
-    when (registrationState) {
+    when (setInfoState) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
             Box(
@@ -167,7 +158,6 @@ fun RegistrationCoachScreen(
                 CircularProgressIndicator()
             }
             LaunchedEffect(Unit) {
-                preferences.setIsLoggedIn(true)
                 onFinishRegistrationButtonClick()
             }
         }
@@ -176,7 +166,7 @@ fun RegistrationCoachScreen(
 
 }
 
-private fun isAllFilled(state: RegistrationUiState): Boolean {
+private fun isAllFilled(state: ProfileInfoUiState): Boolean {
 //    return true
     return state.selectedCoach != null
 }

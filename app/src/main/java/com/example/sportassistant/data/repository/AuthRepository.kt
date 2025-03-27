@@ -2,6 +2,7 @@ package com.example.sportassistant.data.repository
 
 import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
 import com.example.sportassistant.data.schemas.auth.requests.RegistrationRequest
+import com.example.sportassistant.data.schemas.auth.requests.SetProfileDataRequest
 import com.example.sportassistant.data.schemas.auth.requests.VerifyEmailRequest
 import com.example.sportassistant.domain.interfaces.services.AuthApiService
 import com.example.sportassistant.presentation.utils.ApiResponse

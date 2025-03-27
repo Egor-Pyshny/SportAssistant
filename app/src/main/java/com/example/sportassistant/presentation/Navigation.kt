@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -17,7 +18,6 @@ import androidx.navigation.navigation
 import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.ant_params.ui.AnthropometricParamsScreen
-import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
 import com.example.sportassistant.presentation.ant_params_add.ui.AnthropometricParamsAddScreen
 import com.example.sportassistant.presentation.ant_params_graphic.ui.AnthropometricParamsGraphicScreen
 import com.example.sportassistant.presentation.ant_params_info.ui.AnthropometricParamsInfoScreen
@@ -31,26 +31,23 @@ import com.example.sportassistant.presentation.competition_calendar.viewmodel.Ta
 import com.example.sportassistant.presentation.competition_result.ui.CompetitionResultScreen
 import com.example.sportassistant.presentation.competition_info.ui.CompetitionInfoScreen
 import com.example.sportassistant.presentation.comprehensive_examination.ui.ComprehensiveExaminationScreen
-import com.example.sportassistant.presentation.comprehensive_examination.viewmodel.ComprehensiveExaminationViewModel
 import com.example.sportassistant.presentation.comprehensive_examination_add.ui.ComprehensiveExaminationAddScreen
 import com.example.sportassistant.presentation.comprehensive_examination_info.ui.ComprehensiveExaminationInfoScreen
 import com.example.sportassistant.presentation.competition_calendar.ui.CompetitionCalendarScreen
+import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.homemain.ui.HomeScreen
 import com.example.sportassistant.presentation.homemain.ui.HomeMainScreen
 import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.login.ui.LogInScreen
 import com.example.sportassistant.presentation.med_examination.ui.MedExaminationScreen
-import com.example.sportassistant.presentation.med_examination.viewmodel.MedExaminationViewModel
 import com.example.sportassistant.presentation.med_examination_add.ui.MedExaminationAddScreen
 import com.example.sportassistant.presentation.med_examination_info.ui.MedExaminationInfoScreen
 import com.example.sportassistant.presentation.note_add.ui.NoteAddScreen
 import com.example.sportassistant.presentation.note_info.ui.NoteInfoScreen
 import com.example.sportassistant.presentation.notes.ui.NotesScreen
-import com.example.sportassistant.presentation.notes.viewmodel.NotesViewModel
 import com.example.sportassistant.presentation.ofp_graphic.ui.OFPResultsGraphicScreen
 import com.example.sportassistant.presentation.ofp_result_add.ui.OFPResultAddScreen
 import com.example.sportassistant.presentation.ofp_results.ui.OFPResultsScreen
-import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
 import com.example.sportassistant.presentation.ofp_results_info.ui.OFPResultsInfoScreen
 import com.example.sportassistant.presentation.pinned.ui.PinnedScreen
 import com.example.sportassistant.presentation.premium.ui.PremiumScreen
@@ -63,11 +60,11 @@ import com.example.sportassistant.presentation.registration.ui.RegistrationCoach
 import com.example.sportassistant.presentation.registration.ui.RegistrationCreateAccountScreen
 import com.example.sportassistant.presentation.registration.ui.RegistrationProfileScreen
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
+import com.example.sportassistant.presentation.registration.viewmodel.SetProfileInfoViewModel
 import com.example.sportassistant.presentation.settings.ui.SettingsScreen
 import com.example.sportassistant.presentation.sfp_graphic.ui.SFPResultsGraphicScreen
 import com.example.sportassistant.presentation.sfp_result_add.ui.SFPResultAddScreen
 import com.example.sportassistant.presentation.sfp_results.ui.SFPResultsScreen
-import com.example.sportassistant.presentation.sfp_results.viewmodel.SFPResultsViewModel
 import com.example.sportassistant.presentation.sfp_results_info.ui.SFPResultsInfoScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
 import com.example.sportassistant.presentation.theme.SportAssistantTheme
@@ -77,6 +74,8 @@ import com.example.sportassistant.presentation.training_camp_info.ui.TrainingCam
 import com.example.sportassistant.presentation.training_camps_calendar.ui.TrainingCampsAllDaysScreen
 import com.example.sportassistant.presentation.training_camps_calendar.ui.TrainingCampsCalendarScreen
 import com.example.sportassistant.presentation.training_camps_day.ui.TrainingCampDayScreen
+import com.example.sportassistant.presentation.utils.ApiResponse
+import com.example.sportassistant.presentation.verification.ui.VerificationScreen
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
@@ -86,6 +85,7 @@ open class Route(val route: String)
 sealed class AuthRoutes {
     data object Start : Route("start")
     data object RegistrationStart : Route("registration_start")
+    data object Verification : Route("email_verification")
     data object RegistrationProfile : Route("registration_profile")
     data object RegistrationCoach : Route("registration_coach")
     data object LogIn : Route("login")
@@ -97,6 +97,7 @@ sealed class GraphRoutes {
 }
 
 sealed class HomeRoutes {
+    data object Loading: Route("loading")
     data object Home : Route("home")
     data object Settings : Route("settings")
     data object Profile : Route("profile")
@@ -149,6 +150,7 @@ sealed class HomeRoutes {
 @Composable
 fun RootNavGraph(
     navController: NavHostController = rememberNavController(),
+    profileInfoViewModel: SetProfileInfoViewModel = koinViewModel(),
     registrationViewModel: RegistrationViewModel = koinViewModel(),
     titleViewModel: TitleViewModel = viewModel(),
 ) {
@@ -156,7 +158,7 @@ fun RootNavGraph(
     var startDestination = GraphRoutes.AuthNav.route
     val isUserLoggedIn by preferences.isLoggedIn().collectAsState(initial = false)
     if (isUserLoggedIn) {
-        startDestination = GraphRoutes.HomeNav.route
+        startDestination = HomeRoutes.Loading.route
     }
     val coroutineScope = rememberCoroutineScope()
     val themeViewModel: AppLayoutViewModel = koinViewModel()
@@ -172,8 +174,32 @@ fun RootNavGraph(
         ) {
             authNavGraph(
                 navController = navController,
+                profileInfoViewModel = profileInfoViewModel,
                 registrationViewModel = registrationViewModel,
             )
+            composable(route = HomeRoutes.Loading.route) {
+                LaunchedEffect(Unit) {
+                    profileInfoViewModel.isProfileFilled()
+                }
+                val profileState by profileInfoViewModel.isProfileFilled.observeAsState()
+                when (profileState) {
+                    is ApiResponse.Success -> {
+                        val isFilled = (profileState as ApiResponse.Success<Boolean?>).data ?: false
+                        navController.navigate(
+                            if (isFilled)
+                                GraphRoutes.HomeNav.route
+                            else
+                                AuthRoutes.RegistrationProfile.route
+                        ) {
+                            popUpTo(0)
+                        }
+                    }
+                    is ApiResponse.Loading -> {
+                        Loader()
+                    }
+                    else -> {}
+                }
+            }
             composable(route = GraphRoutes.HomeNav.route) {
                 HomeScreen(
                     themeViewModel = themeViewModel,
@@ -407,6 +433,7 @@ fun HomeNavGraph(
 
 fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
+    profileInfoViewModel: SetProfileInfoViewModel,
     registrationViewModel: RegistrationViewModel,
 ) {
     navigation(
@@ -437,14 +464,25 @@ fun NavGraphBuilder.authNavGraph(
             RegistrationCreateAccountScreen(
                 viewModel = registrationViewModel,
                 onContinueRegistrationButtonClick = {
+                    Log.d("Navigation", "to -> Verification")
+                    navigateTo(AuthRoutes.Verification, navController)
+                }
+            )
+        }
+        composable(route = AuthRoutes.Verification.route){
+            VerificationScreen(
+                viewModel = registrationViewModel,
+                onContinueRegistrationButtonClick = {
                     Log.d("Navigation", "to -> RegistrationProfile")
-                    navigateTo(AuthRoutes.RegistrationProfile, navController)
+                    navController.navigate(AuthRoutes.RegistrationProfile.route) {
+                        popUpTo(0)
+                    }
                 }
             )
         }
         composable(route = AuthRoutes.RegistrationCoach.route){
             RegistrationCoachScreen(
-                viewModel = registrationViewModel,
+                viewModel = profileInfoViewModel,
                 onFinishRegistrationButtonClick = {
                     Log.d("Navigation", "to -> Home")
                     navigateTo(GraphRoutes.HomeNav, navController)
@@ -453,7 +491,7 @@ fun NavGraphBuilder.authNavGraph(
         }
         composable(route = AuthRoutes.RegistrationProfile.route){
             RegistrationProfileScreen(
-                viewModel = registrationViewModel,
+                viewModel = profileInfoViewModel,
                 onContinueRegistrationButtonClick = {
                     Log.d("Navigation", "to -> RegistrationCoach")
                     navigateTo(AuthRoutes.RegistrationCoach, navController)

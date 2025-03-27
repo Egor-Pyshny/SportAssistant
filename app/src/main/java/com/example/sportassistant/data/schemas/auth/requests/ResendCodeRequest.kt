@@ -1,6 +1,5 @@
 package com.example.sportassistant.data.schemas.auth.requests
 
-data class VerifyEmailRequest(
+data class ResendCodeRequest(
     val email: String,
-    val code: String,
 )

@@ -1,5 +1,6 @@
 package com.example.sportassistant.presentation.registration.ui
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
+import com.example.sportassistant.data.schemas.auth.requests.RegistrationRequest
 import com.example.sportassistant.data.schemas.user.requests.CheckEmailRequest
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
@@ -41,6 +43,7 @@ import com.example.sportassistant.presentation.registration.viewmodel.Registrati
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
+import java.util.UUID
 
 @Composable
 fun RegistrationCreateAccountScreen(
@@ -52,6 +55,7 @@ fun RegistrationCreateAccountScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val checkEmailState by checkEmailViewModel.checkEmailResponse.observeAsState()
+    val registrationState by viewModel.registrationResponse.observeAsState()
 
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
@@ -102,10 +106,11 @@ fun RegistrationCreateAccountScreen(
                     onValueChange = {
                         var isError: Boolean = false
                         if (it.isNotEmpty()) {
-                            isError = !android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                            isError = !Patterns.EMAIL_ADDRESS.matcher(it).matches()
                         }
                         viewModel.setUserMailError(isError)
                         viewModel.setMail(it)
+                        checkEmailViewModel.resetCheckEmailResponse()
                     },
                     placeholder = stringResource(R.string.mail_input_placeholder),
                     leadingIcon = R.drawable.mail,
@@ -143,6 +148,22 @@ fun RegistrationCreateAccountScreen(
                     text = (checkEmailState as ApiResponse.Failure).errorMessage
                 )
             }
+            if (checkEmailState is ApiResponse.Failure) {
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.Red,
+                    text = (checkEmailState as ApiResponse.Failure).errorMessage
+                )
+            }
+            if (registrationState is ApiResponse.Failure) {
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+                    textAlign = TextAlign.Center,
+                    color = Color.Red,
+                    text = (registrationState as ApiResponse.Failure).errorMessage
+                )
+            }
         }
         Column(
             verticalArrangement = Arrangement.Center,
@@ -151,11 +172,23 @@ fun RegistrationCreateAccountScreen(
                 StyledButton(
                     text = stringResource(R.string.continue_button_text),
                     onClick = {
-                        checkEmailViewModel.checkEmail(
-                            CheckEmailRequest(
-                                email = uiState.userMail,
+                        if (checkEmailState !is ApiResponse.Success) {
+                            checkEmailViewModel.checkEmail(
+                                CheckEmailRequest(
+                                    email = uiState.userMail,
+                                )
                             )
-                        )
+                        } else {
+                            viewModel.registration(
+                                data = RegistrationRequest(
+                                    name = uiState.userName,
+                                    surname = uiState.userSurname,
+                                    email = uiState.userMail,
+                                    password = uiState.userPassword,
+                                    deviceId = uiState.deviceId,
+                                )
+                            )
+                        }
                     },
                     isEnabled = true,
                     trailingIcon = R.drawable.chevron_right,
@@ -175,14 +208,32 @@ fun RegistrationCreateAccountScreen(
         }
     }
 
+    if (checkEmailState is ApiResponse.Loading || registrationState is ApiResponse.Loading) {
+        Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
+    }
+
     when (checkEmailState) {
-        is ApiResponse.Loading -> {
-            Loader()
-        }
         is ApiResponse.Success -> {
-            Loader()
+            LaunchedEffect(Unit) {
+                viewModel.registration(
+                    data = RegistrationRequest(
+                        name = uiState.userName,
+                        surname = uiState.userSurname,
+                        email = uiState.userMail,
+                        password = uiState.userPassword,
+                        deviceId = uiState.deviceId,
+                    )
+                )
+            }
+        }
+        else -> {}
+    }
+
+    when (registrationState) {
+        is ApiResponse.Success -> {
             LaunchedEffect(Unit) {
                 onContinueRegistrationButtonClick()
+                viewModel.resetRegistrationResponse()
                 checkEmailViewModel.resetCheckEmailResponse()
             }
         }
@@ -198,13 +249,4 @@ private fun isAllFilled(state: RegistrationUiState): Boolean {
             && state.userMail.isNotEmpty()
             && state.userPassword.isNotEmpty()
             && state.userSurname.isNotEmpty())
-}
-
-fun checkInputValues(viewModel: RegistrationViewModel): Boolean {
-    val userNameError: Boolean = false
-    val userSurnameError: Boolean = false
-    val userMailError: Boolean = false
-    val userPasswordError: Boolean = false
-
-    return false
 }
