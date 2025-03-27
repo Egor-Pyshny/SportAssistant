@@ -104,11 +104,3 @@ fun StartScreen(
         }
     }
 }
-
-@Preview
-@Composable
-fun StartScreenPreview(
-
-) {
-    StartScreen()
-}

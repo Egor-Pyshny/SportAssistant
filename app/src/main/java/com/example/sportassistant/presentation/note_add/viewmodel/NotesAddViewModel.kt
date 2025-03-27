@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.note_add.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.NotesRepository
 import com.example.sportassistant.data.schemas.notes.requests.NoteCreateRequest
 import com.example.sportassistant.presentation.note_add.domain.NotesModelUiState

@@ -1,11 +1,9 @@
 package com.example.sportassistant.presentation.ant_params_info.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.AnthropometricParamsRepository
 import com.example.sportassistant.data.schemas.ant_params.requests.AnthropometricParamsCreateRequest
 import com.example.sportassistant.domain.model.AnthropometricParams
-import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.ant_params_add.domain.AnthropometricParamsUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel

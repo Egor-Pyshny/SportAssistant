@@ -2,19 +2,11 @@ package com.example.sportassistant.presentation.training_camps_calendar.viewmode
 
 import androidx.lifecycle.MutableLiveData
 import com.example.sportassistant.data.repository.TrainingCampsRepository
-import com.example.sportassistant.data.schemas.training_camp_day.requests.TrainingCampDayUpdateRequest
-import com.example.sportassistant.data.schemas.training_camps.requests.CreateTrainingCampRequest
 import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.enums.CompetitionStatus
 import com.example.sportassistant.domain.model.TrainingCamp
-import com.example.sportassistant.domain.model.TrainingCampDay
-import com.example.sportassistant.presentation.training_camps_calendar.domain.TrainingCampsUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.util.UUID
 

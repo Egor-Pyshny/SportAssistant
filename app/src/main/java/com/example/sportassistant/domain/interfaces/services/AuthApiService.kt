@@ -25,7 +25,7 @@ interface AuthApiService {
     ): Response<Void>
 
     @POST("auth/resend_verification_code")
-    suspend fun resendCode(
+    suspend fun resendVerificationCode(
         @Body body: ResendCodeRequest,
     ): Response<Void>
 }

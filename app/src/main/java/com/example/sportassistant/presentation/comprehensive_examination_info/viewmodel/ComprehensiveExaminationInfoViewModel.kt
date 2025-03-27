@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.comprehensive_examination_info.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.ComprehensiveExaminationRepository
 import com.example.sportassistant.data.schemas.comprehensive_examination.requests.ComprehensiveExaminationCreateRequest
 import com.example.sportassistant.domain.model.ComprehensiveExamination

@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.ant_params_graphic.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.AnthropometricParamsRepository
 import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
 import com.example.sportassistant.domain.model.GraphicPoint

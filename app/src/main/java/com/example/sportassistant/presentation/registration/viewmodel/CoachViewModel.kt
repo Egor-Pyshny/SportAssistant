@@ -2,8 +2,6 @@ package com.example.sportassistant.presentation.registration.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import com.example.sportassistant.data.repository.CoachRepository
-import com.example.sportassistant.data.repository.UserRepository
-import com.example.sportassistant.data.schemas.user.requests.CheckEmailRequest
 import com.example.sportassistant.domain.model.Coach
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel

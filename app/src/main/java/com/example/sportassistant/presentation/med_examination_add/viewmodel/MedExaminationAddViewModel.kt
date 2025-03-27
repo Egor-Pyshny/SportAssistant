@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.med_examination_add.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.MedExaminationRepository
 import com.example.sportassistant.data.schemas.med_examination.requests.MedExaminationCreateRequest
 import com.example.sportassistant.presentation.med_examination_add.domain.MedExaminationUiState

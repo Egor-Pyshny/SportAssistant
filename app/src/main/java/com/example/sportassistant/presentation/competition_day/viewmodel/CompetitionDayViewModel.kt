@@ -1,7 +1,6 @@
 package com.example.sportassistant.presentation.competition_day.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.CompetitionRepository
 import com.example.sportassistant.data.schemas.competition_day.requests.CompetitionDayUpdateRequest
 import com.example.sportassistant.domain.model.CompetitionDay

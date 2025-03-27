@@ -1,11 +1,9 @@
 package com.example.sportassistant.presentation.login.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.AuthRepository
 import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
 import com.example.sportassistant.presentation.login.domain.LogInUiState
-import com.example.sportassistant.presentation.registration.domain.model.RegistrationUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

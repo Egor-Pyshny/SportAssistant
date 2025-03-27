@@ -84,6 +84,12 @@
     <string name="end_date">Конец</string>
     <string name="confirm">Подтвердить</string>
     <string name="cancel">Отменить</string>
+    <string name="otp_text">Пожалуйста введите код подтверждения отправленные на вашу электронную почту</string>
+    <string name="otp_text_resend">Код не пришел?</string>
+    <string name="resend_request">Отправить повторно</string>
+    <string name="too_many_request">Отправить код повторно можно через: </string>
+    <string name="incorrect_code">Неверный код</string>
+    <string name="too_many_check_requests">Вы привысили лимит запросов, попробуйте чуть позже</string>
     <string name="not_enough_data_for_graph">Что бы показать график недостаточно данных. Необходимо более 2 записей</string>
     <string name="date_period">Промежуток</string>
     <string name="add_competition_date">Дата</string>

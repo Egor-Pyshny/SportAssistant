@@ -1,13 +1,10 @@
 package com.example.sportassistant.presentation.ofp_graphic.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.OFPResultsRepository
 import com.example.sportassistant.domain.application_state.ApplicationState
-import com.example.sportassistant.domain.enums.AnthropometricParamsMeasures
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.GraphicPoint
-import com.example.sportassistant.presentation.ant_params_graphic.domain.AnthropometricParamsGraphicUiState
 import com.example.sportassistant.presentation.ofp_graphic.domain.OFPResultsGraphicUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel

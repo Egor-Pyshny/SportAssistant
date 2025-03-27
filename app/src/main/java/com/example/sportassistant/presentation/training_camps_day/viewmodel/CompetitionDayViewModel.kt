@@ -1,11 +1,9 @@
 package com.example.sportassistant.presentation.training_camps_day.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.TrainingCampsRepository
 import com.example.sportassistant.data.schemas.training_camp_day.requests.TrainingCampDayUpdateRequest
 import com.example.sportassistant.domain.model.TrainingCampDay
-import com.example.sportassistant.presentation.competition_day.domain.CompetitionDayUiState
 import com.example.sportassistant.presentation.training_camps_day.domain.TrainingCampDayUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel

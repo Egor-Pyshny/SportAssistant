@@ -1,13 +1,11 @@
 package com.example.sportassistant.presentation.sfp_results_info.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.sportassistant.data.repository.SFPResultsRepository
 import com.example.sportassistant.data.schemas.sfp_results.requests.SFPResultsCreateRequest
 import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.SFPResult
-import com.example.sportassistant.presentation.ofp_result_add.domain.OFPResultModelUiState
 import com.example.sportassistant.presentation.sfp_result_add.domain.SFPResultModelUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel

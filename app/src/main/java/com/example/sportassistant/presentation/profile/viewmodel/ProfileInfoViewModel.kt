@@ -2,9 +2,7 @@ package com.example.sportassistant.presentation.profile.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import com.example.sportassistant.data.repository.UserRepository
-import com.example.sportassistant.data.schemas.user.requests.CheckEmailRequest
 import com.example.sportassistant.domain.model.User
-import com.example.sportassistant.presentation.profile.domain.model.ProfileUiState
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -2,7 +2,6 @@ package com.example.sportassistant.presentation.ofp_results.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import com.example.sportassistant.data.repository.OFPResultsRepository
-import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.OFPResult
 import com.example.sportassistant.presentation.utils.ApiResponse
 import com.example.sportassistant.presentation.utils.BaseViewModel
