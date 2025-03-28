@@ -166,12 +166,11 @@ fun RootNavGraph(
     var startDestination = GraphRoutes.AuthNav.route
     val isUserLoggedIn by preferences.isLoggedIn().collectAsState(initial = false)
     if (isUserLoggedIn) {
-        startDestination = GraphRoutes.AuthNav.route
+        startDestination = HomeRoutes.Loading.route
     }
     val coroutineScope = rememberCoroutineScope()
     val themeViewModel: AppLayoutViewModel = koinViewModel()
     themeViewModel.loadTheme()
-    val tabsViewModel: TabsViewModel = viewModel()
 
     SportAssistantTheme(
         viewModel = themeViewModel

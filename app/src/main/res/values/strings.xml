@@ -91,6 +91,8 @@
     <string name="otp_text_resend">Код не пришел?</string>
     <string name="resend_request">Отправить повторно</string>
     <string name="too_many_request">Отправить код повторно можно через: </string>
+    <string name="current_competitions">Текущее соревнование</string>
+    <string name="current_camps">Текущие сборы</string>
     <string name="forgot_password_text">Забыли пароль? </string>
     <string name="forgot_password_link">Восставновить пароль</string>
     <string name="incorrect_code">Неверный код</string>
