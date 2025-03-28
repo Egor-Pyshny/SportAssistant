@@ -1,5 +1,7 @@
 package com.example.sportassistant.domain.interfaces.services
 
+import com.example.sportassistant.data.schemas.auth.requests.ChangePasswordRequest
+import com.example.sportassistant.data.schemas.auth.requests.ForgotPasswordRequest
 import com.example.sportassistant.data.schemas.auth.requests.LoginRequest
 import com.example.sportassistant.data.schemas.auth.requests.RegistrationRequest
 import com.example.sportassistant.data.schemas.auth.requests.ResendCodeRequest
@@ -26,6 +28,26 @@ interface AuthApiService {
 
     @POST("auth/resend_verification_code")
     suspend fun resendVerificationCode(
+        @Body body: ResendCodeRequest,
+    ): Response<Void>
+
+    @POST("auth/forgot_password")
+    suspend fun getPasswordCode(
+        @Body body: ForgotPasswordRequest,
+    ): Response<Void>
+
+    @POST("auth/check_verification_code")
+    suspend fun checkPasswordCode(
+        @Body body: VerifyEmailRequest,
+    ): Response<Void>
+
+    @POST("auth/reset_password")
+    suspend fun changePassword(
+        @Body body: ChangePasswordRequest,
+    ): Response<Void>
+
+    @POST("auth/resend_password_code")
+    suspend fun resendPasswordCode(
         @Body body: ResendCodeRequest,
     ): Response<Void>
 }

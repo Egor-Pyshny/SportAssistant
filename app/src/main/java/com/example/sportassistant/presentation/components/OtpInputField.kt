@@ -1,4 +1,4 @@
-package com.example.sportassistant.presentation.verification.ui
+package com.example.sportassistant.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background

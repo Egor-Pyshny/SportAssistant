@@ -61,6 +61,10 @@ import com.example.sportassistant.presentation.registration.ui.RegistrationCreat
 import com.example.sportassistant.presentation.registration.ui.RegistrationProfileScreen
 import com.example.sportassistant.presentation.registration.viewmodel.RegistrationViewModel
 import com.example.sportassistant.presentation.registration.viewmodel.SetProfileInfoViewModel
+import com.example.sportassistant.presentation.reset_password.ui.PasswordVerificationEmailScreen
+import com.example.sportassistant.presentation.reset_password.ui.ResetPasswordEmailScreen
+import com.example.sportassistant.presentation.reset_password.ui.ResetPasswordScreen
+import com.example.sportassistant.presentation.reset_password.viewmodel.ResetPasswordViewModel
 import com.example.sportassistant.presentation.settings.ui.SettingsScreen
 import com.example.sportassistant.presentation.sfp_graphic.ui.SFPResultsGraphicScreen
 import com.example.sportassistant.presentation.sfp_result_add.ui.SFPResultAddScreen
@@ -89,6 +93,9 @@ sealed class AuthRoutes {
     data object RegistrationProfile : Route("registration_profile")
     data object RegistrationCoach : Route("registration_coach")
     data object LogIn : Route("login")
+    data object ResetPasswordEmail : Route("reset_password_email")
+    data object ResetPasswordCode : Route("reset_password_code")
+    data object ResetPassword : Route("reset_password")
 }
 
 sealed class GraphRoutes {
@@ -152,13 +159,14 @@ fun RootNavGraph(
     navController: NavHostController = rememberNavController(),
     profileInfoViewModel: SetProfileInfoViewModel = koinViewModel(),
     registrationViewModel: RegistrationViewModel = koinViewModel(),
+    resetPasswordViewModel: ResetPasswordViewModel = koinViewModel(),
     titleViewModel: TitleViewModel = viewModel(),
 ) {
     val preferences: UserPreferencesRepository = get()
     var startDestination = GraphRoutes.AuthNav.route
     val isUserLoggedIn by preferences.isLoggedIn().collectAsState(initial = false)
     if (isUserLoggedIn) {
-        startDestination = HomeRoutes.Loading.route
+        startDestination = GraphRoutes.AuthNav.route
     }
     val coroutineScope = rememberCoroutineScope()
     val themeViewModel: AppLayoutViewModel = koinViewModel()
@@ -176,6 +184,7 @@ fun RootNavGraph(
                 navController = navController,
                 profileInfoViewModel = profileInfoViewModel,
                 registrationViewModel = registrationViewModel,
+                resetPasswordViewModel = resetPasswordViewModel,
             )
             composable(route = HomeRoutes.Loading.route) {
                 LaunchedEffect(Unit) {
@@ -435,6 +444,7 @@ fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
     profileInfoViewModel: SetProfileInfoViewModel,
     registrationViewModel: RegistrationViewModel,
+    resetPasswordViewModel: ResetPasswordViewModel
 ) {
     navigation(
         route = GraphRoutes.AuthNav.route,
@@ -457,7 +467,28 @@ fun NavGraphBuilder.authNavGraph(
                 onLogInButtonClick = {
                     Log.d("Navigation", "to -> Home")
                     navigateTo(GraphRoutes.HomeNav, navController)
+                },
+                onForgotPasswordButtonClick = {
+                    navigateTo(AuthRoutes.ResetPasswordEmail, navController)
                 }
+            )
+        }
+        composable(route = AuthRoutes.ResetPasswordEmail.route) {
+            ResetPasswordEmailScreen(
+                navController = navController,
+                viewModel = resetPasswordViewModel,
+            )
+        }
+        composable(route = AuthRoutes.ResetPasswordCode.route) {
+            PasswordVerificationEmailScreen(
+                navController = navController,
+                viewModel = resetPasswordViewModel,
+            )
+        }
+        composable(route = AuthRoutes.ResetPassword.route) {
+            ResetPasswordScreen(
+                navController = navController,
+                viewModel = resetPasswordViewModel,
             )
         }
         composable(route = AuthRoutes.RegistrationStart.route){
