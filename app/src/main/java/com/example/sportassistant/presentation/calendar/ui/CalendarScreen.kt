@@ -1,6 +1,7 @@
 package com.example.sportassistant.presentation.calendar.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -8,9 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -75,6 +78,8 @@ fun CalendarScreen(
 
     val currentCampStartDate = LocalDate.now().minusDays(7)
     val currentCampEndDate = LocalDate.now().minusDays(2)
+
+    val eventDays = listOf<LocalDate>()
 
     Column(
         modifier = Modifier.padding(
@@ -170,6 +175,7 @@ fun CalendarScreen(
                             date in currentCompetitionStartDate..currentCompetitionEndDate
                         val isCampDay =
                             date in currentCampStartDate..currentCampEndDate
+                        val hasEvent = eventDays.contains(date)
                         DayCell(
                             day = day,
                             isCompetitionDay = isCompetitionDay,
@@ -184,6 +190,7 @@ fun CalendarScreen(
                                 currentCampEndDate,
                             ),
                             isCampDay = isCampDay,
+                            hasEvent = hasEvent,
                             onDayClick = {
 
                             },
@@ -236,10 +243,11 @@ private fun getShape(
     start: LocalDate?,
     end: LocalDate?,
 ): RoundedCornerShape {
+    val cornerRadius = 50
     if (date == start) {
         return RoundedCornerShape(
-            topStartPercent = 100,
-            bottomStartPercent = 100,
+            topStartPercent = cornerRadius,
+            bottomStartPercent = cornerRadius,
             topEndPercent = 0,
             bottomEndPercent = 0,
         )
@@ -248,8 +256,8 @@ private fun getShape(
         return RoundedCornerShape(
             topStartPercent = 0,
             bottomStartPercent = 0,
-            topEndPercent = 100,
-            bottomEndPercent = 100,
+            topEndPercent = cornerRadius,
+            bottomEndPercent = cornerRadius,
         )
     }
     return RoundedCornerShape(
@@ -268,6 +276,7 @@ fun DayCell(
     campShape: RoundedCornerShape,
     isCompetitionDay: Boolean,
     isCampDay: Boolean,
+    hasEvent: Boolean,
     onDayClick: () -> Unit,
 ) {
     Box(
@@ -295,6 +304,15 @@ fun DayCell(
                         color = Color.Blue.copy(alpha = 0.2f),
                         shape = campShape
                     )
+            )
+        }
+        if (hasEvent) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(20.dp)
+                    .padding(8.dp)
+                    .background(Color.Red, CircleShape)
             )
         }
         Text(
