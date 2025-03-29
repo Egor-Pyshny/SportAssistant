@@ -2,6 +2,7 @@ package com.example.sportassistant.di
 
 import com.example.sportassistant.data.repository.AnthropometricParamsRepository
 import com.example.sportassistant.data.repository.AuthRepository
+import com.example.sportassistant.data.repository.CalendarRepository
 import com.example.sportassistant.data.repository.CoachRepository
 import com.example.sportassistant.data.repository.CompetitionRepository
 import com.example.sportassistant.data.repository.ComprehensiveExaminationRepository
@@ -18,6 +19,7 @@ import com.example.sportassistant.presentation.ant_params_add.viewmodel.Anthropo
 import com.example.sportassistant.presentation.ant_params_graphic.viewmodel.AnthropometricParamsGraphicViewModel
 import com.example.sportassistant.presentation.ant_params_info.viewmodel.AnthropometricParamsInfoViewModel
 import com.example.sportassistant.presentation.applayout.viewmodel.AppLayoutViewModel
+import com.example.sportassistant.presentation.calendar.viewmodel.CalendarViewModel
 import com.example.sportassistant.presentation.competition_add.viewmodel.CompetitionAddViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_day.viewmodel.CompetitionDayViewModel
@@ -83,6 +85,7 @@ val dataModules = module {
     factory { NotesRepository(get()) }
     factory { MedExaminationRepository(get()) }
     factory { ComprehensiveExaminationRepository(get()) }
+    factory { CalendarRepository(get()) }
     viewModel{
         LogInViewModel(
             authRepository = get(),
@@ -266,6 +269,11 @@ val dataModules = module {
     viewModel{
         ComprehensiveExaminationInfoViewModel(
             comprehensiveExaminationRepository = get(),
+        )
+    }
+    viewModel{
+        CalendarViewModel(
+            calendarRepository = get(),
         )
     }
 }

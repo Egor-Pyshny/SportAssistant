@@ -2,6 +2,7 @@ package com.example.sportassistant.di
 
 import com.example.sportassistant.domain.interfaces.services.AnthropometricParamsApiService
 import com.example.sportassistant.domain.interfaces.services.AuthApiService
+import com.example.sportassistant.domain.interfaces.services.CalendarApiService
 import com.example.sportassistant.domain.interfaces.services.CoachApiService
 import com.example.sportassistant.domain.interfaces.services.CompetitionApiService
 import com.example.sportassistant.domain.interfaces.services.ComprehensiveExaminationApiService
@@ -36,6 +37,7 @@ val networkModule = module {
     factory { provideNotesApi(get()) }
     factory { provideComprehensiveExamination(get()) }
     factory { provideMedExamination(get()) }
+    factory { provideCalendar(get()) }
     single { provideRetrofit(get()) }
 }
 
@@ -64,3 +66,4 @@ fun provideAnthropometricParamsApi(retrofit: Retrofit): AnthropometricParamsApiS
 fun provideNotesApi(retrofit: Retrofit): NotesApiService = retrofit.create(NotesApiService::class.java)
 fun provideComprehensiveExamination(retrofit: Retrofit): ComprehensiveExaminationApiService = retrofit.create(ComprehensiveExaminationApiService::class.java)
 fun provideMedExamination(retrofit: Retrofit): MedExaminationApiService = retrofit.create(MedExaminationApiService::class.java)
+fun provideCalendar(retrofit: Retrofit): CalendarApiService = retrofit.create(CalendarApiService::class.java)

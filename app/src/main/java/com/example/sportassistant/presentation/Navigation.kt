@@ -336,7 +336,9 @@ fun HomeNavGraph(
             TrainingCampInfoScreen()
         }
         composable(route = HomeRoutes.Calendar.route) {
-            CalendarScreen()
+            CalendarScreen(
+                navController = navController
+            )
         }
         composable(route = HomeRoutes.OFPResults.route) {
             OFPResultsScreen(

@@ -90,9 +90,13 @@
     <string name="passwords_doesnt_match">Пароли не совпадают</string>
     <string name="otp_text_resend">Код не пришел?</string>
     <string name="resend_request">Отправить повторно</string>
+    <string name="see_details">Подробнее</string>
+    <string name="calendar_camp_prefix">Сборы в </string>
     <string name="too_many_request">Отправить код повторно можно через: </string>
     <string name="current_competitions">Текущее соревнование</string>
     <string name="current_camps">Текущие сборы</string>
+    <string name="day_events">События в этот день</string>
+    <string name="day_note">Примечание</string>
     <string name="forgot_password_text">Забыли пароль? </string>
     <string name="forgot_password_link">Восставновить пароль</string>
     <string name="incorrect_code">Неверный код</string>
@@ -160,4 +164,5 @@
         <item>Обхват груди</item>
     </string-array>
     <string name="custom_date_period">Свой промежуток</string>
+    <string name="empty_text">Пусто</string>
 </resources>

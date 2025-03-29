@@ -65,6 +65,10 @@ object ApplicationState {
     fun setSelectedAnthropometricParams(anthropometricParams: AnthropometricParams) {
         state.antParams = anthropometricParams
     }
+
+    fun setNoteDate(date: LocalDate) {
+        state.noteAddData = date
+    }
 }
 
 data class State (
@@ -76,6 +80,7 @@ data class State (
     var medExamination: MedExamination? = null,
 
     var note: Note? = null,
+    var noteAddData: LocalDate? = null,
 
     var OFP: OFPResult? = null,
     var OFPCategories: List<CategoryModel>? = null,

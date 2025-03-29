@@ -61,6 +61,7 @@ import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 
@@ -77,7 +78,7 @@ fun NoteAddScreen(
     val noteAddState by notesAddViewModel.noteAddResponse.observeAsState()
     var missingDate by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = System.currentTimeMillis(),
+        initialSelectedDateMillis = getInitialDate(),
         initialDisplayMode = DisplayMode.Input,
     )
     val decimalFormatter = DecimalFormatter()
@@ -251,6 +252,15 @@ fun NoteAddScreen(
             }
         }
         else -> {}
+    }
+}
+
+fun getInitialDate(): Long? {
+    val state = ApplicationState.getState()
+    return if (state.noteAddData == null) {
+        System.currentTimeMillis()
+    } else {
+        state.noteAddData!!.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
     }
 }
 
