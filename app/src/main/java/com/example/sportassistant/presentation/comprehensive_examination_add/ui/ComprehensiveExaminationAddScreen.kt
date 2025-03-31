@@ -283,10 +283,10 @@ fun ComprehensiveExaminationAddScreen(
 
     when (comprehensiveExaminationAddState) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
             LaunchedEffect(Unit) {
                 navController.navigate(HomeRoutes.ComprehensiveExamination.route) {
                     popUpTo(HomeRoutes.ComprehensiveExamination.route) {

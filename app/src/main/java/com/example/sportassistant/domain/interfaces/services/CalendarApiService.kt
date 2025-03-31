@@ -9,7 +9,7 @@ import retrofit2.http.Query
 import java.util.UUID
 
 interface CalendarApiService {
-    @GET("calendar")
+    @GET("calendar/")
     suspend fun getCalendarData(
         @Query("day") day: Int?,
         @Query("month") month: Int,

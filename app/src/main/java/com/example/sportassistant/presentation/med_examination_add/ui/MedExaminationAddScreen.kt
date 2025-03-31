@@ -267,10 +267,10 @@ fun MedExaminationAddScreen(
 
     when (medExaminationAddState) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
             LaunchedEffect(Unit) {
                 navController.navigate(HomeRoutes.MedExamination.route) {
                     popUpTo(HomeRoutes.MedExamination.route) {

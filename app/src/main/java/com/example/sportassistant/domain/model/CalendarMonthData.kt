@@ -6,8 +6,8 @@ import java.util.UUID
 data class CalendarMonthData(
     val competition: Competition?,
     val camp: TrainingCamp?,
-    val note: Note?,
 
+    val dayNotes: Map<LocalDate, Note>,
     val eventDays: Map<LocalDate, List<EventData>>,
 )
 
@@ -15,6 +15,7 @@ data class EventData(
     val name: String,
     val id: UUID,
     val type: EventType,
+    val dates: List<LocalDate> = listOf(),
 )
 
 enum class EventType {

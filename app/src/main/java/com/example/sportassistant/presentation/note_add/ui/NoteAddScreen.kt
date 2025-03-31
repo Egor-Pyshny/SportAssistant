@@ -239,10 +239,10 @@ fun NoteAddScreen(
 
     when (noteAddState) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
             LaunchedEffect(Unit) {
                 navController.navigate(HomeRoutes.Notes.route) {
                     popUpTo(HomeRoutes.Notes.route) {

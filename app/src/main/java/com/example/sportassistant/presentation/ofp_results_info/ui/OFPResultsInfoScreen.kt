@@ -1,6 +1,7 @@
 package com.example.sportassistant.presentation.ofp_results_info.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -379,7 +380,7 @@ fun OFPResultsInfoScreen(
 
     when (ofpUpdateResponse) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {

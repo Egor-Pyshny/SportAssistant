@@ -1,6 +1,7 @@
 package com.example.sportassistant.presentation.med_examination_info.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -297,7 +298,7 @@ fun MedExaminationInfoScreen(
 
     when (medExaminationUpdateResponse) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {

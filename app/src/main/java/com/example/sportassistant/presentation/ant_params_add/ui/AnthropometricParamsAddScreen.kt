@@ -1,6 +1,7 @@
 package com.example.sportassistant.presentation.ant_params_add.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -286,10 +287,10 @@ fun AnthropometricParamsAddScreen(
 
     when (anthropometricParamsAddState) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
             LaunchedEffect(Unit) {
                 navController.navigate(HomeRoutes.AnthropometricParams.route) {
                     popUpTo(HomeRoutes.AnthropometricParams.route) {

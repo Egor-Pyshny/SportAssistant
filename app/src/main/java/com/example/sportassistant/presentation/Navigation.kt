@@ -337,7 +337,8 @@ fun HomeNavGraph(
         }
         composable(route = HomeRoutes.Calendar.route) {
             CalendarScreen(
-                navController = navController
+                navController = navController,
+                titleViewModel = titleViewModel
             )
         }
         composable(route = HomeRoutes.OFPResults.route) {

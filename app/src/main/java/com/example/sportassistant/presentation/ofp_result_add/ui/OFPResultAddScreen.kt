@@ -68,6 +68,7 @@ import com.example.sportassistant.presentation.ofp_result_add.viewmodel.OFPResul
 import com.example.sportassistant.presentation.ofp_results.viewmodel.OFPResultsViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.koinViewModel
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -82,7 +83,7 @@ fun OFPResultAddScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
-    ofpResultsAddViewModel: OFPResultAddViewModel = viewModel(),
+    ofpResultsAddViewModel: OFPResultAddViewModel = koinViewModel(),
 ) {
     LaunchedEffect(Unit) {
         ofpResultsAddViewModel.getCategories()
@@ -356,10 +357,10 @@ fun OFPResultAddScreen(
 
     when (ofpAddState) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
             LaunchedEffect(Unit) {
                 navController.navigate(HomeRoutes.OFPResults.route) {
                     popUpTo(HomeRoutes.OFPResults.route) {

@@ -225,7 +225,7 @@ fun CompetitionDayScreen(
 
     when (competitionUpdateDayResponse) {
         is ApiResponse.Loading -> {
-            Loader()
+            Loader(Modifier.background(Color.White.copy(alpha = 0.7f)))
         }
         is ApiResponse.Success -> {
             LaunchedEffect(Unit) {

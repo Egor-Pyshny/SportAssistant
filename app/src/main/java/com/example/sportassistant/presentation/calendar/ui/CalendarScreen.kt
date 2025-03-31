@@ -63,21 +63,33 @@ import com.example.sportassistant.data.schemas.auth.requests.ResendCodeRequest
 import com.example.sportassistant.data.schemas.calendar.requests.GetCalendarMonthData
 import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CalendarMonthData
+import com.example.sportassistant.domain.model.Competition
+import com.example.sportassistant.domain.model.ComprehensiveExamination
 import com.example.sportassistant.domain.model.EventData
 import com.example.sportassistant.domain.model.EventType
+import com.example.sportassistant.domain.model.MedExamination
+import com.example.sportassistant.domain.model.OFPResult
+import com.example.sportassistant.domain.model.SFPResult
+import com.example.sportassistant.domain.model.TrainingCamp
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.calendar.viewmodel.CalendarViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_day.viewmodel.CompetitionDayViewModel
+import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import com.example.sportassistant.presentation.utils.ApiResponse
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Locale
+import java.util.UUID
 
 @Composable
 fun CalendarScreen(
     navController: NavController,
+    titleViewModel: TitleViewModel,
     calendarViewModel: CalendarViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
@@ -87,14 +99,25 @@ fun CalendarScreen(
     val months = stringArrayResource(id = R.array.months).toList()
     var currentMonth by remember { mutableStateOf(Calendar.getInstance().get(Calendar.MONTH)) }
     var currentYear by remember { mutableStateOf(Calendar.getInstance().get(Calendar.YEAR)) }
-    LaunchedEffect(Unit) {
+    val day by remember { mutableStateOf(LocalDate.now().dayOfMonth) }
+    LaunchedEffect(key1 = currentMonth, key2 = currentYear, key3 = day) {
+        if (currentMonth+1 != LocalDate.now().monthValue) {
+            calendarViewModel.getMonthData(
+                data = GetCalendarMonthData(
+                    day = null,
+                    month = currentMonth+1,
+                    year = currentYear
+                )
+            )
+        } else {
         calendarViewModel.getMonthData(
             data = GetCalendarMonthData(
-                day = LocalDate.now().dayOfMonth,
+                day = day,
                 month = currentMonth+1,
                 year = currentYear
             )
         )
+            }
     }
     val calendarDataState by calendarViewModel.getMonthDataResponse.observeAsState()
     val daysInMonth = getDaysInMonth(currentMonth, Calendar.getInstance().get(Calendar.YEAR))
@@ -104,29 +127,36 @@ fun CalendarScreen(
         "${months[currentMonth]}, $currentYear"
     }
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(
                 start = screenSizeProvider.getEdgeSpacing(),
                 end = screenSizeProvider.getEdgeSpacing(),
-            ).verticalScroll(rememberScrollState()),
+            )
+            .verticalScroll(rememberScrollState()),
     ) {
         Column(
-            modifier = Modifier.padding(
-                top = 20.dp,
-            ).background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = MaterialTheme.shapes.large,
-            ).heightIn(max = 600.dp),
+            modifier = Modifier
+                .padding(
+                    top = 20.dp,
+                )
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = MaterialTheme.shapes.large,
+                )
+                .heightIn(max = 600.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(
-                    top = 16.dp,
-                    bottom = 16.dp,
-                    start = 32.dp,
-                    end = 32.dp,
-                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 16.dp,
+                        bottom = 16.dp,
+                        start = 32.dp,
+                        end = 32.dp,
+                    ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -241,12 +271,20 @@ fun CalendarScreen(
                         }
                     }
                 } else if (calendarDataState is ApiResponse.Loading) {
-                    ClearCalendar(daysInMonth)
+                    Column(
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 100.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Loader(Modifier.heightIn(max = 150.dp))
+                    }
                 }
             }
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp),
             horizontalArrangement = Arrangement.Absolute.Left,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -264,7 +302,9 @@ fun CalendarScreen(
             )
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 5.dp),
             horizontalArrangement = Arrangement.Absolute.Left,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -284,36 +324,7 @@ fun CalendarScreen(
         if (uiState.selectedDay != null && calendarDataState is ApiResponse.Success) {
             val data = (calendarDataState as ApiResponse.Success<CalendarMonthData?>).data!!
             val events = (data.eventDays[uiState.selectedDay] ?: listOf()).toMutableList()
-            val isCompetitionDay =
-                if (data.competition != null) {
-                    uiState.selectedDay!! in data.competition.startDate..data.competition.endDate
-                } else {
-                    false
-                }
-            val isCampDay =
-                if (data.camp != null) {
-                    uiState.selectedDay!! in data.camp.startDate..data.camp.startDate
-                } else {
-                    false
-                }
-            if (isCompetitionDay) {
-                events.add(
-                    EventData(
-                        name = data.competition!!.name,
-                        id = data.competition.id,
-                        type = EventType.COMPETITION,
-                    )
-                )
-            }
-            if (isCampDay) {
-                events.add(
-                    EventData(
-                        name = stringResource(R.string.calendar_camp_prefix) + data.camp!!.location,
-                        id = data.camp.id,
-                        type = EventType.CAMP,
-                    )
-                )
-            }
+
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -324,12 +335,31 @@ fun CalendarScreen(
                     textAlign = TextAlign.Center
                 )
                 HorizontalDivider(thickness = 2.dp)
-                ListItem(
-                    text = "asdasdasdsadsadsadasdasd",
-                    onDetailClick = {
-
-                    }
-                )
+                val calendarText = stringResource(R.string.nav_bar_calendar_text)
+                events.forEach{ event ->
+                    ListItem(
+                        text = event.name,
+                        onDetailClick = {
+                            val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                            when (event.dates.size) {
+                                1 -> {
+                                    val title = event.dates[0].format(dateFormatter)
+                                    titleViewModel.setTitle(title)
+                                }
+                                2 -> {
+                                    val start = event.dates[0].format(dateFormatter)
+                                    val end = event.dates[1].format(dateFormatter)
+                                    titleViewModel.setTitle("$start - $end")
+                                }
+                                0 -> {
+                                    titleViewModel.setTitle(calendarText)
+                                }
+                            }
+                            updateApplicationState(event)
+                            navigateToDetails(navController, event)
+                        }
+                    )
+                }
                 Text(
                     modifier = Modifier.padding(top = 10.dp, bottom = 5.dp),
                     text = stringResource(R.string.day_note),
@@ -337,33 +367,136 @@ fun CalendarScreen(
                     textAlign = TextAlign.Center
                 )
                 HorizontalDivider(thickness = 2.dp)
-
+                val note = data.dayNotes.get(uiState.selectedDay)
                 Row(
-                    modifier = modifier.padding(top = 10.dp, bottom = 20.dp).fillMaxWidth(),
+                    modifier = modifier
+                        .padding(top = 10.dp, bottom = 20.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
+
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = data.note?.text ?: stringResource(R.string.empty_text),
+                        text = note?.text ?: stringResource(R.string.empty_text),
                         style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
                         maxLines = 5,
                     )
                     Icon(
                         painter = painterResource(R.drawable.pencil),
                         contentDescription = null,
                         modifier = Modifier.clickable {
-                            if (data.note == null) {
+                            if (note == null) {
                                 ApplicationState.setNoteDate(uiState.selectedDay!!)
                                 navController.navigate(HomeRoutes.NotesAdd.route)
                             } else {
-                                ApplicationState.setSelectedNote(data.note)
+                                val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                                titleViewModel.setTitle(note.date.format(dateFormatter))
+                                ApplicationState.setSelectedNote(note)
                                 navController.navigate(HomeRoutes.NotesInfo.route)
                             }
                         },
                     )
                 }
             }
+        }
+    }
+}
+
+fun navigateToDetails(navController: NavController, event: EventData) {
+    when (event.type) {
+        EventType.COMPETITION -> {
+            navController.navigate(HomeRoutes.CompetitionInfo.route)
+        }
+        EventType.CAMP -> {
+            navController.navigate(HomeRoutes.TrainingCampsInfo.route)
+        }
+        EventType.OFP -> {
+            navController.navigate(HomeRoutes.OFPResultsInfo.route)
+        }
+        EventType.SFP -> {
+            navController.navigate(HomeRoutes.SFPResultsInfo.route)
+        }
+        EventType.MED -> {
+            navController.navigate(HomeRoutes.MedExaminationInfo.route)
+        }
+        EventType.COMPREHENSIVE -> {
+            navController.navigate(HomeRoutes.ComprehensiveExaminationInfo.route)
+        }
+    }
+}
+
+fun updateApplicationState(event: EventData) {
+    when (event.type) {
+        EventType.COMPETITION -> {
+            ApplicationState.setSelectedCompetition(
+                Competition(
+                    id = event.id,
+                    startDate = LocalDate.now(),
+                    endDate = LocalDate.now(),
+                    location = "",
+                    notes = "",
+                    name = "",
+                )
+            )
+        }
+        EventType.CAMP -> {
+            ApplicationState.setSelectedCamp(
+                TrainingCamp(
+                    id = event.id,
+                    startDate = LocalDate.now(),
+                    endDate = LocalDate.now(),
+                    location = "",
+                    notes = "",
+                    goals = "",
+                )
+            )
+        }
+        EventType.OFP -> {
+            ApplicationState.setSelectedOFP(
+                OFPResult(
+                    id = event.id,
+                    date = LocalDate.now(),
+                    notes = "",
+                    goals = "",
+                    categoryId = UUID.randomUUID(),
+                    result = 0f,
+                )
+            )
+        }
+        EventType.SFP -> {
+            ApplicationState.setSelectedSFP(
+                SFPResult(
+                    id = event.id,
+                    date = LocalDate.now(),
+                    notes = "",
+                    goals = "",
+                    categoryId = UUID.randomUUID(),
+                    result = 0f,
+                )
+            )
+        }
+        EventType.MED -> {
+            ApplicationState.setSelectedMedExamination(
+                MedExamination(
+                    id = event.id,
+                    date = LocalDate.now(),
+                    institution = "",
+                    methods = "",
+                    recommendations = "",
+                )
+            )
+        }
+        EventType.COMPREHENSIVE -> {
+            ApplicationState.setSelectedComprehensiveExamination(
+                ComprehensiveExamination(
+                    id = event.id,
+                    date = LocalDate.now(),
+                    institution = "",
+                    methods = "",
+                    recommendations = "",
+                    specialists = "",
+                )
+            )
         }
     }
 }
@@ -451,7 +584,7 @@ fun DayCell(
                 modifier = Modifier
                     .matchParentSize()
                     .background(
-                        color = Color.Blue.copy(alpha = 0.7f),
+                        color = Color(0xFF90CAF9).copy(alpha = 0.5f),
                         shape = RoundedCornerShape(100)
                     )
             )
@@ -478,14 +611,18 @@ fun ListItem(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(top = 10.dp, bottom = 5.dp).fillMaxWidth(),
+        modifier = modifier
+            .padding(top = 10.dp, bottom = 5.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f).padding(end = 15.dp),
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 15.dp),
         )
         Text(
             modifier = Modifier.clickable { onDetailClick() },
