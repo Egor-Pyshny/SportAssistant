@@ -227,11 +227,13 @@ private fun GetTopBar(
                 }
             },
             actions = {
-                IconButton(onClick = logout) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                        contentDescription = "Выход из аккаунта"
-                    )
+                if (currentDestination?.route?.startsWith(HomeRoutes.Profile.route) == true) {
+                    IconButton(onClick = logout) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Выход из аккаунта"
+                        )
+                    }
                 }
             }
         )
@@ -283,6 +285,11 @@ private fun getTopBarTitles(
         HomeRoutes.ComprehensiveExaminationAdd.route -> stringResource(R.string.add_comprehensive_exam)
         HomeRoutes.AnthropometricParamsAdd.route -> stringResource(R.string.add_ant_params)
         HomeRoutes.AnthropometricParamsGraphic.route -> stringResource(R.string.home_list_item_ant_params)
+        HomeRoutes.Activity.route -> stringResource(R.string.diary_list_item_activity)
+        HomeRoutes.Sleep.route -> stringResource(R.string.diary_list_item_sleep)
+        HomeRoutes.TrainDiary.route -> stringResource(R.string.home_list_item_train_diary)
+        HomeRoutes.Food.route -> stringResource(R.string.diary_list_item_food)
+        HomeRoutes.Meal.route -> stringResource(R.string.diary_list_item_food)
         else -> "ERROR"
     }
     if (title == "ERROR") {

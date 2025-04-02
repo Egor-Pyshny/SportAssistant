@@ -27,6 +27,7 @@ class UserPreferencesRepository(
     private companion object {
         val IS_DARK_THEME = booleanPreferencesKey("is_dark_theme")
         val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+        val IS_FILLED_PROFILE = booleanPreferencesKey("is_filled_profile")
         val SID = stringPreferencesKey("sid")
     }
 
@@ -48,10 +49,24 @@ class UserPreferencesRepository(
         }
     }
 
+    fun isFilledProfile(): Flow<Boolean?> {
+        return context.dataStore.data.map { preferences ->
+            preferences[IS_FILLED_PROFILE] ?: null
+        }
+    }
+
     suspend fun setIsLoggedIn(isLoggedIn: Boolean) {
         withContext(appDispatchers.io) {
             context.dataStore.edit {preferences ->
                 preferences[IS_LOGGED_IN] = isLoggedIn
+            }
+        }
+    }
+
+    suspend fun setIsProfileFilled(isProfileFilled: Boolean) {
+        withContext(appDispatchers.io) {
+            context.dataStore.edit {preferences ->
+                preferences[IS_FILLED_PROFILE] = isProfileFilled
             }
         }
     }

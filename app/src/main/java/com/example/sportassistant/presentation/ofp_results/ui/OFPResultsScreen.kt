@@ -126,7 +126,7 @@ fun OFPResultsScreen(
                         },
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(30.dp),
+                            .padding(bottom=30.dp, end=5.dp),
                         shape = CircleShape,
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.primary

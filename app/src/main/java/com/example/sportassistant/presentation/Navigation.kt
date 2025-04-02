@@ -72,7 +72,17 @@ import com.example.sportassistant.presentation.sfp_results.ui.SFPResultsScreen
 import com.example.sportassistant.presentation.sfp_results_info.ui.SFPResultsInfoScreen
 import com.example.sportassistant.presentation.start.ui.StartScreen
 import com.example.sportassistant.presentation.theme.SportAssistantTheme
+import com.example.sportassistant.presentation.train_diary.ui.ActivityScreen
+import com.example.sportassistant.presentation.train_diary.ui.FoodDiaryScreen
+import com.example.sportassistant.presentation.train_diary.ui.MealScreen
+import com.example.sportassistant.presentation.train_diary.ui.PreparationType
+import com.example.sportassistant.presentation.train_diary.ui.PreparationsScreen
+import com.example.sportassistant.presentation.train_diary.ui.SleepScreen
 import com.example.sportassistant.presentation.train_diary.ui.TrainDiaryMainScreen
+import com.example.sportassistant.presentation.train_diary.ui.TrainScreen
+import com.example.sportassistant.presentation.train_diary.viewmodel.MealViewModel
+import com.example.sportassistant.presentation.train_diary.viewmodel.TrainDiaryViewModel
+import com.example.sportassistant.presentation.train_diary.viewmodel.TrainViewModel
 import com.example.sportassistant.presentation.trainig_camps_add.ui.TrainingCampAddScreen
 import com.example.sportassistant.presentation.training_camp_info.ui.TrainingCampInfoScreen
 import com.example.sportassistant.presentation.training_camps_calendar.ui.TrainingCampsAllDaysScreen
@@ -148,10 +158,12 @@ sealed class HomeRoutes {
     data object SFPResultsGraphic : Route("sfp_results_graphic")
     data object OFPResultsGraphic : Route("ofp_results_graphic")
     data object TrainDiary : Route("train_diary")
-    data object Sleep : Route("train_diary")
-    data object Food : Route("train_diary")
-    data object Preparations : Route("train_diary")
-    data object Activity : Route("train_diary")
+    data object Sleep : Route("sleep")
+    data object Food : Route("food")
+    data object Preparations : Route("preparations")
+    data object Activity : Route("activity")
+    data object Meal : Route("meal/{id}")
+    data object Preparation : Route("general_prep/{type}")
 }
 
 @Composable
@@ -186,26 +198,43 @@ fun RootNavGraph(
                 resetPasswordViewModel = resetPasswordViewModel,
             )
             composable(route = HomeRoutes.Loading.route) {
+                val isUserFilledProfile by preferences.isFilledProfile().collectAsState(initial = null)
                 LaunchedEffect(Unit) {
                     profileInfoViewModel.isProfileFilled()
                 }
-                val profileState by profileInfoViewModel.isProfileFilled.observeAsState()
-                when (profileState) {
-                    is ApiResponse.Success -> {
-                        val isFilled = (profileState as ApiResponse.Success<Boolean?>).data ?: false
-                        navController.navigate(
-                            if (isFilled)
-                                GraphRoutes.HomeNav.route
-                            else
-                                AuthRoutes.RegistrationProfile.route
-                        ) {
-                            popUpTo(0)
+                if (isUserFilledProfile == null) {
+                    val profileState by profileInfoViewModel.isProfileFilled.observeAsState()
+                    when (profileState) {
+                        is ApiResponse.Success -> {
+                            val isFilled =
+                                (profileState as ApiResponse.Success<Boolean?>).data ?: false
+                            LaunchedEffect(Unit) {
+                                preferences.setIsProfileFilled(isFilled)
+                            }
+                            navController.navigate(
+                                if (isFilled)
+                                    GraphRoutes.HomeNav.route
+                                else
+                                    AuthRoutes.RegistrationProfile.route
+                            ) {
+                                popUpTo(0)
+                            }
                         }
+
+                        is ApiResponse.Loading -> {
+                            Loader()
+                        }
+
+                        else -> {}
                     }
-                    is ApiResponse.Loading -> {
-                        Loader()
+                } else if (isUserFilledProfile == false) {
+                    navController.navigate(AuthRoutes.RegistrationProfile.route) {
+                        popUpTo(0)
                     }
-                    else -> {}
+                } else {
+                    navController.navigate(GraphRoutes.HomeNav.route) {
+                        popUpTo(0)
+                    }
                 }
             }
             composable(route = GraphRoutes.HomeNav.route) {
@@ -236,6 +265,7 @@ fun HomeNavGraph(
     val profileInfoViewModel: ProfileInfoViewModel = koinViewModel()
     val profileViewModel: ProfileViewModel = viewModel()
     val trainingCampsTabsViewModel: TabsViewModel = viewModel()
+    val diaryViewModel: TrainDiaryViewModel = viewModel()
     NavHost(
         navController = navController,
         route = GraphRoutes.HomeNav.route,
@@ -437,6 +467,59 @@ fun HomeNavGraph(
         composable(route = HomeRoutes.TrainDiary.route) {
             TrainDiaryMainScreen(
                 navController = navController,
+            )
+        }
+        composable(route = HomeRoutes.Activity.route) {
+            ActivityScreen(
+                viewModel = diaryViewModel
+            )
+        }
+        composable(route = HomeRoutes.Sleep.route) {
+            SleepScreen(
+                viewModel = diaryViewModel
+            )
+        }
+        composable(route = HomeRoutes.Food.route) {
+            FoodDiaryScreen(
+                navController = navController,
+                viewModel = diaryViewModel
+            )
+        }
+        composable(route = HomeRoutes.Preparations.route) {
+            PreparationsScreen(
+                navController = navController,
+                titleViewModel = titleViewModel,
+            )
+        }
+        composable(route = HomeRoutes.Meal.route) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            val mealViewModel: MealViewModel = viewModel()
+            if (id != null) {
+                val meal = diaryViewModel.getMealById(id)
+                mealViewModel.setAppetit(meal.appetit)
+                mealViewModel.setMealTime(meal.mealTime)
+                mealViewModel.setNote(meal.note)
+                mealViewModel.setFats(meal.fats)
+                mealViewModel.setCarbs(meal.carbs)
+                mealViewModel.setProtein(meal.protein)
+            }
+            MealScreen(
+                navController = navController,
+                mealId = id,
+                diaryViewModel = diaryViewModel,
+                mealViewModel = mealViewModel,
+            )
+        }
+        composable(route = HomeRoutes.Preparation.route) { backStackEntry ->
+            val typeName = backStackEntry.arguments?.getString("type")!!
+            val type = PreparationType.valueOf(typeName)
+            val trainViewModel: TrainViewModel = viewModel()
+            val value = diaryViewModel.getTrainByType(type)
+            trainViewModel.loadTrain(value)
+            TrainScreen(
+                type = type,
+                diaryViewModel = diaryViewModel,
+                trainViewModel = trainViewModel,
             )
         }
     }

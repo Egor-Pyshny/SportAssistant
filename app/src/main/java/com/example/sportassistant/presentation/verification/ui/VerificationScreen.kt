@@ -246,6 +246,7 @@ fun VerificationScreen(
             LaunchedEffect(Unit) {
                 onContinueRegistrationButtonClick()
                 preferences.setIsLoggedIn(true)
+                preferences.setIsProfileFilled(false)
             }
         }
         else -> {}

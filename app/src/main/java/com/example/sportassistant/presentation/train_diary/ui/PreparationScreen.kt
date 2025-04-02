@@ -1,11 +1,8 @@
 package com.example.sportassistant.presentation.train_diary.ui
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -25,15 +22,17 @@ import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.Route
 import com.example.sportassistant.presentation.components.Border
 import com.example.sportassistant.presentation.components.StyledButtonListItem
+import com.example.sportassistant.presentation.homemain.viewmodel.TitleViewModel
 import org.koin.androidx.compose.get
 
 @Composable
-fun TrainDiaryMainScreen(
+fun PreparationsScreen(
     navController: NavHostController,
+    titleViewModel: TitleViewModel,
     modifier: Modifier = Modifier,
     screenSizeProvider: WindowSizeProvider = get(),
 ) {
-    val items: HashMap<Route, String> = getRouteForMenuItemMap()
+    val items: HashMap<String, String> = getRouteForMenuItemMap()
     val itemsLen: Int = items.size - 1
     Column(
         modifier = Modifier
@@ -50,8 +49,9 @@ fun TrainDiaryMainScreen(
                 StyledButtonListItem(
                     text = entry.value,
                     onClick = {
-                        navController.navigate(entry.key.route)
-                        Log.d("Navigation", "to -> ${entry.key.route}")
+                        navController.navigate(entry.key)
+                        titleViewModel.setTitle(entry.value)
+                        Log.d("Navigation", "to -> ${entry.key}")
                     },
                     cornerShape = getCornerShape(index, itemsLen),
                     border = getBorder(index, itemsLen),
@@ -87,11 +87,16 @@ private fun getBorder(index: Int, lastIndex: Int): Border {
 }
 
 @Composable
-private fun getRouteForMenuItemMap(): HashMap<Route, String> {
+private fun getRouteForMenuItemMap(): HashMap<String, String> {
     return linkedMapOf(
-        HomeRoutes.Sleep to stringResource(R.string.diary_list_item_sleep),
-        HomeRoutes.Food to stringResource(R.string.diary_list_item_food),
-        HomeRoutes.Preparations to stringResource(R.string.diary_list_item_preparations),
-        HomeRoutes.Activity to stringResource(R.string.diary_list_item_activity)
+        HomeRoutes.Preparation.route.replace("{type}", PreparationType.GENERAL.name) to stringResource(R.string.general_prep_text),
+        HomeRoutes.Preparation.route.replace("{type}", PreparationType.SPEC.name) to stringResource(R.string.special_prep_text),
+        HomeRoutes.Preparation.route.replace("{type}", PreparationType.PRED_COMP.name) to stringResource(R.string.pred_comp_prep_text),
+        HomeRoutes.Preparation.route.replace("{type}", PreparationType.COMP.name) to stringResource(R.string.comp_prep_text),
+        HomeRoutes.Preparation.route.replace("{type}", PreparationType.TRANSITIONAL.name) to stringResource(R.string.transitional_prep_text)
     )
+}
+
+enum class PreparationType {
+    GENERAL, SPEC, PRED_COMP, COMP, TRANSITIONAL
 }
