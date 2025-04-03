@@ -1,0 +1,5 @@
+services:
+  android-builder:
+    image: android-builder:latest
+    volumes:
+      - ./release_outputs:/app/release_outputs

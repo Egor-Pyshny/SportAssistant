@@ -248,6 +248,50 @@ fun TrainScreen(
                 trainViewModel.setFinishNote(value)
             },
         )
+        Card(
+            modifier = modifier
+                .fillMaxWidth().padding(top = 40.dp, bottom = 25.dp),
+            shape = MaterialTheme.shapes.large,
+        ) {
+            Text(
+                modifier = Modifier.padding(
+                    start = 15.dp,
+                    end = 15.dp,
+                    top = 25.dp,
+                    bottom = 10.dp
+                ),
+                text = stringResource(R.string.work_capacity_text),
+                style = MaterialTheme.typography.bodyLarge,
+                overflow = TextOverflow.Ellipsis,
+            )
+            RowScrollWheel(
+                items = (1..10).map { "$it" },
+                initialState = uiState.workCapacity,
+                onSelectedChanges = { index ->
+                    trainViewModel.setWorkCapacity(index)
+                }
+            )
+            HorizontalDivider(thickness = 2.dp)
+            Text(
+                modifier = Modifier.padding(
+                    start = 15.dp,
+                    end = 15.dp,
+                    top = 10.dp,
+                    bottom = 10.dp
+                ),
+                text = stringResource(R.string.degree_of_fatigue_text),
+                style = MaterialTheme.typography.bodyLarge,
+                overflow = TextOverflow.Ellipsis,
+            )
+            RowScrollWheel(
+                modifier = Modifier.padding(bottom = 25.dp),
+                items = (1..10).map { "$it" },
+                initialState = uiState.degreeOfFatigue,
+                onSelectedChanges = { index ->
+                    trainViewModel.setDegreeOfFatigue(index)
+                }
+            )
+        }
     }
 }
 
