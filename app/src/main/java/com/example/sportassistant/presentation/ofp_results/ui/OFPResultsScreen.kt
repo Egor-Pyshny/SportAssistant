@@ -34,6 +34,7 @@ import com.example.sportassistant.domain.model.OFPResult
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
@@ -64,21 +65,6 @@ fun OFPResultsScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        StyledButton(
-            text = stringResource(R.string.draw_graphic),
-            onClick = {
-                navController.navigate(HomeRoutes.OFPResultsGraphic.route)
-            },
-            isEnabled = true,
-            trailingIcon = R.drawable.line_chart,
-            trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
-            modifier = Modifier.padding(
-                start = screenSizeProvider.getEdgeSpacing(),
-                end = screenSizeProvider.getEdgeSpacing(),
-                bottom = 25.dp,
-                top = 20.dp
-            )
-        )
         when (ofpResultsResponse) {
             is ApiResponse.Loading -> {
                 Loader()
@@ -93,6 +79,21 @@ fun OFPResultsScreen(
                         item = "${it.date.format(formatter)}"
                     )
                 }
+                StyledButton(
+                    text = stringResource(R.string.draw_graphic),
+                    onClick = {
+                        navController.navigate(HomeRoutes.OFPResultsGraphic.route)
+                    },
+                    isEnabled = true,
+                    trailingIcon = R.drawable.line_chart,
+                    trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
+                    modifier = Modifier.padding(
+                        start = screenSizeProvider.getEdgeSpacing(),
+                        end = screenSizeProvider.getEdgeSpacing(),
+                        bottom = 25.dp,
+                        top = 20.dp
+                    )
+                )
                 Box(modifier = Modifier.fillMaxSize()) {
                     StyledButtonListWithDropDownMenu(
                         modifier = Modifier
@@ -139,11 +140,9 @@ fun OFPResultsScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (ofpResultsResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(ofpResultsResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 }
@@ -165,9 +164,9 @@ private fun getResults(
                 ofpResultsViewModel.getResults()
             }
             is ApiResponse.Failure -> {
-                throw Error()
+                return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
     return ofpResultsViewModel.getOFPResultsResponse.observeAsState()

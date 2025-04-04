@@ -30,6 +30,7 @@ import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.MedExamination
 import com.example.sportassistant.presentation.HomeRoutes
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
@@ -119,11 +120,9 @@ fun MedExaminationScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (medExaminationResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(medExaminationResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 }
@@ -145,9 +144,9 @@ private fun getResults(
                 medExaminationViewModel.getMedExaminations()
             }
             is ApiResponse.Failure -> {
-                throw Error()
+                return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
     return medExaminationViewModel.getMedExaminationResponse.observeAsState()

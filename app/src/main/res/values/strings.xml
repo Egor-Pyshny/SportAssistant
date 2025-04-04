@@ -82,6 +82,8 @@
     <string name="add_ofp">Новое тестирование ОФП</string>
     <string name="add_sfp">Новое тестирование СФП</string>
     <string name="add_note">Новое примечание</string>
+    <string name="loading_failed">Ошибка при загрузке</string>
+    <string name="server_error">Упс! С нашей стороны что-то пошло не так. Наша команда была уведомлена. Пожалуйста, повторите попытку позже.</string>
     <string name="add_ant_params">Новые антропометрические данные</string>
     <string name="competition_result_title">Результаты</string>
     <string name="general_prep_text">Общеподготовительный</string>
@@ -157,6 +159,10 @@
     <string name="home_list_item_rules">Правила использования</string>
     <string name="database_text">Базы данных</string>
     <string name="missing_date_error">Заполните даты</string>
+    <string name="category_error_text">Произошла ошибка при загрузке</string>
+    <string name="error_notification_title">Ошибка</string>
+    <string name="add_error_notification_text">Произошла ошибка при добвавлении новой записи</string>
+    <string name="update_error_notification_text">Произошла ошибка при обновлении записи</string>
     <string name="missing_start_date_error">Заполните дату начала</string>
     <string name="missing_ofp_date_error">Заполните дату</string>
     <string name="missing_sfp_date_error">Заполните дату</string>

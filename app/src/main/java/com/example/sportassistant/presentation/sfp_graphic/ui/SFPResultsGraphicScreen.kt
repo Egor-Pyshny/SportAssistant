@@ -48,6 +48,7 @@ import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CategoryModel
 import com.example.sportassistant.domain.model.GraphicPoint
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
@@ -325,7 +326,21 @@ fun SFPResultsGraphicScreen(
                             )
                         }
                     }
-                    else -> {}
+                    is ApiResponse.Failure -> {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.category_error_text),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            onClick = {},
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else -> { Loader() }
                 }
             }
         }
@@ -421,6 +436,9 @@ fun SFPResultsGraphicScreen(
                             textAlign = TextAlign.Center,
                         )
                     }
+                }
+                is ApiResponse.Failure -> {
+                    ErrorScreen(getGraphicData as ApiResponse.Failure)
                 }
                 else -> {
                     GetEmptyChart()

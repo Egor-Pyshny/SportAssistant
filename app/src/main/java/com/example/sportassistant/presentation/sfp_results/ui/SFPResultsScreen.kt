@@ -30,6 +30,7 @@ import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.SFPResult
 import com.example.sportassistant.presentation.HomeRoutes
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
@@ -134,11 +135,9 @@ fun SFPResultsScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (sfpResultsResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(sfpResultsResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 }
@@ -162,7 +161,7 @@ private fun getResults(
             is ApiResponse.Failure -> {
                 throw Error()
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
     return sfpResultsViewModel.getSFPResultsResponse.observeAsState()

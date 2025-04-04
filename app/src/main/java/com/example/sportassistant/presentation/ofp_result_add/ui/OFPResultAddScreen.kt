@@ -57,6 +57,7 @@ import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
@@ -351,7 +352,9 @@ fun OFPResultAddScreen(
                 }
             }
             null -> { Loader() }
-            else -> {}
+            is ApiResponse.Failure -> {
+                ErrorScreen(categoriesResponse as ApiResponse.Failure)
+            }
         }
     }
 
@@ -369,7 +372,7 @@ fun OFPResultAddScreen(
                 }
             }
         }
-        else -> {}
+        else -> { Loader() }
     }
 }
 

@@ -13,6 +13,7 @@ import java.time.LocalDate
 
 object ApplicationState {
     @Volatile private var state: State = State()
+    var logout: () -> Unit = {}
 
     fun getState(): State {
         return state

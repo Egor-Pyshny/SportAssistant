@@ -30,6 +30,7 @@ import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.ComprehensiveExamination
 import com.example.sportassistant.presentation.HomeRoutes
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
@@ -119,11 +120,9 @@ fun ComprehensiveExaminationScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (comprehensiveExaminationResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(comprehensiveExaminationResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 }
@@ -145,9 +144,9 @@ private fun getResults(
                 comprehensiveExaminationViewModel.getComprehensiveExaminations()
             }
             is ApiResponse.Failure -> {
-                throw Error()
+                return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
     return comprehensiveExaminationViewModel.getComprehensiveExaminationResponse.observeAsState()

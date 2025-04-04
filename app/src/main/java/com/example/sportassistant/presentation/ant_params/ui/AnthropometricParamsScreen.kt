@@ -30,6 +30,7 @@ import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.AnthropometricParams
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.ant_params.viewmodel.AnthropometricParamsViewModel
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
@@ -58,23 +59,11 @@ fun AnthropometricParamsScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        StyledButton(
-            text = stringResource(R.string.draw_graphic),
-            onClick = {
-                navController.navigate(HomeRoutes.AnthropometricParamsGraphic.route)
-            },
-            isEnabled = true,
-            trailingIcon = R.drawable.line_chart,
-            trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
-            modifier = Modifier.padding(
-                start = screenSizeProvider.getEdgeSpacing(),
-                end = screenSizeProvider.getEdgeSpacing(),
-                bottom = 25.dp,
-                top = 20.dp
-            )
-        )
         when (anthropometricParamsResultsResponse) {
             is ApiResponse.Loading -> {
+                Loader()
+            }
+            null -> {
                 Loader()
             }
             is ApiResponse.Success -> {
@@ -87,6 +76,21 @@ fun AnthropometricParamsScreen(
                         item = "${it.date.format(formatter)}"
                     )
                 }
+                StyledButton(
+                    text = stringResource(R.string.draw_graphic),
+                    onClick = {
+                        navController.navigate(HomeRoutes.AnthropometricParamsGraphic.route)
+                    },
+                    isEnabled = true,
+                    trailingIcon = R.drawable.line_chart,
+                    trailingIconModifier = Modifier.padding(top = 1.dp, start = 10.dp),
+                    modifier = Modifier.padding(
+                        start = screenSizeProvider.getEdgeSpacing(),
+                        end = screenSizeProvider.getEdgeSpacing(),
+                        bottom = 25.dp,
+                        top = 20.dp
+                    )
+                )
                 Box(modifier = Modifier.fillMaxSize()) {
                     StyledButtonListWithDropDownMenu(
                         modifier = Modifier
@@ -133,11 +137,8 @@ fun AnthropometricParamsScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (anthropometricParamsResultsResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(anthropometricParamsResultsResponse as ApiResponse.Failure)
             }
-            else -> {}
         }
     }
 }
@@ -159,9 +160,9 @@ private fun getResults(
                 anthropometricParamsViewModel.getAnthropometricParams()
             }
             is ApiResponse.Failure -> {
-                throw Error()
+                return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
     return anthropometricParamsViewModel.getAnthropometricParamsResponse.observeAsState()

@@ -32,6 +32,7 @@ import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.TrainingCamp
 import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.TabsViewModel
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.ListItem
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.MenuItem
@@ -126,11 +127,9 @@ fun TrainingCampsCalendarMainScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (campsResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(campsResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 }
@@ -153,9 +152,9 @@ private fun getCamps(
                 trainingCampsViewModel.getCamps(tabIndex)
             }
             is ApiResponse.Failure -> {
-                throw Error()
+                return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
     return when (tabIndex) {

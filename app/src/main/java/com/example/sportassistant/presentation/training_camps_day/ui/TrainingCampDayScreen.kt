@@ -34,7 +34,9 @@ import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.training_camp_day.requests.TrainingCampDayUpdateRequest
 import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.TrainingCampDay
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -197,11 +199,9 @@ fun TrainingCampDayScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (campDayResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(campDayResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 
@@ -215,7 +215,16 @@ fun TrainingCampDayScreen(
                 campDayViewModel.clearUpdate()
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.update_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 

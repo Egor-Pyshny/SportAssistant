@@ -54,6 +54,7 @@ import com.example.sportassistant.presentation.ant_params.viewmodel.Anthropometr
 import com.example.sportassistant.presentation.ant_params_graphic.domain.AnthropometricParamsGraphicUiState
 import com.example.sportassistant.presentation.ant_params_graphic.viewmodel.AnthropometricParamsGraphicViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledButton
@@ -331,7 +332,21 @@ fun OFPResultsGraphicScreen(
                             )
                         }
                     }
-                    else -> {}
+                    is ApiResponse.Failure -> {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = stringResource(R.string.category_error_text),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            onClick = {},
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else -> { Loader() }
                 }
             }
         }
@@ -427,6 +442,9 @@ fun OFPResultsGraphicScreen(
                             textAlign = TextAlign.Center,
                         )
                     }
+                }
+                is ApiResponse.Failure -> {
+                    ErrorScreen(getGraphicData as ApiResponse.Failure)
                 }
                 else -> {
                     GetEmptyChart()

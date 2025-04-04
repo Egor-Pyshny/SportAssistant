@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.example.sportassistant.data.repository.UserPreferencesRepository
+import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.presentation.aboutapp.ui.AboutAppScreen
 import com.example.sportassistant.presentation.ant_params.ui.AnthropometricParamsScreen
 import com.example.sportassistant.presentation.ant_params_add.ui.AnthropometricParamsAddScreen
@@ -183,6 +184,13 @@ fun RootNavGraph(
     val coroutineScope = rememberCoroutineScope()
     val themeViewModel: AppLayoutViewModel = koinViewModel()
     themeViewModel.loadTheme()
+    ApplicationState.logout = {
+        coroutineScope.launch {
+            preferences.setIsLoggedIn(false)
+            preferences.saveSID("")
+        }
+        navController.navigate(GraphRoutes.AuthNav.route) { popUpTo(0) }
+    }
 
     SportAssistantTheme(
         viewModel = themeViewModel
@@ -224,8 +232,7 @@ fun RootNavGraph(
                         is ApiResponse.Loading -> {
                             Loader()
                         }
-
-                        else -> {}
+                        else -> { Loader() }
                     }
                 } else if (isUserFilledProfile == false) {
                     navController.navigate(AuthRoutes.RegistrationProfile.route) {

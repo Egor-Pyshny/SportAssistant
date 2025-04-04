@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.domain.model.User
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.Loader
 import com.example.sportassistant.presentation.components.StyledCard
 import com.example.sportassistant.presentation.profile.viewmodel.ProfileInfoViewModel
@@ -53,6 +54,9 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         when (data) {
+            is ApiResponse.Loading -> {
+                Loader()
+            }
             is ApiResponse.Success -> {
                 val user: User? = (data as ApiResponse.Success).data
                 if (user != null) {
@@ -69,14 +73,9 @@ fun ProfileScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                if ((data as ApiResponse.Failure).code == 403) {
-                    logout()
-                }
+                ErrorScreen(data as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
-    }
-    if (data is ApiResponse.Loading) {
-        Loader()
     }
 }

@@ -46,6 +46,7 @@ import com.example.sportassistant.presentation.HomeRoutes
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -279,7 +280,16 @@ fun MedExaminationAddScreen(
                 }
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.add_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 

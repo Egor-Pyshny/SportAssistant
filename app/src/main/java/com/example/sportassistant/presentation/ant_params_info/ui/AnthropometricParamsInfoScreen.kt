@@ -59,8 +59,10 @@ import com.example.sportassistant.presentation.ant_params_info.viewmodel.Anthrop
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -325,11 +327,9 @@ fun AnthropometricParamsInfoScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (anthropometricParamsInfoResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(anthropometricParamsInfoResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 
@@ -350,7 +350,16 @@ fun AnthropometricParamsInfoScreen(
                 anthropometricParamsInfoViewModel.clearUpdateResponse()
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.update_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 

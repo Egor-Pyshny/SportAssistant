@@ -45,7 +45,9 @@ import com.example.sportassistant.domain.model.Competition
 import com.example.sportassistant.presentation.competition_add.domain.CompetitionUiState
 import com.example.sportassistant.presentation.competition_info.viewmodel.CompetitionInfoViewModel
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -306,11 +308,9 @@ fun CompetitionInfoScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (competitionInfoResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(competitionInfoResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 
@@ -332,7 +332,16 @@ fun CompetitionInfoScreen(
                 competitionInfoViewModel.clearUpdate()
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.update_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 

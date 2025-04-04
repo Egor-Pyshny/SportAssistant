@@ -41,7 +41,9 @@ import com.example.sportassistant.presentation.competition_add.domain.Competitio
 import com.example.sportassistant.presentation.competition_calendar.viewmodel.CompetitionViewModel
 import com.example.sportassistant.presentation.competition_day.domain.CompetitionDayUiState
 import com.example.sportassistant.presentation.competition_day.viewmodel.CompetitionDayViewModel
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -215,11 +217,9 @@ fun CompetitionDayScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (competitionDayResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(competitionDayResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 
@@ -233,7 +233,16 @@ fun CompetitionDayScreen(
                 competitionDayViewModel.clearUpdate()
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.update_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 

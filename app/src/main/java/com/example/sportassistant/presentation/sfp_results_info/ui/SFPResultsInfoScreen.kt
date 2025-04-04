@@ -54,8 +54,10 @@ import com.example.sportassistant.domain.model.SFPResult
 import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -364,11 +366,9 @@ fun SFPResultsInfoScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (sfpInfoResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(sfpInfoResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 
@@ -390,7 +390,16 @@ fun SFPResultsInfoScreen(
                 sfpResultsInfoViewModel.clearUpdateResponse()
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.update_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 
@@ -414,13 +423,18 @@ private fun getResults(
                 is ApiResponse.Success -> {
                     return sfpResultsViewModel.getSFPResultInfoResponse.observeAsState()
                 }
-                else -> {throw Error()}
+                is ApiResponse.Failure -> {
+                    return mutableStateOf(getInfoState as ApiResponse.Failure)
+                }
+                else -> {return mutableStateOf(ApiResponse.Loading)}
             }
+        }
+        is ApiResponse.Failure -> {
+            return mutableStateOf(getCategoriesState as ApiResponse.Failure)
         }
         null -> {
             return mutableStateOf(ApiResponse.Loading)
         }
-        else -> {throw Error()}
     }
 }
 

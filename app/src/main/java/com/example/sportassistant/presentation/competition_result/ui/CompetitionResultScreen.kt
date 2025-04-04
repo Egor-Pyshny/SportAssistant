@@ -34,7 +34,9 @@ import com.example.sportassistant.domain.application_state.ApplicationState
 import com.example.sportassistant.domain.model.CompetitionResult
 import com.example.sportassistant.presentation.competition_result.domain.CompetitionResultUiState
 import com.example.sportassistant.presentation.competition_result.viewmodel.CompetitionResultViewModel
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -73,6 +75,9 @@ fun CompetitionResultScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         when (competitionResultResponse) {
+            is ApiResponse.Loading -> {
+                Loader()
+            }
             is ApiResponse.Success -> {
                 val data = (competitionResultResponse as ApiResponse.Success<CompetitionResult?>).data!!
                 LaunchedEffect(Unit) {
@@ -201,11 +206,9 @@ fun CompetitionResultScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (competitionResultResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(competitionResultResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 
@@ -223,7 +226,16 @@ fun CompetitionResultScreen(
                 competitionResultViewModel.clearUpdate()
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.update_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 

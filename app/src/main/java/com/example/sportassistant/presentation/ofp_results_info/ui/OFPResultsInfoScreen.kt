@@ -60,8 +60,10 @@ import com.example.sportassistant.presentation.components.DatePickerHeadline
 import com.example.sportassistant.presentation.components.DateRangePickerHeadline
 import com.example.sportassistant.presentation.components.DecimalFormatter
 import com.example.sportassistant.presentation.components.DecimalInputVisualTransformation
+import com.example.sportassistant.presentation.components.ErrorScreen
 import com.example.sportassistant.presentation.components.GetDropdownTrailingIcon
 import com.example.sportassistant.presentation.components.Loader
+import com.example.sportassistant.presentation.components.SingleButtonDialog
 import com.example.sportassistant.presentation.components.StyledButton
 import com.example.sportassistant.presentation.components.StyledCardTextField
 import com.example.sportassistant.presentation.components.StyledOutlinedButton
@@ -370,11 +372,9 @@ fun OFPResultsInfoScreen(
                 }
             }
             is ApiResponse.Failure -> {
-                Text(
-                    text = (ofpInfoResponse as ApiResponse.Failure).errorMessage
-                )
+                ErrorScreen(ofpInfoResponse as ApiResponse.Failure)
             }
-            else -> {}
+            else -> { Loader() }
         }
     }
 
@@ -396,7 +396,16 @@ fun OFPResultsInfoScreen(
                 ofpResultsInfoViewModel.clearUpdateResponse()
             }
         }
-        else -> {}
+        is ApiResponse.Failure -> {
+            var showErrorDialog by remember { mutableStateOf(false) }
+            SingleButtonDialog(
+                showDialog = showErrorDialog,
+                onDismiss = { showErrorDialog = false },
+                title = stringResource(R.string.error_notification_title),
+                message = stringResource(R.string.update_error_notification_text)
+            )
+        }
+        else -> { Loader() }
     }
 }
 
@@ -420,13 +429,18 @@ private fun getResults(
                 is ApiResponse.Success -> {
                     return ofpResultsViewModel.getOFPResultInfoResponse.observeAsState()
                 }
-                else -> {throw Error()}
+                is ApiResponse.Failure -> {
+                    return mutableStateOf(getInfoState as ApiResponse.Failure)
+                }
+                else -> { return mutableStateOf(ApiResponse.Loading) }
             }
         }
         null -> {
             return mutableStateOf(ApiResponse.Loading)
         }
-        else -> {throw Error()}
+        is ApiResponse.Failure -> {
+            return mutableStateOf(getCategoriesState as ApiResponse.Failure)
+        }
     }
 }
 
