@@ -374,7 +374,7 @@ fun OFPResultsInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(ofpInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -405,7 +405,7 @@ fun OFPResultsInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

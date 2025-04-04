@@ -190,7 +190,7 @@ fun LogInScreen(
                 onLogInButtonClick()
             }
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

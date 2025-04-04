@@ -308,7 +308,7 @@ fun ComprehensiveExaminationInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(comprehensiveExaminationInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -339,7 +339,7 @@ fun ComprehensiveExaminationInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

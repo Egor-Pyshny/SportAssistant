@@ -346,7 +346,7 @@ fun OFPResultsGraphicScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
-                    else -> { Loader() }
+                    else -> {}
                 }
             }
         }

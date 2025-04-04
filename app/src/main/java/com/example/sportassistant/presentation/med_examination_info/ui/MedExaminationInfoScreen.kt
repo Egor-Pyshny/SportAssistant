@@ -292,7 +292,7 @@ fun MedExaminationInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(medExaminationInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -322,7 +322,7 @@ fun MedExaminationInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

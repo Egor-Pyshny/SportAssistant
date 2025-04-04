@@ -122,7 +122,7 @@ fun MedExaminationScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(medExaminationResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 }
@@ -146,7 +146,7 @@ private fun getResults(
             is ApiResponse.Failure -> {
                 return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return medExaminationViewModel.getMedExaminationResponse.observeAsState()

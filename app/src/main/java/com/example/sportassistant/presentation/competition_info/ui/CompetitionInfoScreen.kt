@@ -310,7 +310,7 @@ fun CompetitionInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(competitionInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -341,7 +341,7 @@ fun CompetitionInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

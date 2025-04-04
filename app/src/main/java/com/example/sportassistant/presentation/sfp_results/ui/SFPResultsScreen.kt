@@ -137,7 +137,7 @@ fun SFPResultsScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(sfpResultsResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 }
@@ -161,7 +161,7 @@ private fun getResults(
             is ApiResponse.Failure -> {
                 throw Error()
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return sfpResultsViewModel.getSFPResultsResponse.observeAsState()

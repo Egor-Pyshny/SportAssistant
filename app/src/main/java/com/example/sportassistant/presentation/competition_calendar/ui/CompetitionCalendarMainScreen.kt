@@ -128,7 +128,7 @@ fun CompetitionCalendarMainScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(competitionsResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -154,7 +154,7 @@ private fun getCompetitions(
             is ApiResponse.Failure -> {
                 return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return when (tabIndex) {

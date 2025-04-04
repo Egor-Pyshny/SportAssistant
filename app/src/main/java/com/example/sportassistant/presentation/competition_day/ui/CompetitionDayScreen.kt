@@ -219,7 +219,7 @@ fun CompetitionDayScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(competitionDayResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -242,7 +242,7 @@ fun CompetitionDayScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

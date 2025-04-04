@@ -122,7 +122,7 @@ fun ComprehensiveExaminationScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(comprehensiveExaminationResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 }
@@ -146,7 +146,7 @@ private fun getResults(
             is ApiResponse.Failure -> {
                 return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return comprehensiveExaminationViewModel.getComprehensiveExaminationResponse.observeAsState()

@@ -122,7 +122,7 @@ fun NotesScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(notesResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 }
@@ -146,7 +146,7 @@ private fun getNotes(
             is ApiResponse.Failure -> {
                 return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return notesViewModel.getNotesResponse.observeAsState()

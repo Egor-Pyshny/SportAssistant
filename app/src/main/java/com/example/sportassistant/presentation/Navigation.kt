@@ -232,7 +232,7 @@ fun RootNavGraph(
                         is ApiResponse.Loading -> {
                             Loader()
                         }
-                        else -> { Loader() }
+                        else -> {}
                     }
                 } else if (isUserFilledProfile == false) {
                     navController.navigate(AuthRoutes.RegistrationProfile.route) {

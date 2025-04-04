@@ -380,7 +380,7 @@ fun SFPResultAddScreen(
                 message = stringResource(R.string.add_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

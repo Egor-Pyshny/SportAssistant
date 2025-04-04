@@ -226,7 +226,7 @@ fun RegistrationCreateAccountScreen(
                 )
             }
         }
-        else -> { Loader() }
+        else -> {}
     }
 
     when (registrationState) {
@@ -237,7 +237,7 @@ fun RegistrationCreateAccountScreen(
                 checkEmailViewModel.resetCheckEmailResponse()
             }
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

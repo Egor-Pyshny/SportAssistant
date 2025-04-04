@@ -142,7 +142,7 @@ fun OFPResultsScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(ofpResultsResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 }
@@ -166,7 +166,7 @@ private fun getResults(
             is ApiResponse.Failure -> {
                 return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return ofpResultsViewModel.getOFPResultsResponse.observeAsState()

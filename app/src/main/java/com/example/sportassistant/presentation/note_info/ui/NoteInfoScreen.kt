@@ -259,7 +259,7 @@ fun NoteInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(noteInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -287,7 +287,7 @@ fun NoteInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

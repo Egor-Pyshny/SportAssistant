@@ -368,7 +368,7 @@ fun SFPResultsInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(sfpInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -399,7 +399,7 @@ fun SFPResultsInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

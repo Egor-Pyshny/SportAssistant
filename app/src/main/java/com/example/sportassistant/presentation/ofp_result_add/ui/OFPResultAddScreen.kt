@@ -372,7 +372,7 @@ fun OFPResultAddScreen(
                 }
             }
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

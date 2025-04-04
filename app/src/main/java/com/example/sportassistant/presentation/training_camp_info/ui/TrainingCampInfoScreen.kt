@@ -312,7 +312,7 @@ fun TrainingCampInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(campInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -343,7 +343,7 @@ fun TrainingCampInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

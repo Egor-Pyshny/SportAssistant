@@ -340,7 +340,7 @@ fun SFPResultsGraphicScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
-                    else -> { Loader() }
+                    else -> {}
                 }
             }
         }

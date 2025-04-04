@@ -201,7 +201,7 @@ fun TrainingCampDayScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(campDayResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -224,7 +224,7 @@ fun TrainingCampDayScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

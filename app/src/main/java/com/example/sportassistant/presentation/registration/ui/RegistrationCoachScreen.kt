@@ -161,7 +161,7 @@ fun RegistrationCoachScreen(
                 onFinishRegistrationButtonClick()
             }
         }
-        else -> { Loader() }
+        else -> {}
     }
 
 }

@@ -75,7 +75,7 @@ fun ProfileScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(data as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 }

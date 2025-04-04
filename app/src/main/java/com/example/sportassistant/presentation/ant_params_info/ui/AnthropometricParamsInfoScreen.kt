@@ -329,7 +329,7 @@ fun AnthropometricParamsInfoScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(anthropometricParamsInfoResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 
@@ -359,7 +359,7 @@ fun AnthropometricParamsInfoScreen(
                 message = stringResource(R.string.update_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

@@ -94,7 +94,7 @@ fun StyledCoachesDropdownList(
                 is ApiResponse.Loading -> {
                     Loader()
                 }
-                else -> { Loader() }
+                else -> {}
             }
         }
     }

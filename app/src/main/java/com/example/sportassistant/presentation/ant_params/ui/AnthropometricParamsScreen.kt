@@ -162,7 +162,7 @@ private fun getResults(
             is ApiResponse.Failure -> {
                 return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return anthropometricParamsViewModel.getAnthropometricParamsResponse.observeAsState()

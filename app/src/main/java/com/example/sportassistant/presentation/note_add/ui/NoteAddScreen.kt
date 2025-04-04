@@ -261,7 +261,7 @@ fun NoteAddScreen(
                 message = stringResource(R.string.add_error_notification_text)
             )
         }
-        else -> { Loader() }
+        else -> {}
     }
 }
 

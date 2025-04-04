@@ -129,7 +129,7 @@ fun TrainingCampsCalendarMainScreen(
             is ApiResponse.Failure -> {
                 ErrorScreen(campsResponse as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
 }
@@ -154,7 +154,7 @@ private fun getCamps(
             is ApiResponse.Failure -> {
                 return mutableStateOf(deleteState as ApiResponse.Failure)
             }
-            else -> { Loader() }
+            else -> {}
         }
     }
     return when (tabIndex) {
