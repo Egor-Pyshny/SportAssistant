@@ -70,7 +70,7 @@ fun SleepScreen(
                     end = 15.dp,
                     bottom = 10.dp
                 ).background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.background,
                     shape = MaterialTheme.shapes.large,
                 ).fillMaxWidth(),
             ) {
@@ -102,7 +102,7 @@ fun SleepScreen(
                     end = 15.dp,
                     bottom = 10.dp
                 ).background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.background,
                     shape = MaterialTheme.shapes.large,
                 ).fillMaxWidth(),
             ) {

@@ -14,11 +14,17 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -71,6 +77,7 @@ fun TrainScreen(
                 initialState = uiState.wishToTrain,
                 onSelectedChanges = { index ->
                     trainViewModel.setWishToTrain(index)
+                    diaryViewModel.saveTrainByType(type, uiState)
                 }
             )
             HorizontalDivider(thickness = 2.dp)
@@ -90,6 +97,7 @@ fun TrainScreen(
                 initialState = uiState.selfBeing,
                 onSelectedChanges = { index ->
                     trainViewModel.setSelfBeing(index)
+                    diaryViewModel.saveTrainByType(type, uiState)
                 }
             )
             HorizontalDivider(thickness = 2.dp)
@@ -110,7 +118,7 @@ fun TrainScreen(
                     end = 15.dp,
                     bottom = 25.dp
                 ).background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.background,
                     shape = MaterialTheme.shapes.large,
                 ).fillMaxWidth(),
             ) {
@@ -121,6 +129,7 @@ fun TrainScreen(
                     initialTime = uiState.trainStart,
                     onSelectedChanges = { time ->
                         trainViewModel.setTrainStart(time)
+                        diaryViewModel.saveTrainByType(type, uiState)
                     }
                 )
             }
@@ -142,7 +151,7 @@ fun TrainScreen(
                     end = 15.dp,
                     bottom = 25.dp
                 ).background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.background,
                     shape = MaterialTheme.shapes.large,
                 ).fillMaxWidth(),
             ) {
@@ -153,6 +162,7 @@ fun TrainScreen(
                     initialTime = uiState.trainEnd,
                     onSelectedChanges = { time ->
                         trainViewModel.setTrainEnd(time)
+                        diaryViewModel.saveTrainByType(type, uiState)
                     }
                 )
             }
@@ -183,15 +193,19 @@ fun TrainScreen(
             note = uiState.warmUpNote,
             onHeartRateBeforeChanges = { value ->
                 trainViewModel.setHeartRateBeforeWarmUp(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onHeartRateAfterChanges = { value ->
                 trainViewModel.setHeartRateAfterWarmUp(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onDurationChanges = { value ->
                 trainViewModel.setWarmUpDuration(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onNoteChanges = { value ->
                 trainViewModel.setWarmUpNote(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
         )
         Text(
@@ -210,15 +224,19 @@ fun TrainScreen(
             note = uiState.mainNote,
             onHeartRateBeforeChanges = { value ->
                 trainViewModel.setHeartRateBeforeMain(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onHeartRateAfterChanges = { value ->
                 trainViewModel.setHeartRateAfterMain(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onDurationChanges = { value ->
                 trainViewModel.setMainDuration(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onNoteChanges = { value ->
                 trainViewModel.setMainNote(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
         )
         Text(
@@ -237,15 +255,19 @@ fun TrainScreen(
             note = uiState.finishNote,
             onHeartRateBeforeChanges = { value ->
                 trainViewModel.setHeartRateBeforeFinish(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onHeartRateAfterChanges = { value ->
                 trainViewModel.setHeartRateAfterFinish(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onDurationChanges = { value ->
                 trainViewModel.setFinishDuration(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
             onNoteChanges = { value ->
                 trainViewModel.setFinishNote(value)
+                diaryViewModel.saveTrainByType(type, uiState)
             },
         )
         Card(
@@ -269,6 +291,7 @@ fun TrainScreen(
                 initialState = uiState.workCapacity,
                 onSelectedChanges = { index ->
                     trainViewModel.setWorkCapacity(index)
+                    diaryViewModel.saveTrainByType(type, uiState)
                 }
             )
             HorizontalDivider(thickness = 2.dp)
@@ -289,6 +312,7 @@ fun TrainScreen(
                 initialState = uiState.degreeOfFatigue,
                 onSelectedChanges = { index ->
                     trainViewModel.setDegreeOfFatigue(index)
+                    diaryViewModel.saveTrainByType(type, uiState)
                 }
             )
         }
@@ -328,7 +352,7 @@ fun TrainPart(
             initialState = heartRateBefore,
             onSelectedChanges = { index ->
                 onHeartRateBeforeChanges(index)
-            }
+            },
         )
         HorizontalDivider(thickness = 2.dp)
         Text(
@@ -367,7 +391,7 @@ fun TrainPart(
                 end = 15.dp,
                 bottom = 10.dp
             ).background(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 shape = MaterialTheme.shapes.large,
             ).fillMaxWidth(),
         ) {

@@ -142,10 +142,60 @@ class TrainDiaryViewModel: ViewModel() {
     fun getTrainByType(type: PreparationType): Train {
         return when (type) {
             PreparationType.GENERAL -> _uiState.value.generalTrain
-            PreparationType.SPEC -> _uiState.value.generalTrain
-            PreparationType.PRED_COMP -> _uiState.value.generalTrain
-            PreparationType.COMP -> _uiState.value.generalTrain
-            PreparationType.TRANSITIONAL -> _uiState.value.generalTrain
+            PreparationType.SPEC -> _uiState.value.specialTrain
+            PreparationType.PRED_COMP -> _uiState.value.predCompTrain
+            PreparationType.COMP -> _uiState.value.compTrain
+            PreparationType.TRANSITIONAL -> _uiState.value.transitionalTrain
+        }
+    }
+
+    fun saveTrainByType(type: PreparationType, train: Train) {
+        when (type) {
+            PreparationType.GENERAL -> this.setGeneralTrain(train)
+            PreparationType.SPEC -> this.setSpecialTrain(train)
+            PreparationType.PRED_COMP -> this.setPredCompTrain(train)
+            PreparationType.COMP -> this.setCompTrain(train)
+            PreparationType.TRANSITIONAL -> this.setTransitionalTrain(train)
+        }
+    }
+
+    fun setGeneralTrain(train: Train) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                generalTrain = train
+            )
+        }
+    }
+
+    fun setSpecialTrain(train: Train) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                specialTrain = train
+            )
+        }
+    }
+
+    fun setPredCompTrain(train: Train) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                predCompTrain = train
+            )
+        }
+    }
+
+    fun setCompTrain(train: Train) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                compTrain = train
+            )
+        }
+    }
+
+    fun setTransitionalTrain(train: Train) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                transitionalTrain = train
+            )
         }
     }
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sportassistant.R
+import com.example.sportassistant.data.repository.UserPreferencesRepository
 import com.example.sportassistant.data.repository.WindowSizeProvider
 import com.example.sportassistant.data.schemas.auth.requests.SetProfileDataRequest
 import com.example.sportassistant.domain.model.Coach
@@ -55,7 +56,7 @@ fun RegistrationCoachScreen(
     val uiState by viewModel.uiState.collectAsState()
     val coaches by coachViewModel.coachesResponse.observeAsState()
     val setInfoState by viewModel.setInfoResponse.observeAsState()
-
+    val preferences: UserPreferencesRepository = get()
     Column (
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(
@@ -158,6 +159,7 @@ fun RegistrationCoachScreen(
                 CircularProgressIndicator()
             }
             LaunchedEffect(Unit) {
+                preferences.setIsProfileFilled(true)
                 onFinishRegistrationButtonClick()
             }
         }

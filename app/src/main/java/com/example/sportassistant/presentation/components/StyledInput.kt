@@ -68,6 +68,8 @@ fun StyledInput(
         supportingText = if (supportingText != null ) { {Text(text = supportingText)} } else null,
         prefix = if (prefix != null ) { {Text(text = prefix)} } else null,
         suffix = if (suffix != null ) { {Text(text = suffix)} } else null,
-        textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black)
+        textStyle = MaterialTheme.typography.bodyLarge.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        ),
     )
 }

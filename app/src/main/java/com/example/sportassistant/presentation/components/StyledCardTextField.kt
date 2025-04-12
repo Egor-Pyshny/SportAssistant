@@ -54,9 +54,11 @@ fun StyledCardTextField(
                 .fillMaxWidth()
                 .onFocusChanged { isFocused = it.isFocused },
             enabled = enabled,
-            singleLine = singleLine,
+            singleLine = if (maxLines == 1) singleLine else false,
             maxLines = maxLines,
-            textStyle = LocalTextStyle.current,
+            textStyle = MaterialTheme.typography.bodyLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             visualTransformation = visualTransformation,
             readOnly = readOnly,
@@ -77,8 +79,8 @@ fun StyledCardTextField(
                         ) {
                             Box(modifier = Modifier.weight(1f)) {
                                 when {
-                                    isFocused || value.isNotEmpty() -> innerTextField()
-                                    placeholder != null -> placeholder()
+                                    placeholder != null && !isFocused && value.isEmpty() -> placeholder()
+                                    else -> innerTextField()
                                 }
                             }
 

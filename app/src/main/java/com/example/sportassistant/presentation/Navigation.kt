@@ -232,6 +232,12 @@ fun RootNavGraph(
                         is ApiResponse.Loading -> {
                             Loader()
                         }
+
+                        is ApiResponse.Failure -> {
+                            navController.navigate(AuthRoutes.Start.route) {
+                                popUpTo(0)
+                            }
+                        }
                         else -> {}
                     }
                 } else if (isUserFilledProfile == false) {

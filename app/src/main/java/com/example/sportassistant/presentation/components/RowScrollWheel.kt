@@ -34,6 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.sportassistant.data.repository.WindowSizeProvider
+import org.koin.androidx.compose.get
 import kotlin.math.abs
 
 @Composable
@@ -43,6 +45,9 @@ fun RowScrollWheel(
     initialState: Int,
     modifier: Modifier = Modifier,
 ) {
+    val screenSizeProvider: WindowSizeProvider = get()
+    val width: Dp =
+        (screenSizeProvider.getScreenDimensions().screenWidth - screenSizeProvider.getEdgeSpacing()*2 - 140.dp) / 3
     val scrollState = rememberLazyListState(initialState)
     val snapState = rememberSnapFlingBehavior(scrollState)
     LaunchedEffect(Unit) {
@@ -76,7 +81,7 @@ fun RowScrollWheel(
         ) {
             Box(
                 modifier = Modifier
-                    .width(80.dp)
+                    .width(width)
                     .height(componentHeight - componentHeight/6)
                     .padding(top = componentHeight/12)
                     .fillMaxHeight(),
@@ -91,11 +96,10 @@ fun RowScrollWheel(
             }
             Box(
                 modifier = Modifier
-                    .width(80.dp)
+                    .width(width)
                     .height(componentHeight - componentHeight/6)
                     .padding(top = componentHeight/12)
                     .fillMaxHeight(),
-
                 contentAlignment = Alignment.CenterEnd
             ) {
                 VerticalDivider(
@@ -113,7 +117,7 @@ fun RowScrollWheel(
                 end = 15.dp,
                 bottom = 10.dp
             ).background(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 shape = MaterialTheme.shapes.large,
             ).fillMaxWidth(),
         ) {
@@ -136,14 +140,15 @@ fun RowScrollWheel(
                         Text(
                             style = MaterialTheme.typography.headlineMedium,
                             text = "",
-                            modifier = Modifier.padding(vertical = 15.dp).width(80.dp)
+                            modifier = Modifier.padding(vertical = 15.dp).width(width)
                         )
                     } else {
                         Text(
                             style =
                             if (item == selectedIndex)
                                 MaterialTheme.typography.headlineMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             else
                                 MaterialTheme.typography.headlineSmall.copy(
@@ -151,7 +156,7 @@ fun RowScrollWheel(
                                 ),
                             modifier = Modifier.alpha(
                                 if (item == selectedIndex) 1f else 0.5f
-                            ).padding(vertical = 15.dp).width(80.dp),
+                            ).padding(vertical = 15.dp).width(width),
                             text = items[item-1],
                             textAlign = TextAlign.Center,
                         )

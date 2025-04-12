@@ -77,7 +77,7 @@ private val darkScheme = darkColorScheme(
     surfaceVariant = surfaceVariantDark,
     onSurfaceVariant = onSurfaceVariantDark,
     outline = outlineDark,
-    outlineVariant = outlineVariantDark,
+    outlineVariant = outlineDark,
     scrim = scrimDark,
     inverseSurface = inverseSurfaceDark,
     inverseOnSurface = inverseOnSurfaceDark,
@@ -267,7 +267,6 @@ fun SportAssistantTheme(
         uistate.isDark -> darkScheme
         else -> lightScheme
     }
-
 
     MaterialTheme(
         colorScheme = colorScheme,

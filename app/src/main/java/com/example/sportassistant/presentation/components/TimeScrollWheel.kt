@@ -24,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +33,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.example.sportassistant.data.repository.WindowSizeProvider
+import org.koin.androidx.compose.get
 import java.time.LocalTime
 import kotlin.math.abs
 
@@ -43,6 +47,10 @@ fun TimeScrollWheel(
     initialTime: LocalTime,
     onSelectedChanges: (time: LocalTime) -> Unit,
 ) {
+    val screenSizeProvider: WindowSizeProvider = get()
+    val width: Dp =
+        (screenSizeProvider.getScreenDimensions().screenWidth - screenSizeProvider.getEdgeSpacing()*2 - 140.dp) / 3
+
     val hourScrollState = rememberLazyListState(initialTime.hour)
     val hourSnapState = rememberSnapFlingBehavior(hourScrollState)
     val hourSelectedIndex by remember {
@@ -167,7 +175,7 @@ fun TimeScrollWheel(
         ) {
             LazyColumn(
                 modifier = Modifier.heightIn(max = 180.dp)
-                    .width(80.dp),
+                    .width(width),
                 state = hourScrollState,
                 flingBehavior = hourSnapState,
             ) {
@@ -177,23 +185,25 @@ fun TimeScrollWheel(
                             style = MaterialTheme.typography.headlineMedium,
                             text = "",
                             modifier = Modifier.height(60.dp)
-                                .width(80.dp).padding(vertical = 10.dp),
+                                .width(width).padding(vertical = 10.dp),
                         )
                     } else {
                         Text(
                             style =
                             if (item == hourSelectedIndex)
                                 MaterialTheme.typography.headlineMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             else
                                 MaterialTheme.typography.headlineSmall.copy(
-                                    fontWeight = FontWeight.Thin
+                                    fontWeight = FontWeight.Thin,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 ),
                             modifier = Modifier.alpha(
                                 if (item == hourSelectedIndex) 1f else 0.5f
                             ).height(60.dp)
-                                .width(80.dp).padding(vertical = 10.dp),
+                                .width(width).padding(vertical = 10.dp),
                             text = hours[item-1],
                             textAlign = TextAlign.Center,
                         )
@@ -211,23 +221,25 @@ fun TimeScrollWheel(
                             style = MaterialTheme.typography.headlineMedium,
                             text = "",
                             modifier = Modifier.height(60.dp)
-                                .width(80.dp).padding(vertical = 10.dp),
+                                .width(width).padding(vertical = 10.dp),
                         )
                     } else {
                         Text(
                             style =
                             if (item == minuteSelectedIndex)
                                 MaterialTheme.typography.headlineMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             else
                                 MaterialTheme.typography.headlineSmall.copy(
-                                    fontWeight = FontWeight.Thin
+                                    fontWeight = FontWeight.Thin,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 ),
                             modifier = Modifier.alpha(
                                 if (item == minuteSelectedIndex) 1f else 0.5f
                             ).height(60.dp)
-                                .width(80.dp).padding(vertical = 10.dp),
+                                .width(width).padding(vertical = 10.dp),
                             text = minutes[item-1],
                             textAlign = TextAlign.Center,
                         )
@@ -236,7 +248,7 @@ fun TimeScrollWheel(
             }
             LazyColumn(
                 modifier = Modifier.heightIn(max = 180.dp)
-                    .width(80.dp),
+                    .width(width),
                 state = secondScrollState,
                 flingBehavior = secondSnapState,
             ) {
@@ -246,23 +258,25 @@ fun TimeScrollWheel(
                             style = MaterialTheme.typography.headlineMedium,
                             text = "",
                             modifier = Modifier.height(60.dp)
-                                .width(80.dp).padding(vertical = 10.dp),
+                                .width(width).padding(vertical = 10.dp),
                         )
                     } else {
                         Text(
                             style =
                             if (item == secondSelectedIndex)
                                 MaterialTheme.typography.headlineMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                             else
                                 MaterialTheme.typography.headlineSmall.copy(
-                                    fontWeight = FontWeight.Thin
+                                    fontWeight = FontWeight.Thin,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 ),
                             modifier = Modifier.alpha(
                                 if (item == secondSelectedIndex) 1f else 0.5f
                             ).height(60.dp)
-                                .width(80.dp).padding(vertical = 10.dp),
+                                .width(width).padding(vertical = 10.dp),
                             text = seconds[item-1],
                             textAlign = TextAlign.Center,
                         )

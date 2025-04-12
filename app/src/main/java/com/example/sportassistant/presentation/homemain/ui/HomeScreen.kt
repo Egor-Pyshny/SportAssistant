@@ -288,6 +288,7 @@ private fun getTopBarTitles(
         HomeRoutes.Activity.route -> stringResource(R.string.diary_list_item_activity)
         HomeRoutes.Sleep.route -> stringResource(R.string.diary_list_item_sleep)
         HomeRoutes.TrainDiary.route -> stringResource(R.string.home_list_item_train_diary)
+        HomeRoutes.Preparations.route -> stringResource(R.string.diary_list_item_preparations)
         HomeRoutes.Food.route -> stringResource(R.string.diary_list_item_food)
         HomeRoutes.Meal.route -> stringResource(R.string.diary_list_item_food)
         else -> "ERROR"

@@ -34,6 +34,7 @@ fun StyledButtonListItem(
     textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     onClick: () -> Unit,
 ) {
+    val borderColor = MaterialTheme.colorScheme.outlineVariant
     Row (
         modifier = modifier
             .fillMaxWidth()
@@ -43,7 +44,6 @@ fun StyledButtonListItem(
                 shape = cornerShape
             ).drawBehind {
                 val borderSize = 2.dp.toPx()
-                val borderColor = Color.Black
                 if (border == Border.Bottom) {
                     drawLine(
                         color = borderColor,

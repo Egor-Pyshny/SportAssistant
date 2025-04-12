@@ -292,7 +292,7 @@ fun CalendarScreen(
                 modifier = Modifier
                     .size(15.dp)
                     .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.3f))
+                    .background(Color.Green.copy(alpha = 0.3f))
             )
             Text(
                 modifier = Modifier.padding(end = 10.dp),
@@ -548,7 +548,7 @@ fun DayCell(
             .aspectRatio(1f)
             .background(
                 color = when {
-                    isCompetitionDay -> Color.Black.copy(alpha = 0.2f)
+                    isCompetitionDay -> Color.Green.copy(alpha = 0.2f)
                     else -> Color.Transparent
                 },
                 shape = competitionShape,
@@ -592,7 +592,6 @@ fun DayCell(
         Text(
             text = day.toString(),
             fontSize = 18.sp,
-            color = Color.Black
         )
     }
 }

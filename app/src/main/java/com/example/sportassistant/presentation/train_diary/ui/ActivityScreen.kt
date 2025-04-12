@@ -127,7 +127,7 @@ fun ActivityScreen(
                     end = 15.dp,
                     bottom = 25.dp
                 ).background(
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.background,
                     shape = MaterialTheme.shapes.large,
                 ).fillMaxWidth(),
             ) {

@@ -194,6 +194,7 @@ fun ComprehensiveExaminationAddScreen(
                     comprehensiveExaminationAddViewModel.setInstitution(it)
                 },
                 maxLines = 3,
+                singleLine = false,
                 modifier = Modifier.padding(
                     start = 15.dp,
                     end = 15.dp,
